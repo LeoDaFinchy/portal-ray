@@ -6,11 +6,14 @@ var Vector2 = function(x,y){
 Vector2.prototype.add = function(other){
     return new Vector2(this.x + other.x, this.y + other.y);
 }
-Vector2.prototype.substract = function(other){
+Vector2.prototype.subtract = function(other){
     return new Vector2(this.x - other.x, this.y - other.y);
 }
 Vector2.prototype.multiply = function(scale){
     return new Vector2(this.x * scale, this.y * scale);
+}
+Vector2.prototype.scale = function(scale){
+    return new Vector2(this.x * scale.x, this.y * scale.y);
 }
 Vector2.prototype.length = function(){
     return Math.sqrt(Math.pow(this.x, 2.0) + Math.pow(this.y, 2.0));
@@ -59,7 +62,7 @@ var LineSegment = function(a, b){
 }
 
 LineSegment.prototype.offset = function(){
-    return this.b.substract(this.a);
+    return this.b.subtract(this.a);
 }
 
 var Ray = function(origin, direction){
@@ -101,7 +104,9 @@ Ray.prototype.castAgainstLineSegment = function(lineSegment){
     return new Raycast(
         x,
         ((x.x - this.origin.x) / this.direction.x) || ((x.y - this.origin.y) / this.direction.y),
-        ((x.x - a.x) / lineSegment.offset().x) || ((x.y - a.y) / lineSegment.offset().y)
+        ((x.x - a.x) / lineSegment.offset().x) || ((x.y - a.y) / lineSegment.offset().y),
+        this,
+        lineSegment
     );
 }
 Ray.fromLineSegment = function(lineSegment)
@@ -110,10 +115,12 @@ Ray.fromLineSegment = function(lineSegment)
 }
 
 
-var Raycast = function(incidence, rayDistance, segmentFraction){
+var Raycast = function(incidence, rayDistance, segmentFraction, ray, segment){
     this.incidence = incidence;
     this.rayDistance = rayDistance;
     this.segmentFraction = segmentFraction;
+    this.ray = ray;
+    this.segment = segment;
 }
 
 
@@ -123,6 +130,8 @@ var Portal = function(a, b){
 }
 
 //  TODO Functions: Need functions for transforming rays.
+
+console.log(new Vector2(3.0,3.0), new Vector2(3.0,3.0).multiply(2.0));
 
 var vectorA = new Vector2(-2, 5);
 var vectorB = new Vector2(8, 0);
@@ -136,7 +145,8 @@ console.log(lineSegmentA);
 console.log(lineSegmentA.offset());
 console.log(rayA);
 
-console.log(rayA.castAgainstLineSegment(lineSegmentA));
+var cast = rayA.castAgainstLineSegment(lineSegmentA);
+console.log(cast);
 
 var rotation = new Vector2(1,1).rotation();
 var subject = new Vector2(2,1);
@@ -147,3 +157,118 @@ console.log("Rotating Vectors");
 console.log(subject, subject.normalise())
 console.log(rotation);
 console.log(subjectRotated, subjectRotated.normalise());
+
+if(window && document)
+{
+    window.onload = function(){
+        window.PortalRay = {};
+        canvas = document.getElementById('canvas');
+        context = canvas.getContext("2d");
+        context.scale(20,-20);
+        context.translate(10, -7.5);
+
+        canvas.onmousemove = mouseMoved;
+
+        window.PortalRay = {
+            canvas: canvas,
+            context: context
+        }
+
+        window.setTimeout(draw, 100);
+    };
+
+    function mouseMoved(e){
+        rayA.direction = new Vector2(e.offsetX, e.offsetY).scale(new Vector2(0.05, -0.05)).subtract(rayA.origin).subtract(new Vector2(10, -7.5));
+    };
+
+    function draw(){
+        context = window.PortalRay.context;
+        context.clearRect(-1000,-1000, 2000, 2000);
+        drawAxes(context);
+        drawLineSegments(context, [lineSegmentA]);
+        drawRays(context, [rayA]);
+        drawRaycasts(context, [rayA.castAgainstLineSegment(lineSegmentA)]);
+
+        window.setTimeout(draw, 10);
+    };
+
+    function drawLineSegments(context, segments)
+    {
+        for(var i = 0; i < segments.length; i++)
+        {
+            context.lineWidth = 0.3;
+            context.strokeStyle = "#3333cc";
+
+            segment = segments[i];
+            context.beginPath();
+            context.moveTo(segment.a.x, segment.a.y);
+            context.lineTo(segment.b.x, segment.b.y);
+
+            context.stroke();
+        }
+    };
+
+    function drawRaycasts(context, raycasts)
+    {
+        for(var i = 0; i < raycasts.length; i++)
+        {
+            raycast = raycasts[i];
+
+            context.lineWidth = 0.1;
+
+            context.strokeStyle = "#cc33cc";
+            context.beginPath();
+            context.arc(raycast.incidence.x, raycast.incidence.y, 0.2, 0, Math.PI * 2);
+            context.stroke();
+
+            context.strokeStyle = "#cccc33";
+
+            context.beginPath();
+            context.moveTo(raycast.ray.origin.x, raycast.ray.origin.y);
+            dist = raycast.ray.direction.multiply(raycast.rayDistance).add(raycast.ray.origin);
+            context.lineTo(dist.x, dist.y);
+            context.stroke();
+
+            context.strokeStyle = "#33cc33";
+
+            context.beginPath();
+            context.moveTo(raycast.segment.a.x, raycast.segment.a.y);
+            portion = raycast.segment.offset().multiply(raycast.segmentFraction).add(raycast.segment.a);
+            context.lineTo(portion.x, portion.y);
+            context.stroke();
+        }
+    };
+
+    function drawRays(context, rays)
+    {
+        for(var i = 0; i < rays.length; i++)
+        {
+            context.lineWidth = 0.2;
+            context.strokeStyle = "#cc3333";
+
+            ray = rays[i];
+            context.beginPath();
+            context.arc(ray.origin.x, ray.origin.y, 0.2, 0, Math.PI * 2);
+            context.moveTo(ray.origin.x, ray.origin.y);
+            context.lineTo(ray.forward().x, ray.forward().y);
+
+            context.stroke();
+        }
+    };
+
+    function drawAxes(context, segments)
+    {
+        context.lineWidth = 0.1;
+        context.strokeStyle = "#dddddd";
+
+        context.beginPath();
+        context.moveTo(0, 1000);
+        context.lineTo(0, -1000);
+        context.stroke();
+        context.beginPath();
+        context.moveTo(1000, 0);
+        context.lineTo(-1000, 0);
+
+        context.stroke();
+    };
+}
