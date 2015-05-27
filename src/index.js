@@ -15,6 +15,10 @@ Vector2.prototype.multiply = function(scale){
 Vector2.prototype.scale = function(scale){
     return new Vector2(this.x * scale.x, this.y * scale.y);
 }
+Vector2.prototype.reciprocal = function()
+{
+    return new Vector2(1.0 / this.x, 1.0 / this.y);
+}
 Vector2.prototype.length = function(){
     return Math.sqrt(Math.pow(this.x, 2.0) + Math.pow(this.y, 2.0));
 }
@@ -136,17 +140,12 @@ console.log(new Vector2(3.0,3.0), new Vector2(3.0,3.0).multiply(2.0));
 var vectorA = new Vector2(-2, 5);
 var vectorB = new Vector2(8, 0);
 var lineSegmentA = new LineSegment(vectorA, vectorB);
+var lineSegmentB = new LineSegment(new Vector2(-8.0, -8.0), new Vector2(10.0, -5.0));
 
 vectorX = new Vector2(0, 1);
 vectorC = new Vector2(-1, 1);
 var rayA = new Ray(vectorX, vectorC);
-
-console.log(lineSegmentA);
-console.log(lineSegmentA.offset());
-console.log(rayA);
-
-var cast = rayA.castAgainstLineSegment(lineSegmentA);
-console.log(cast);
+var rayB = new Ray(new Vector2(-3.0, 5.0))
 
 var rotation = new Vector2(1,1).rotation();
 var subject = new Vector2(2,1);
@@ -160,12 +159,16 @@ console.log(subjectRotated, subjectRotated.normalise());
 
 if(window && document)
 {
+    var CanvasSize = new Vector2(800, 600);
+    var GraphSize = new Vector2(40, 30);
+    var Scaling = new Vector2(CanvasSize.x / GraphSize.x, -CanvasSize.y / GraphSize.y)
+
     window.onload = function(){
         window.PortalRay = {};
         canvas = document.getElementById('canvas');
         context = canvas.getContext("2d");
-        context.scale(20,-20);
-        context.translate(10, -7.5);
+        context.scale(Scaling.x, Scaling.y);
+        context.translate(GraphSize.x / 2.0, -GraphSize.y / 2.0);
 
         canvas.onmousemove = mouseMoved;
 
@@ -178,16 +181,29 @@ if(window && document)
     };
 
     function mouseMoved(e){
-        rayA.direction = new Vector2(e.offsetX, e.offsetY).scale(new Vector2(0.05, -0.05)).subtract(rayA.origin).subtract(new Vector2(10, -7.5));
+        var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).scale(Scaling.reciprocal()).subtract(GraphSize.scale(new Vector2(0.5,-0.5)));
+        rayA.direction = graphSpaceMouse.subtract(rayA.origin);
+        rayB.direction = graphSpaceMouse.subtract(rayB.origin);
     };
 
     function draw(){
         context = window.PortalRay.context;
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
-        drawLineSegments(context, [lineSegmentA]);
-        drawRays(context, [rayA]);
-        drawRaycasts(context, [rayA.castAgainstLineSegment(lineSegmentA)]);
+        drawLineSegments(context, [
+            lineSegmentA,
+            lineSegmentB
+        ]);
+        drawRays(context, [
+            rayA,
+            rayB
+        ]);
+        drawRaycasts(context, [
+            rayA.castAgainstLineSegment(lineSegmentA),
+            rayA.castAgainstLineSegment(lineSegmentB),
+            rayB.castAgainstLineSegment(lineSegmentA),
+            rayB.castAgainstLineSegment(lineSegmentB)
+        ]);
 
         window.setTimeout(draw, 10);
     };
