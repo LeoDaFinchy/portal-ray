@@ -135,27 +135,20 @@ var Portal = function(a, b){
 
 //  TODO Functions: Need functions for transforming rays.
 
-console.log(new Vector2(3.0,3.0), new Vector2(3.0,3.0).multiply(2.0));
-
 var vectorA = new Vector2(-2, 5);
 var vectorB = new Vector2(8, 0);
 var lineSegmentA = new LineSegment(vectorA, vectorB);
 var lineSegmentB = new LineSegment(new Vector2(-8.0, -8.0), new Vector2(10.0, -5.0));
 
-vectorX = new Vector2(0, 1);
-vectorC = new Vector2(-1, 1);
-var rayA = new Ray(vectorX, vectorC);
-var rayB = new Ray(new Vector2(-3.0, 5.0))
+var lineSegments = [
+    new LineSegment(new Vector2(-2.0, 10.0), new Vector2(12.0, 0.0)),
+    new LineSegment(new Vector2(-8.0,-8.0), new Vector2(10.0, -5.0))
+];
 
-var rotation = new Vector2(1,1).rotation();
-var subject = new Vector2(2,1);
-
-var subjectRotated = subject.rotate(rotation);
-
-console.log("Rotating Vectors");
-console.log(subject, subject.normalise())
-console.log(rotation);
-console.log(subjectRotated, subjectRotated.normalise());
+var rays = [
+    new Ray(new Vector2(0.0, 1.0)),
+    new Ray(new Vector2(-5.0, 3.0))
+]
 
 if(window && document)
 {
@@ -177,33 +170,39 @@ if(window && document)
             context: context
         }
 
+        Object.defineProperty(window.PortalRay, 'raycasts', {
+            get: function()
+            {
+                value = [];
+                for(var x = 0; x < rays.length; x++)
+                {
+                    for(var y = 0; y < lineSegments.length; y++)
+                    {
+                        value.push(rays[x].castAgainstLineSegment(lineSegments[y]));
+                    }
+                }
+                return value;
+            }
+        });
+
         window.setTimeout(draw, 100);
     };
 
     function mouseMoved(e){
         var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).scale(Scaling.reciprocal()).subtract(GraphSize.scale(new Vector2(0.5,-0.5)));
-        rayA.direction = graphSpaceMouse.subtract(rayA.origin);
-        rayB.direction = graphSpaceMouse.subtract(rayB.origin);
+        for(var x = 0; x < rays.length; x++)
+        {
+            rays[x].direction = graphSpaceMouse.subtract(rays[x].origin)
+        }
     };
 
     function draw(){
         context = window.PortalRay.context;
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
-        drawLineSegments(context, [
-            lineSegmentA,
-            lineSegmentB
-        ]);
-        drawRays(context, [
-            rayA,
-            rayB
-        ]);
-        drawRaycasts(context, [
-            rayA.castAgainstLineSegment(lineSegmentA),
-            rayA.castAgainstLineSegment(lineSegmentB),
-            rayB.castAgainstLineSegment(lineSegmentA),
-            rayB.castAgainstLineSegment(lineSegmentB)
-        ]);
+        drawLineSegments(context, lineSegments);
+        drawRays(context, rays);
+        drawRaycasts(context, window.PortalRay.raycasts);
 
         window.setTimeout(draw, 10);
     };
