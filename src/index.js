@@ -113,6 +113,14 @@ Ray.prototype.castAgainstLineSegment = function(lineSegment){
         lineSegment
     );
 }
+
+Ray.prototype.castAgainstLineSegments = function(lineSegments)
+{
+    return lineSegments.map(function(segment){
+        return this.castAgainstLineSegment(segment);
+    }, this);
+}
+
 Ray.fromLineSegment = function(lineSegment)
 {
     return new Ray(lineSegment.a.clone(), lineSegment.b.normalise());
@@ -202,7 +210,6 @@ if(window && document)
                 })
             }
         })
-
 
         window.setTimeout(draw, 100);
     };
