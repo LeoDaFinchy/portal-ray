@@ -180,8 +180,6 @@ var rays = [
     new Ray(new Vector2(-5.0, 3.0))
 ]
 
-var rayHits;
-
 if(window && document)
 {
     var CanvasSize = new Vector2(800, 600);
@@ -220,11 +218,11 @@ if(window && document)
         drawLineSegments(context, lineSegments);
         drawRays(context, rays);
 
-        var rayCastsToDraw = rays.map(function(ray){
+        var rayHits = rays.map(function(ray){
             return ray.findNearestHitOnSegments(lineSegments);
         }).filter(function(raycast){return raycast;});
 
-        drawRaycasts(context, rayCastsToDraw);
+        drawRaycasts(context, rayHits);
 
         window.setTimeout(draw, 10);
     };
