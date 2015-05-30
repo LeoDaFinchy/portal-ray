@@ -37,6 +37,10 @@ Vector2.prototype.rotation = function()
 Vector2.prototype.rotate = function(matrix){
     return matrix.rotateVector2(this);
 }
+Vector2.prototype.normal = function()
+{
+    return new Vector2(this.y, -this.x).normalise();
+}
 
 Vector2.zero = function(){
     return new Vector2()
@@ -67,6 +71,11 @@ var LineSegment = function(a, b){
 
 LineSegment.prototype.offset = function(){
     return this.b.subtract(this.a);
+}
+
+LineSegment.prototype.normal = function()
+{
+    return this.offset().normal();
 }
 
 var Ray = function(origin, direction){
@@ -222,6 +231,7 @@ if(window && document)
             return ray.findNearestHitOnSegments(lineSegments);
         }).filter(function(raycast){return raycast;});
 
+
         drawRaycasts(context, rayHits);
 
         window.setTimeout(draw, 10);
@@ -238,7 +248,14 @@ if(window && document)
             context.beginPath();
             context.moveTo(segment.a.x, segment.a.y);
             context.lineTo(segment.b.x, segment.b.y);
+            context.stroke();
 
+            var normalPosition = segment.a.add(segment.normal());
+            context.strokeStyle = "#33cc33";
+            context.lineWidth = 0.1;
+            context.beginPath();
+            context.moveTo(segment.a.x, segment.a.y);
+            context.lineTo(normalPosition.x, normalPosition.y);
             context.stroke();
         }
     };
