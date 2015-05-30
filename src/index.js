@@ -121,6 +121,20 @@ Ray.prototype.castAgainstLineSegments = function(lineSegments)
     }, this);
 }
 
+Ray.prototype.findNearestHitOnSegments = function(lineSegments)
+{
+    return this.castAgainstLineSegments(lineSegments).filter(function(raycast){
+        return (raycast.rayDistance > 0.0) &&
+        (raycast.segmentFraction >= 0.0) &&
+        (raycast.segmentFraction <= 1.0);
+    }).reduce(function(prev, current){
+        if(!prev){return current};
+        if(current.rayDistance < prev.rayDistance){
+            return current;
+        }else{return prev;}
+    }, undefined);
+}
+
 Ray.fromLineSegment = function(lineSegment)
 {
     return new Ray(lineSegment.a.clone(), lineSegment.b.normalise());
@@ -156,7 +170,8 @@ var lineSegmentA = new LineSegment(vectorA, vectorB);
 var lineSegmentB = new LineSegment(new Vector2(-8.0, -8.0), new Vector2(10.0, -5.0));
 
 var lineSegments = [
-    new LineSegment(new Vector2(-2.0, 10.0), new Vector2(12.0, 0.0)),
+    new LineSegment(new Vector2(-2.0, 10.0), new Vector2(10.0, 0.0)),
+    new LineSegment(new Vector2(-2.0, 12.0), new Vector2(17.0, -4.0)),
     new LineSegment(new Vector2(-8.0,-8.0), new Vector2(10.0, -5.0))
 ];
 
@@ -164,6 +179,8 @@ var rays = [
     new Ray(new Vector2(0.0, 1.0)),
     new Ray(new Vector2(-5.0, 3.0))
 ]
+
+var rayHits;
 
 if(window && document)
 {
@@ -185,32 +202,6 @@ if(window && document)
             context: context
         }
 
-        Object.defineProperty(window.PortalRay, 'raycasts', {
-            get: function()
-            {
-                var rayCasts = [];
-                for(var x = 0; x < rays.length; x++)
-                {
-                    for(var y = 0; y < lineSegments.length; y++)
-                    {
-                        rayCasts.push(rays[x].castAgainstLineSegment(lineSegments[y]));
-                    }
-                }
-                return rayCasts;
-            }
-        });
-
-        Object.defineProperty(window.PortalRay, 'rayHits', {
-            get: function()
-            {
-                return this.raycasts.filter(function(raycast){
-                    return (raycast.rayDistance > 0.0) &&
-                        (raycast.segmentFraction >= 0.0) &&
-                        (raycast.segmentFraction <= 1.0)
-                })
-            }
-        })
-
         window.setTimeout(draw, 100);
     };
 
@@ -228,7 +219,12 @@ if(window && document)
         drawAxes(context);
         drawLineSegments(context, lineSegments);
         drawRays(context, rays);
-        drawRaycasts(context, window.PortalRay.rayHits);
+
+        var rayCastsToDraw = rays.map(function(ray){
+            return ray.findNearestHitOnSegments(lineSegments);
+        }).filter(function(raycast){return raycast;});
+
+        drawRaycasts(context, rayCastsToDraw);
 
         window.setTimeout(draw, 10);
     };
