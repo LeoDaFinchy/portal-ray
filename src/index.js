@@ -48,6 +48,10 @@ Vector2.zero = function(){
 Vector2.unit = function(){
     return new Vector2(1,0)
 }
+Vector2.crossProductMagnitude = function(a, b)
+{
+    return (a.x * b.y) - (a.y * b.x);
+}
 
 
 var Matrix2 = function(initial){
@@ -133,9 +137,7 @@ Ray.prototype.castAgainstLineSegments = function(lineSegments)
 Ray.prototype.findNearestHitOnSegments = function(lineSegments)
 {
     return this.castAgainstLineSegments(lineSegments).filter(function(raycast){
-        return (raycast.rayDistance > 0.0) &&
-        (raycast.segmentFraction >= 0.0) &&
-        (raycast.segmentFraction <= 1.0);
+        return raycast.isHit();
     }).reduce(function(prev, current){
         if(!prev){return current};
         if(current.rayDistance < prev.rayDistance){
@@ -158,6 +160,31 @@ var Raycast = function(incidence, rayDistance, segmentFraction, ray, segment){
     this.segment = segment;
 }
 
+Raycast.prototype.isForward = function()
+{
+    return this.rayDistance > 0.0;
+}
+
+Raycast.prototype.isInBounds = function()
+{
+    return this.segmentFraction >= 0.0 && this.segmentFraction <= 1.0;
+}
+
+Raycast.prototype.isHit = function()
+{
+    return this.isForward() && this.isInBounds();
+}
+
+Raycast.prototype.againstNormal = function()
+{
+    return Vector2.crossProductMagnitude(this.ray.direction, this.segment.offset()) < 0.0;
+}
+
+Raycast.prototype.isHittingFront = function()
+{
+    return this.isHit() && this.againstNormal();
+}
+
 
 var Portal = function(a, b){
     //  clear up any prexisting links
@@ -170,13 +197,6 @@ var Portal = function(a, b){
     a.portal = b;
     b.portal = a;
 }
-
-//  TODO Functions: Need functions for transforming rays.
-
-var vectorA = new Vector2(-2, 5);
-var vectorB = new Vector2(8, 0);
-var lineSegmentA = new LineSegment(vectorA, vectorB);
-var lineSegmentB = new LineSegment(new Vector2(-8.0, -8.0), new Vector2(10.0, -5.0));
 
 var lineSegments = [
     new LineSegment(new Vector2(-2.0, 10.0), new Vector2(10.0, 0.0)),
@@ -269,7 +289,7 @@ if(window && document)
             context.lineWidth = 0.1;
 
             //incidence
-            context.strokeStyle = "#cccc33";
+            context.strokeStyle = raycast.isHittingFront() ? "#cccc33" : "#cc3333";
             context.beginPath();
             context.arc(raycast.incidence.x, raycast.incidence.y, 0.2, 0, Math.PI * 2);
             context.stroke();
@@ -287,7 +307,7 @@ if(window && document)
                 var blipPoint = raycast.ray.direction.multiply(x).add(raycast.ray.origin)
                 context.beginPath();
                 context.arc(blipPoint.x, blipPoint.y, 0.2, 0, Math.PI * 2);
-                context.fillStyle = "#cccc33";
+                context.fillStyle = raycast.isHittingFront() ? "#cccc33" : "#cc3333";
                 context.fill();
             }
 
@@ -307,7 +327,7 @@ if(window && document)
         for(var i = 0; i < rays.length; i++)
         {
             context.lineWidth = 0.2;
-            context.strokeStyle = "#cc3333";
+            context.strokeStyle = "#33cccc";
 
             ray = rays[i];
             context.beginPath();
