@@ -173,17 +173,29 @@ if(window && document)
         Object.defineProperty(window.PortalRay, 'raycasts', {
             get: function()
             {
-                value = [];
+                var rayCasts = [];
                 for(var x = 0; x < rays.length; x++)
                 {
                     for(var y = 0; y < lineSegments.length; y++)
                     {
-                        value.push(rays[x].castAgainstLineSegment(lineSegments[y]));
+                        rayCasts.push(rays[x].castAgainstLineSegment(lineSegments[y]));
                     }
                 }
-                return value;
+                return rayCasts;
             }
         });
+
+        Object.defineProperty(window.PortalRay, 'rayHits', {
+            get: function()
+            {
+                return this.raycasts.filter(function(raycast){
+                    return (raycast.rayDistance > 0.0) &&
+                        (raycast.segmentFraction >= 0.0) &&
+                        (raycast.segmentFraction <= 1.0)
+                })
+            }
+        })
+
 
         window.setTimeout(draw, 100);
     };
@@ -202,7 +214,7 @@ if(window && document)
         drawAxes(context);
         drawLineSegments(context, lineSegments);
         drawRays(context, rays);
-        drawRaycasts(context, window.PortalRay.raycasts);
+        drawRaycasts(context, window.PortalRay.rayHits);
 
         window.setTimeout(draw, 10);
     };
@@ -231,26 +243,37 @@ if(window && document)
 
             context.lineWidth = 0.1;
 
-            context.strokeStyle = "#cc33cc";
+            //incidence
+            context.strokeStyle = "#cccc33";
             context.beginPath();
             context.arc(raycast.incidence.x, raycast.incidence.y, 0.2, 0, Math.PI * 2);
             context.stroke();
 
-            context.strokeStyle = "#cccc33";
-
+            //ray path
             context.beginPath();
             context.moveTo(raycast.ray.origin.x, raycast.ray.origin.y);
             dist = raycast.ray.direction.multiply(raycast.rayDistance).add(raycast.ray.origin);
             context.lineTo(dist.x, dist.y);
             context.stroke();
 
-            context.strokeStyle = "#33cc33";
+            context.fillCol
+            for(var x = 0; x < Math.min(GraphSize.x, raycast.rayDistance); x++)
+            {
+                var blipPoint = raycast.ray.direction.multiply(x).add(raycast.ray.origin)
+                context.beginPath();
+                context.arc(blipPoint.x, blipPoint.y, 0.2, 0, Math.PI * 2);
+                context.fillStyle = "#cccc33";
+                context.fill();
+            }
 
+            //lineSegment fraction
+            context.strokeStyle = "#33cc33";
             context.beginPath();
             context.moveTo(raycast.segment.a.x, raycast.segment.a.y);
             portion = raycast.segment.offset().multiply(raycast.segmentFraction).add(raycast.segment.a);
             context.lineTo(portion.x, portion.y);
             context.stroke();
+
         }
     };
 
@@ -277,12 +300,12 @@ if(window && document)
         context.strokeStyle = "#dddddd";
 
         context.beginPath();
-        context.moveTo(0, 1000);
-        context.lineTo(0, -1000);
+        context.moveTo(0, GraphSize.y);
+        context.lineTo(0, -GraphSize.y);
         context.stroke();
         context.beginPath();
-        context.moveTo(1000, 0);
-        context.lineTo(-1000, 0);
+        context.moveTo(GraphSize.x, 0);
+        context.lineTo(-GraphSize.x, 0);
 
         context.stroke();
     };
