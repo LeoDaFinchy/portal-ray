@@ -129,8 +129,15 @@ var Raycast = function(incidence, rayDistance, segmentFraction, ray, segment){
 
 
 var Portal = function(a, b){
-    this.a = a;
-    this.b = b;
+    //  clear up any prexisting links
+    if(a.portal){
+        delete(a.portal.portal)
+    }
+    if(b.portal){
+        delete(b.portal.portal)
+    }
+    a.portal = b;
+    b.portal = a;
 }
 
 //  TODO Functions: Need functions for transforming rays.
