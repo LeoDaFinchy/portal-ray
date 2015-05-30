@@ -32,7 +32,8 @@ Vector2.prototype.clone = function()
 Vector2.prototype.rotation = function()
 {
     var norm = this.normalise();
-    return new Matrix2([norm.x, (1-norm.y), (1-norm.x), norm.y]);
+    var angle = Math.atan2(norm.x, norm.y);
+    return new Matrix2([Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle)]);
 }
 Vector2.prototype.rotate = function(matrix){
     return matrix.rotateVector2(this);
@@ -55,6 +56,7 @@ Vector2.crossProductMagnitude = function(a, b)
 
 
 var Matrix2 = function(initial){
+    //  Row-major order
     this.m = initial || [ 1, 0, 0, 1];
 }
 Matrix2.prototype.rotateVector2 = function(vector)
