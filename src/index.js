@@ -31,8 +31,11 @@ Vector2.prototype.clone = function()
 }
 Vector2.prototype.rotation = function()
 {
-    var angle = Math.atan2(this.x, this.y);
-    return new Matrix2([Math.cos(angle), -Math.sin(angle), Math.sin(angle), Math.cos(angle)]);
+    var angle = Math.atan2(this.y, this.x);
+    return new Matrix2([
+        Math.cos(angle), -Math.sin(angle),
+        Math.sin(angle), Math.cos(angle)]
+    );
 }
 Vector2.prototype.rotate = function(matrix){
     return matrix.rotateVector2(this);
@@ -204,6 +207,25 @@ Raycast.prototype.isHittingFront = function()
     return this.isHit() && this.againstNormal();
 }
 
+Raycast.prototype.portalExitRay = function()
+{
+    var thisSide = this.segment;
+    var otherSide = thisSide.portal;
+    console.log(this.segmentFraction);
+    console.log(otherSide.offset().multiply(this.segmentFraction));
+    console.log(thisSide.normal());
+    console.log(otherSide.normal());
+    console.log(this.ray.direction);
+    var exitRay = new Ray(
+        otherSide.a.add(otherSide.offset().multiply(1.0 - this.segmentFraction)),
+        this.ray.direction
+            .rotate(thisSide.normal().rotation().inverse())
+            .rotate(otherSide.normal().rotation())
+            .rotate(new Vector2(-1,0).rotation())
+    );
+    return exitRay;
+}
+
 
 var Portal = function(a, b){
     //  clear up any prexisting links
@@ -220,13 +242,18 @@ var Portal = function(a, b){
 var lineSegments = [
     new LineSegment(new Vector2(-2.0, 10.0), new Vector2(10.0, 0.0)),
     new LineSegment(new Vector2(-2.0, 12.0), new Vector2(17.0, -4.0)),
-    new LineSegment(new Vector2(-8.0,-8.0), new Vector2(10.0, -5.0))
+    new LineSegment(new Vector2(-8.0,-8.0), new Vector2(10.0, -5.0)),
+    new LineSegment(new Vector2(-8.0, -2.0), new Vector2(-8.0, 4.0)),
+    new LineSegment(new Vector2(-9.0,  4.0), new Vector2(-9.0, -2.0))
 ];
 
 var rays = [
     new Ray(new Vector2(0.0, 1.0)),
     new Ray(new Vector2(-5.0, 3.0))
-]
+];
+
+Portal(lineSegments[0], lineSegments[2]);
+Portal(lineSegments[3], lineSegments[4]);
 
 if(window && document)
 {
@@ -263,14 +290,24 @@ if(window && document)
         context = window.PortalRay.context;
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
-        drawLineSegments(context, lineSegments);
-        drawRays(context, rays);
+
+        var raysToDraw = rays;
 
         var rayHits = rays.map(function(ray){
             return ray.findNearestHitOnSegments(lineSegments);
         }).filter(function(raycast){return raycast;});
 
+        var rayPorts = rayHits.filter(function(rayCast){
+            return rayCast.segment.portal && rayCast.isHittingFront();
+        });
+        for(var p = 0; p < rayPorts.length; p++)
+        {
+            var rayHit = rayPorts[p];
+            raysToDraw = raysToDraw.concat([rayHit.portalExitRay()]);
+        }
 
+        drawLineSegments(context, lineSegments);
+        drawRays(context, raysToDraw);
         drawRaycasts(context, rayHits);
 
         window.setTimeout(draw, 10);
