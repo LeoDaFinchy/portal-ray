@@ -140,10 +140,15 @@ Ray.prototype.castAgainstLineSegment = function(lineSegment){
         )
     );
 
+    var offset = lineSegment.offset();
+    var segmentFraction = offset.x > offset.y?
+        ((x.x - a.x) / lineSegment.offset().x):
+        ((x.y - a.y) / lineSegment.offset().y);
+
     return new Raycast(
         x,
         ((x.x - this.origin.x) / this.direction.x) || ((x.y - this.origin.y) / this.direction.y),
-        ((x.x - a.x) / lineSegment.offset().x) || ((x.y - a.y) / lineSegment.offset().y),
+        segmentFraction,
         this,
         lineSegment
     );
