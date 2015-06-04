@@ -1,20 +1,5 @@
-var Vector2 = function(x,y){
-    this.x = x || 0.0;
-    this.y = y || 0.0;
-}
+var Vector2 = require('./Vector2.js').Vector2;
 
-Vector2.prototype.add = function(other){
-    return new Vector2(this.x + other.x, this.y + other.y);
-}
-Vector2.prototype.subtract = function(other){
-    return new Vector2(this.x - other.x, this.y - other.y);
-}
-Vector2.prototype.multiply = function(scale){
-    return new Vector2(this.x * scale, this.y * scale);
-}
-Vector2.prototype.scale = function(scale){
-    return new Vector2(this.x * scale.x, this.y * scale.y);
-}
 Vector2.prototype.reciprocal = function()
 {
     return new Vector2(1.0 / this.x, 1.0 / this.y);
@@ -23,7 +8,7 @@ Vector2.prototype.length = function(){
     return Math.sqrt(Math.pow(this.x, 2.0) + Math.pow(this.y, 2.0));
 }
 Vector2.prototype.normalise = function(){
-    return this.multiply(1.0 / this.length());
+    return this.divideByScalar(this.length());
 }
 Vector2.prototype.clone = function()
 {
@@ -96,7 +81,7 @@ var LineSegment = function(a, b){
 }
 
 LineSegment.prototype.offset = function(){
-    return this.b.subtract(this.a);
+    return this.b.clone().subtract(this.a);
 }
 
 LineSegment.prototype.normal = function()
@@ -106,12 +91,12 @@ LineSegment.prototype.normal = function()
 
 var Ray = function(origin, direction){
     this.origin = origin || new Vector2();
-    this.direction = direction ? direction.normalise() : new Vector2(1.0, 0.0);
+    this.direction = direction ? direction.clone().normalise() : new Vector2(1.0, 0.0);
 }
 
 
 Ray.prototype.forward = function(distance){
-    return this.origin.add(this.direction);
+    return this.origin.clone().add(this.direction);
 }
 Ray.prototype.castAgainstLineSegment = function(lineSegment){
     a = lineSegment.a;
@@ -216,14 +201,14 @@ Raycast.prototype.portalExitRay = function()
 {
     var thisSide = this.segment;
     var otherSide = thisSide.portal;
-    var exitDirection = this.ray.direction
+    var exitDirection = this.ray.direction.clone()
         .normalise()
         .rotate(thisSide.normal().rotation().inverse())
         .rotate(otherSide.normal().rotation())
         .rotate(new Vector2(-1,0).rotation());
-    var exitPosition = otherSide.a
-        .add(otherSide.offset().multiply(1.0 - this.segmentFraction))
-        .add(exitDirection.multiply(0.1));
+    var exitPosition = otherSide.a.clone()
+        .add(otherSide.offset().multiplyByScalar(1.0 - this.segmentFraction))
+        .add(exitDirection.multiplyByScalar(0.1));
     var exitRay = new Ray(
         exitPosition,
         exitDirection
@@ -305,7 +290,7 @@ if(window && document)
     };
 
     function mouseMoved(e){
-        var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).scale(Scaling.reciprocal()).subtract(GraphSize.scale(new Vector2(0.5,-0.5)));
+        var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).multiplyByVector2(Scaling.reciprocal()).subtract(GraphSize.clone().multiplyByVector2(new Vector2(0.5,-0.5)));
         for(var x = 0; x < rays.length; x++)
         {
             rays[x].direction = graphSpaceMouse.subtract(rays[x].origin)
@@ -340,7 +325,7 @@ if(window && document)
             context.lineTo(segment.b.x, segment.b.y);
             context.stroke();
 
-            var normalPosition = segment.a.add(segment.normal());
+            var normalPosition = segment.a.clone().add(segment.normal());
             context.strokeStyle = "#33cc33";
             context.lineWidth = 0.1;
             context.beginPath();
@@ -367,7 +352,7 @@ if(window && document)
             //ray path
             context.beginPath();
             context.moveTo(raycast.ray.origin.x, raycast.ray.origin.y);
-            dist = raycast.ray.direction.multiply(raycast.rayDistance).add(raycast.ray.origin);
+            dist = raycast.ray.direction.clone().multiplyByScalar(raycast.rayDistance).add(raycast.ray.origin);
             context.lineTo(dist.x, dist.y);
             context.stroke();
 
@@ -385,7 +370,7 @@ if(window && document)
             context.strokeStyle = "#33cc33";
             context.beginPath();
             context.moveTo(raycast.segment.a.x, raycast.segment.a.y);
-            portion = raycast.segment.offset().multiply(raycast.segmentFraction).add(raycast.segment.a);
+            portion = raycast.segment.offset().multiplyByScalar(raycast.segmentFraction).add(raycast.segment.a);
             context.lineTo(portion.x, portion.y);
             context.stroke();
 
