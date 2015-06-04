@@ -216,12 +216,17 @@ Raycast.prototype.portalExitRay = function()
 {
     var thisSide = this.segment;
     var otherSide = thisSide.portal;
+    var exitDirection = this.ray.direction
+        .normalise()
+        .rotate(thisSide.normal().rotation().inverse())
+        .rotate(otherSide.normal().rotation())
+        .rotate(new Vector2(-1,0).rotation());
+    var exitPosition = otherSide.a
+        .add(otherSide.offset().multiply(1.0 - this.segmentFraction))
+        .add(exitDirection.multiply(0.1));
     var exitRay = new Ray(
-        otherSide.a.add(otherSide.offset().multiply(1.0 - this.segmentFraction)),
-        this.ray.direction
-            .rotate(thisSide.normal().rotation().inverse())
-            .rotate(otherSide.normal().rotation())
-            .rotate(new Vector2(-1,0).rotation())
+        exitPosition,
+        exitDirection
     );
     return exitRay;
 }
@@ -239,21 +244,43 @@ var Portal = function(a, b){
     b.portal = a;
 }
 
+var castRaysAgainstPortals = function(rays, lineSegments, generations)
+{
+    if(generations <= 0 || rays.length <= 0){return {rays:[], hits:[]}};
+
+    var hits = [];
+
+    for(var r = 0; r < rays.length; r++)
+    {
+        hits.push(rays[r].findNearestHitOnSegments(lineSegments));
+    }
+    hits = hits.filter(function(raycast){ return raycast;});
+    ports = hits.filter(function(raycast){
+        return raycast.segment.portal && raycast.isHittingFront();
+    }).map(function(raycast){return raycast.portalExitRay();});
+    result = castRaysAgainstPortals(ports, lineSegments, generations - 1);
+    rays = rays.concat(result.rays);
+    hits = hits.concat(result.hits);
+    return {rays:rays, hits:hits};
+}
+
 var lineSegments = [
     new LineSegment(new Vector2(-2.0, 10.0), new Vector2(10.0, 0.0)),
     new LineSegment(new Vector2(-2.0, 12.0), new Vector2(17.0, -4.0)),
     new LineSegment(new Vector2(-8.0,-8.0), new Vector2(10.0, -5.0)),
-    new LineSegment(new Vector2(-8.0, -2.0), new Vector2(-8.0, 4.0)),
-    new LineSegment(new Vector2(-9.0,  4.0), new Vector2(-9.0, -2.0))
+    new LineSegment(new Vector2(-12.0, -2.0), new Vector2(-12.0, 4.0)),
+    new LineSegment(new Vector2(-7.0,  2.0), new Vector2(-7.0, -2.0))
 ];
 
 var rays = [
-    new Ray(new Vector2(0.0, 1.0)),
+    // new Ray(new Vector2(0.0, 1.0)),
     new Ray(new Vector2(-5.0, 3.0))
 ];
 
 Portal(lineSegments[0], lineSegments[2]);
 Portal(lineSegments[3], lineSegments[4]);
+
+var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
 if(window && document)
 {
@@ -284,6 +311,9 @@ if(window && document)
         {
             rays[x].direction = graphSpaceMouse.subtract(rays[x].origin)
         }
+        portal = castRaysAgainstPortals(rays, lineSegments, 10);
+        toDraw.rays = portal.rays;
+        toDraw.raycasts = portal.hits;
     };
 
     function draw(){
@@ -291,24 +321,9 @@ if(window && document)
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
 
-        var raysToDraw = rays;
-
-        var rayHits = rays.map(function(ray){
-            return ray.findNearestHitOnSegments(lineSegments);
-        }).filter(function(raycast){return raycast;});
-
-        var rayPorts = rayHits.filter(function(rayCast){
-            return rayCast.segment.portal && rayCast.isHittingFront();
-        });
-        for(var p = 0; p < rayPorts.length; p++)
-        {
-            var rayHit = rayPorts[p];
-            raysToDraw = raysToDraw.concat([rayHit.portalExitRay()]);
-        }
-
-        drawLineSegments(context, lineSegments);
-        drawRays(context, raysToDraw);
-        drawRaycasts(context, rayHits);
+        drawLineSegments(context, toDraw.lineSegments);
+        drawRays(context, toDraw.rays);
+        drawRaycasts(context, toDraw.raycasts);
 
         window.setTimeout(draw, 10);
     };
@@ -357,15 +372,15 @@ if(window && document)
             context.lineTo(dist.x, dist.y);
             context.stroke();
 
-            context.fillCol
-            for(var x = 0; x < Math.min(GraphSize.x, raycast.rayDistance); x++)
-            {
-                var blipPoint = raycast.ray.direction.multiply(x).add(raycast.ray.origin)
-                context.beginPath();
-                context.arc(blipPoint.x, blipPoint.y, 0.2, 0, Math.PI * 2);
-                context.fillStyle = raycast.isHittingFront() ? "#cccc33" : "#cc3333";
-                context.fill();
-            }
+            // context.fillCol
+            // for(var x = 0; x < Math.min(GraphSize.x, raycast.rayDistance); x++)
+            // {
+            //     var blipPoint = raycast.ray.direction.multiply(x).add(raycast.ray.origin)
+            //     context.beginPath();
+            //     context.arc(blipPoint.x, blipPoint.y, 0.2, 0, Math.PI * 2);
+            //     context.fillStyle = raycast.isHittingFront() ? "#cccc33" : "#cc3333";
+            //     context.fill();
+            // }
 
             //lineSegment fraction
             context.strokeStyle = "#33cc33";
