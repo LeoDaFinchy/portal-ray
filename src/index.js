@@ -267,9 +267,8 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 var lineSegments = [
     new LineSegment(new Vector2(-2.0, 10.0), new Vector2(10.0, 0.0)),
     new LineSegment(new Vector2(-2.0, 12.0), new Vector2(17.0, -4.0)),
-    new LineSegment(new Vector2(-8.0,-8.0), new Vector2(10.0, -5.0)),
-    new LineSegment(new Vector2(-12.0, -2.0), new Vector2(-12.0, 4.0)),
-    new LineSegment(new Vector2(-7.0,  2.0), new Vector2(-7.0, -2.0))
+    new LineSegment(new Vector2(-1.0, 7.0), new Vector2(-2.0, -12.0)),
+    new LineSegment(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
 ];
 
 var rays = [
@@ -277,8 +276,8 @@ var rays = [
     new Ray(new Vector2(-5.0, 3.0))
 ];
 
-Portal(lineSegments[0], lineSegments[2]);
-Portal(lineSegments[3], lineSegments[4]);
+Portal(lineSegments[0], lineSegments[1]);
+Portal(lineSegments[2], lineSegments[3]);
 
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
