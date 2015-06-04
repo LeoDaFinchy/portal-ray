@@ -211,11 +211,6 @@ Raycast.prototype.portalExitRay = function()
 {
     var thisSide = this.segment;
     var otherSide = thisSide.portal;
-    console.log(this.segmentFraction);
-    console.log(otherSide.offset().multiply(this.segmentFraction));
-    console.log(thisSide.normal());
-    console.log(otherSide.normal());
-    console.log(this.ray.direction);
     var exitRay = new Ray(
         otherSide.a.add(otherSide.offset().multiply(1.0 - this.segmentFraction)),
         this.ray.direction
