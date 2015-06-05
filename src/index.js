@@ -7,10 +7,6 @@ Vector2.prototype.reciprocal = function()
 Vector2.prototype.normalise = function(){
     return this.divideByScalar(this.length);
 }
-Vector2.prototype.clone = function()
-{
-    return new Vector2(this.x, this.y);
-}
 Vector2.prototype.rotation = function()
 {
     var angle = Math.atan2(this.y, this.x);
@@ -72,7 +68,7 @@ var LineSegment = function(a, b){
 }
 
 LineSegment.prototype.offset = function(){
-    return this.b.clone().subtract(this.a);
+    return this.b._.subtract(this.a);
 }
 
 LineSegment.prototype.normal = function()
@@ -82,12 +78,12 @@ LineSegment.prototype.normal = function()
 
 var Ray = function(origin, direction){
     this.origin = origin || new Vector2();
-    this.direction = direction ? direction.clone().normalise() : new Vector2(1.0, 0.0);
+    this.direction = direction ? direction._.normalise() : new Vector2(1.0, 0.0);
 }
 
 
 Ray.prototype.forward = function(distance){
-    return this.origin.clone().add(this.direction);
+    return this.origin._.add(this.direction);
 }
 Ray.prototype.castAgainstLineSegment = function(lineSegment){
     a = lineSegment.a;
@@ -151,7 +147,7 @@ Ray.prototype.findNearestHitOnSegments = function(lineSegments)
 
 Ray.fromLineSegment = function(lineSegment)
 {
-    return new Ray(lineSegment.a.clone(), lineSegment.b.normalise());
+    return new Ray(lineSegment.a._, lineSegment.b.normalise());
 }
 
 
@@ -192,12 +188,12 @@ Raycast.prototype.portalExitRay = function()
 {
     var thisSide = this.segment;
     var otherSide = thisSide.portal;
-    var exitDirection = this.ray.direction.clone()
+    var exitDirection = this.ray.direction._
         .normalise()
         .rotate(thisSide.normal().rotation().inverse())
         .rotate(otherSide.normal().rotation())
         .rotate(new Vector2(-1,0).rotation());
-    var exitPosition = otherSide.a.clone()
+    var exitPosition = otherSide.a._
         .add(otherSide.offset().multiplyByScalar(1.0 - this.segmentFraction))
         .add(exitDirection.multiplyByScalar(0.1));
     var exitRay = new Ray(
@@ -281,7 +277,7 @@ if(window && document)
     };
 
     function mouseMoved(e){
-        var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).multiplyByVector2(Scaling.reciprocal()).subtract(GraphSize.clone().multiplyByVector2(new Vector2(0.5,-0.5)));
+        var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).multiplyByVector2(Scaling.reciprocal()).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
         for(var x = 0; x < rays.length; x++)
         {
             rays[x].direction = graphSpaceMouse.subtract(rays[x].origin)
@@ -316,7 +312,7 @@ if(window && document)
             context.lineTo(segment.b.x, segment.b.y);
             context.stroke();
 
-            var normalPosition = segment.a.clone().add(segment.normal());
+            var normalPosition = segment.a._.add(segment.normal());
             context.strokeStyle = "#33cc33";
             context.lineWidth = 0.1;
             context.beginPath();
@@ -343,7 +339,7 @@ if(window && document)
             //ray path
             context.beginPath();
             context.moveTo(raycast.ray.origin.x, raycast.ray.origin.y);
-            dist = raycast.ray.direction.clone().multiplyByScalar(raycast.rayDistance).add(raycast.ray.origin);
+            dist = raycast.ray.direction._.multiplyByScalar(raycast.rayDistance).add(raycast.ray.origin);
             context.lineTo(dist.x, dist.y);
             context.stroke();
 
