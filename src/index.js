@@ -4,9 +4,6 @@ Vector2.prototype.reciprocal = function()
 {
     return new Vector2(1.0 / this.x, 1.0 / this.y);
 }
-Vector2.prototype.normalise = function(){
-    return this.divideByScalar(this.length);
-}
 Vector2.prototype.rotation = function()
 {
     var angle = Math.atan2(this.y, this.x);
@@ -18,11 +15,6 @@ Vector2.prototype.rotation = function()
 Vector2.prototype.rotate = function(matrix){
     return matrix.rotateVector2(this);
 }
-Vector2.prototype.normal = function()
-{
-    return new Vector2(this.y, -this.x).normalise();
-}
-
 Vector2.crossProductMagnitude = function(a, b)
 {
     return (a.x * b.y) - (a.y * b.x);
@@ -73,12 +65,12 @@ LineSegment.prototype.offset = function(){
 
 LineSegment.prototype.normal = function()
 {
-    return this.offset().normal();
+    return this.offset().normal;
 }
 
 var Ray = function(origin, direction){
     this.origin = origin || new Vector2();
-    this.direction = direction ? direction._.normalise() : new Vector2(1.0, 0.0);
+    this.direction = direction ? direction.tangent : new Vector2(1.0, 0.0);
 }
 
 
@@ -147,7 +139,7 @@ Ray.prototype.findNearestHitOnSegments = function(lineSegments)
 
 Ray.fromLineSegment = function(lineSegment)
 {
-    return new Ray(lineSegment.a._, lineSegment.b.normalise());
+    return new Ray(lineSegment.a._, lineSegment.b.tangent);
 }
 
 
@@ -189,7 +181,7 @@ Raycast.prototype.portalExitRay = function()
     var thisSide = this.segment;
     var otherSide = thisSide.portal;
     var exitDirection = this.ray.direction._
-        .normalise()
+        .tangent
         .rotate(thisSide.normal().rotation().inverse())
         .rotate(otherSide.normal().rotation())
         .rotate(new Vector2(-1,0).rotation());
