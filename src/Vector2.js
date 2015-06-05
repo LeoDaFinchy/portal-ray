@@ -3,6 +3,8 @@ var Vector2 = function(x,y){
     this.y = y || 0.0;
 };
 
+exports['Vector2'] = Vector2;
+
 Object.defineProperty(Vector2.prototype, 'add', {
     value: function(other)
     {
@@ -129,5 +131,3 @@ Object.defineProperty(Vector2, 'unit', {
         return this.x;
     }
 });
-
-exports['Vector2'] = Vector2;
