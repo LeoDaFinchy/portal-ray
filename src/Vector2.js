@@ -62,7 +62,21 @@ Object.defineProperty(Vector2.prototype, 'length', {
     {
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
-})
+});
+
+Object.defineProperty(Vector2.prototype, 'clone', {
+    get: function()
+    {
+        return new Vector2(this.x, this.y);
+    }
+});
+
+Object.defineProperty(Vector2.prototype, '_', {
+    get: function()
+    {
+        return this.clone;
+    }
+});
 
 Object.defineProperty(Vector2, 'x', {
     get: function(){
