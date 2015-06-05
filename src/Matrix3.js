@@ -1,10 +1,17 @@
-var Matrix3 = function()
+var Matrix3 = function(initial)
 {
-    this.m = [
-        1, 0, 0,
-        0, 1, 0,
-        0, 0, 1
-    ];
+    if(initial && initial.length === 9)
+    {
+        this.m = initial;
+    }
+    else
+    {
+        this.m = [
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1
+        ];
+    }
 };
 
 Object.defineProperty(Matrix3.prototype, 'applyMatrix3', {
