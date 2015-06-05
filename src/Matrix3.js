@@ -31,7 +31,7 @@ Object.defineProperty(Matrix3.prototype, 'applyMatrix3', {
     }
 });
 
-Object.defineProperty(Matrix3, 'transpose', {
+Object.defineProperty(Matrix3.prototype, 'transpose', {
     get: function(){
         return new Matrix3([
             this.m[0],  this.m[3],  this.m[6],
