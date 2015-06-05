@@ -92,6 +92,13 @@ Object.defineProperty(Vector2.prototype, 'normal', {
     }
 });
 
+Object.defineProperty(Vector2.prototype, 'reciprocal', {
+    get: function()
+    {
+        return Vector2.one.divideByVector2(this);
+    }
+});
+
 Object.defineProperty(Vector2, 'x', {
     get: function(){
         return new Vector2(1, 0);

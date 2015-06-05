@@ -1,9 +1,5 @@
 var Vector2 = require('./Vector2.js').Vector2;
 
-Vector2.prototype.reciprocal = function()
-{
-    return new Vector2(1.0 / this.x, 1.0 / this.y);
-}
 Vector2.prototype.rotation = function()
 {
     var angle = Math.atan2(this.y, this.x);
@@ -269,7 +265,7 @@ if(window && document)
     };
 
     function mouseMoved(e){
-        var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).multiplyByVector2(Scaling.reciprocal()).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
+        var graphSpaceMouse = new Vector2(e.offsetX, e.offsetY).multiplyByVector2(Scaling.reciprocal).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
         for(var x = 0; x < rays.length; x++)
         {
             rays[x].direction = graphSpaceMouse.subtract(rays[x].origin)
