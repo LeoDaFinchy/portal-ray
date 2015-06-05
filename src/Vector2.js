@@ -78,6 +78,20 @@ Object.defineProperty(Vector2.prototype, '_', {
     }
 });
 
+Object.defineProperty(Vector2.prototype, 'tangent', {
+    get: function()
+    {
+        return this.clone.divideByScalar(this.length);
+    }
+});
+
+Object.defineProperty(Vector2.prototype, 'normal', {
+    get: function()
+    {
+        return new Vector2(this.y, -this.x).tangent;
+    }
+});
+
 Object.defineProperty(Vector2, 'x', {
     get: function(){
         return new Vector2(1, 0);
