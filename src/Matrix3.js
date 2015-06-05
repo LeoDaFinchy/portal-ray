@@ -31,6 +31,16 @@ Object.defineProperty(Matrix3.prototype, 'applyMatrix3', {
     }
 });
 
+Object.defineProperty(Matrix3, 'transpose', {
+    get: function(){
+        return new Matrix3([
+            this.m[0],  this.m[3],  this.m[6],
+            this.m[1],  this.m[4],  this.m[7],
+            this.m[2],  this.m[5],  this.m[8]
+        ]);
+    }
+});
+
 Object.defineProperty(Matrix3, 'identity', {
     value: function(){
         return new Matrix3();
