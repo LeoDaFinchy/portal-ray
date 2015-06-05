@@ -4,11 +4,8 @@ Vector2.prototype.reciprocal = function()
 {
     return new Vector2(1.0 / this.x, 1.0 / this.y);
 }
-Vector2.prototype.length = function(){
-    return Math.sqrt(Math.pow(this.x, 2.0) + Math.pow(this.y, 2.0));
-}
 Vector2.prototype.normalise = function(){
-    return this.divideByScalar(this.length());
+    return this.divideByScalar(this.length);
 }
 Vector2.prototype.clone = function()
 {
