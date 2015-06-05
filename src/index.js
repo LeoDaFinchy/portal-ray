@@ -1,4 +1,5 @@
 var Vector2 = require('./Vector2.js').Vector2;
+var Matrix2 = require('./Matrix2.js').Matrix2;
 
 Vector2.prototype.rotation = function()
 {
@@ -17,22 +18,9 @@ Vector2.crossProductMagnitude = function(a, b)
 }
 
 
-var Matrix2 = function(initial){
-    //  Row-major order
-    this.m = initial || [ 1, 0, 0, 1];
-}
 Matrix2.prototype.rotateVector2 = function(vector)
 {
     return new Vector2((vector.x * this.m[0]) + (vector.y * this.m[1]), (vector.x * this.m[2]) + (vector.y * this.m[3]));
-}
-Matrix2.prototype.rotateByMatrix = function(matrix)
-{
-    return new Matrix2([
-        (this.m[0] * matrix.m[0]) + (this.m[1] * matrix.m[2]),
-        (this.m[0] * matrix.m[1]) + (this.m[1] * matrix.m[3]),
-        (this.m[2] * matrix.m[0]) + (this.m[3] * matrix.m[2]),
-        (this.m[2] * matrix.m[1]) + (this.m[3] * matrix.m[3])
-    ]);
 }
 Matrix2.prototype.inverse = function(matrix)
 {
