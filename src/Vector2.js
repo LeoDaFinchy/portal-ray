@@ -57,6 +57,13 @@ Object.defineProperty(Vector2.prototype, 'divideByVector2', {
     }
 });
 
+Object.defineProperty(Vector2.prototype, 'length', {
+    get: function()
+    {
+        return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+    }
+})
+
 Object.defineProperty(Vector2, 'x', {
     get: function(){
         return new Vector2(1, 0);
