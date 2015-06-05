@@ -38,6 +38,12 @@ Object.defineProperty(Matrix2.prototype, 'inverse', {
     }
 });
 
+Object.defineProperty(Matrix2.prototype, 'determinant', {
+    get: function(){
+        return (this.m[0] * this.m[3]) - (this.m[1] * this.m[2]);
+    }
+});
+
 Object.defineProperty(Matrix2.prototype, 'transpose', {
     get: function(){
         return new Matrix2([
