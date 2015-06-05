@@ -22,15 +22,6 @@ Matrix2.prototype.rotateVector2 = function(vector)
 {
     return new Vector2((vector.x * this.m[0]) + (vector.y * this.m[1]), (vector.x * this.m[2]) + (vector.y * this.m[3]));
 }
-Matrix2.prototype.inverse = function(matrix)
-{
-    return new Matrix2([
-        this.m[0],
-        -this.m[1],
-        -this.m[2],
-        this.m[3]
-    ]);
-}
 /** TODO Functions
     We need a function for rotating a Matrix by a Matrix i.e. A x B = M
     We need a function to find the difference'difference' rotation matrix to get from 
@@ -166,7 +157,7 @@ Raycast.prototype.portalExitRay = function()
     var otherSide = thisSide.portal;
     var exitDirection = this.ray.direction._
         .tangent
-        .rotate(thisSide.normal().rotation().inverse())
+        .rotate(thisSide.normal().rotation().inverse)
         .rotate(otherSide.normal().rotation())
         .rotate(new Vector2(-1,0).rotation());
     var exitPosition = otherSide.a._

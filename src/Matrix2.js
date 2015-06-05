@@ -26,3 +26,15 @@ Object.defineProperty(Matrix2.prototype, 'applyMatrix2', {
         return this;
     }
 });
+
+Object.defineProperty(Matrix2.prototype, 'inverse', {
+    get: function()
+    {
+        return new Matrix2([
+            this.m[0],
+            -this.m[1],
+            -this.m[2],
+            this.m[3]
+        ]);
+    }
+});
