@@ -15,6 +15,7 @@ var Matrix3 = function(initial)
 };
 
 var Vector2 = require('./Vector2.js').Vector2;
+var Matrix2 = require('./Matrix2.js').Matrix2;
 
 Object.defineProperty(Matrix3.prototype, 'applyMatrix3', {
     value: function(other){
@@ -57,6 +58,23 @@ Object.defineProperty(Matrix3.prototype, 'setAtCoord',{
     value: function(coord, value){
         this.m[Matrix3.indexFromCoord(coord)] = value;
         return this;
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'cofactor', {
+    value: function(index)
+    {
+        var coord = Matrix3.coordFromIndex(index);
+        var xs = [0, 1, 2];
+        var ys = [0, 1, 2];
+        xs.splice(coord.x, 1);
+        ys.splice(coord.y, 1);
+        return new Matrix2([
+            this.getAtCoord(new Vector2(xs[0], ys[0])),
+              this.getAtCoord(new Vector2(xs[1], ys[0])),
+            this.getAtCoord(new Vector2(xs[0], ys[1])),
+              this.getAtCoord(new Vector2(xs[1], ys[1]))
+        ]);
     }
 });
 
