@@ -81,7 +81,9 @@ Object.defineProperty(Matrix3.prototype, 'cofactor', {
 
 Object.defineProperty(Matrix3.prototype, 'determinant', {
     get: function(){
-        return this.cofactor(0) + this.cofactor(1) + this.cofactor(2);
+        return (this.m[0] * this.cofactor(0)) +
+            (this.m[1] * this.cofactor(1)) +
+            (this.m[2] * this.cofactor(2));
     }
 });
 
