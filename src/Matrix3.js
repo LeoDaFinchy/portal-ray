@@ -14,6 +14,8 @@ var Matrix3 = function(initial)
     }
 };
 
+var Vector2 = require('./Vector2.js').Vector2;
+
 Object.defineProperty(Matrix3.prototype, 'applyMatrix3', {
     value: function(other){
         this.m = [
@@ -27,6 +29,33 @@ Object.defineProperty(Matrix3.prototype, 'applyMatrix3', {
               (this.m[6] * other.m[1]) + (this.m[7] * other.m[4]) + (this.m[8] * other.m[7]),
                 (this.m[6] * other.m[2]) + (this.m[7] * other.m[5]) + (this.m[8] * other.m[8])
         ];
+        return this;
+    }
+});
+
+Object.defineProperty(Matrix3, 'coordFromIndex', {
+    value: function(index){
+        var col = index % 3;
+        var row = (index - col) / 3.0;
+        return new Vector2(col, row);
+    }
+});
+
+Object.defineProperty(Matrix3, 'indexFromCoord', {
+    value: function(coord){
+        return coord.x + (coord.y * 3.0);
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'getAtCoord', {
+    value: function(coord){
+        return this.m[Matrix3.indexFromCoord(coord)];
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'setAtCoord',{
+    value: function(coord, value){
+        this.m[Matrix3.indexFromCoord(coord)] = value;
         return this;
     }
 });
