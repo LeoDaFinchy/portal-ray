@@ -57,4 +57,35 @@ Object.defineProperty(Vector2.prototype, 'divideByVector2', {
     }
 });
 
+Object.defineProperty(Vector2, 'x', {
+    get: function(){
+        return new Vector2(1, 0);
+    }
+});
+
+Object.defineProperty(Vector2, 'y', {
+    get: function(){
+        return new Vector2(0, 1);
+    }
+});
+
+Object.defineProperty(Vector2, 'zero', {
+    get:function(){
+        return new Vector2(0, 0);
+    }
+});
+
+Object.defineProperty(Vector2, 'one', {
+    get:function(){
+        return new Vector2(1, 1);
+    }
+});
+
+Object.defineProperty(Vector2, 'unit', {
+    get: function()
+    {
+        return this.x;
+    }
+});
+
 exports['Vector2'] = Vector2;

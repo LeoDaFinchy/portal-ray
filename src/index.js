@@ -30,12 +30,6 @@ Vector2.prototype.normal = function()
     return new Vector2(this.y, -this.x).normalise();
 }
 
-Vector2.zero = function(){
-    return new Vector2()
-}
-Vector2.unit = function(){
-    return new Vector2(1,0)
-}
 Vector2.crossProductMagnitude = function(a, b)
 {
     return (a.x * b.y) - (a.y * b.x);
