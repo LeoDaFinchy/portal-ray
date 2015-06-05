@@ -62,14 +62,13 @@ Object.defineProperty(Matrix3.prototype, 'setAtCoord',{
 });
 
 Object.defineProperty(Matrix3.prototype, 'cofactor', {
-    value: function(index)
-    {
+    value: function(index){
         var coord = Matrix3.coordFromIndex(index);
         var xs = [0, 1, 2];
         var ys = [0, 1, 2];
         xs.splice(coord.x, 1);
         ys.splice(coord.y, 1);
-        var det = Matrix2([
+        var det = new Matrix2([
             this.getAtCoord(new Vector2(xs[0], ys[0])),
               this.getAtCoord(new Vector2(xs[1], ys[0])),
             this.getAtCoord(new Vector2(xs[0], ys[1])),
@@ -77,6 +76,12 @@ Object.defineProperty(Matrix3.prototype, 'cofactor', {
         ]).determinant;
         
         return ((coord.x + coord.y) % 2) === 0 ? det : -det;
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'determinant', {
+    get: function(){
+        return this.cofactor(0) + this.cofactor(1) + this.cofactor(2);
     }
 });
 
