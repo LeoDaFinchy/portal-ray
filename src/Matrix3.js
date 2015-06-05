@@ -85,6 +85,23 @@ Object.defineProperty(Matrix3.prototype, 'determinant', {
     }
 });
 
+Object.defineProperty(Matrix3.prototype, 'inverse', {
+    get: function(){
+        var det = this.determinant;
+        return new Matrix3([
+            this.cofactor(0) / det,
+              this.cofactor(1) / det,
+                this.cofactor(2) / det,
+            this.cofactor(3) / det,
+              this.cofactor(4) / det,
+                this.cofactor(5) / det,
+            this.cofactor(6) / det,
+              this.cofactor(7) / det,
+                this.cofactor(8) / det
+        ]);
+    }
+});
+
 Object.defineProperty(Matrix3.prototype, 'transpose', {
     get: function(){
         return new Matrix3([
