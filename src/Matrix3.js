@@ -69,12 +69,14 @@ Object.defineProperty(Matrix3.prototype, 'cofactor', {
         var ys = [0, 1, 2];
         xs.splice(coord.x, 1);
         ys.splice(coord.y, 1);
-        return new Matrix2([
+        var det = Matrix2([
             this.getAtCoord(new Vector2(xs[0], ys[0])),
               this.getAtCoord(new Vector2(xs[1], ys[0])),
             this.getAtCoord(new Vector2(xs[0], ys[1])),
               this.getAtCoord(new Vector2(xs[1], ys[1]))
-        ]);
+        ]).determinant;
+        
+        return ((coord.x + coord.y) % 2) === 0 ? det : -det;
     }
 });
 
