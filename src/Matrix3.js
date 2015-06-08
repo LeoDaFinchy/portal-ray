@@ -14,6 +14,8 @@ var Matrix3 = function(initial)
     }
 };
 
+exports['Matrix3'] = Matrix3;
+
 var Vector2 = require('./Vector2.js').Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
 
@@ -32,6 +34,32 @@ Object.defineProperty(Matrix3.prototype, 'applyMatrix3', {
         ];
         return this;
     }
+});
+
+Object.defineProperty(Matrix3.prototype, 'transformVector2', {
+    value: function(vector){
+        return new Vector2((this.m[0] * vector.x) + (this.m[1] * vector.y) + this.m[2],(this.m[3] * vector.x) + (this.m[4] * vector.y) + this.m[5]);
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'clone', {
+    get:function(){
+        return new Matrix3([
+            this.m[0],
+              this.m[1],
+                this.m[2],
+            this.m[3],
+              this.m[4],
+                this.m[5],
+            this.m[6],
+              this.m[7],
+                this.m[8],
+        ]);
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, '_', {
+    get: function(){return this.clone;}
 });
 
 Object.defineProperty(Matrix3, 'coordFromIndex', {
@@ -100,7 +128,7 @@ Object.defineProperty(Matrix3.prototype, 'inverse', {
             this.cofactor(6) / det,
               this.cofactor(7) / det,
                 this.cofactor(8) / det
-        ]);
+        ]).transpose;
     }
 });
 
