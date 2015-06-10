@@ -177,3 +177,13 @@ Object.defineProperty(Matrix3, 'rotation', {
         ]);
     }
 });
+
+Object.defineProperty(Matrix3, 'shear', {
+    value: function(factor){
+        return new Matrix3([
+            Math.cos(factor.y), -Math.sin(factor.x), 0,
+            Math.sin(factor.y), Math.cos(factor.x), 0,
+            0, 0, 1,
+        ]);
+    }
+});
