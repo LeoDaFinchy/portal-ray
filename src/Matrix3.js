@@ -147,3 +147,33 @@ Object.defineProperty(Matrix3, 'identity', {
         return new Matrix3();
     }
 });
+
+Object.defineProperty(Matrix3, 'scale', {
+    value: function(factor){
+        return new Matrix3([
+            factor.x, 0, 0,
+            0, factor.y, 0,
+            0, 0, 1,
+        ]);
+    }
+});
+
+Object.defineProperty(Matrix3, 'translation', {
+    value: function(vector){
+        return new Matrix3([
+            1, 0, vector.x,
+            0, 1, vector.y,
+            0, 0, 1,
+        ]);
+    }
+});
+
+Object.defineProperty(Matrix3, 'rotation', {
+    value: function(angle){
+        return new Matrix3([
+            Math.cos(angle), -Math.sin(angle), 0,
+            Math.sin(angle), Math.cos(angle), 0,
+            0, 0, 1,
+        ]);
+    }
+});
