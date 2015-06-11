@@ -42,6 +42,12 @@ Object.defineProperty(Matrix3.prototype, 'transformVector2', {
     }
 });
 
+Object.defineProperty(Matrix3.prototype, 'rotateVector2', {
+    value: function(vector){
+        return new Vector2((this.m[0] * vector.x) + (this.m[1] * vector.y),(this.m[3] * vector.x) + (this.m[4] * vector.y));
+    }
+});
+
 Object.defineProperty(Matrix3.prototype, 'clone', {
     get:function(){
         return new Matrix3([
