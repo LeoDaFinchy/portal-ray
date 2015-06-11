@@ -187,3 +187,31 @@ Object.defineProperty(Matrix3, 'shear', {
         ]);
     }
 });
+
+Object.defineProperty(Matrix3.prototype, 'scale', {
+    value:function(factor){
+        this.applyMatrix3(Matrix3.scale(factor));
+        return this;
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'translate', {
+    value:function(vector){
+        this.applyMatrix3(Matrix3.translation(vector));
+        return this;
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'rotate', {
+    value:function(angle){
+        this.applyMatrix3(Matrix3.rotation(angle));
+        return this;
+    }
+});
+
+Object.defineProperty(Matrix3.prototype, 'shear', {
+    value:function(factor){
+        this.applyMatrix3(Matrix3.shear(factor));
+        return this;
+    }
+});
