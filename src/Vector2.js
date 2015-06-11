@@ -90,7 +90,7 @@ Object.defineProperty(Vector2.prototype, 'tangent', {
 Object.defineProperty(Vector2.prototype, 'normal', {
     get: function()
     {
-        return new Vector2(this.y, -this.x).tangent;
+        return new Vector2(-this.y, this.x).tangent;
     }
 });
 
