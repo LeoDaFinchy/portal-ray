@@ -23,6 +23,58 @@ Object.defineProperty(Transform2.prototype, 'applyContextTransform', {
     }
 });
 
+Object.defineProperty(Transform2.prototype, 'drawEdit', {
+    value: function(context, mouse){
+        this.applyContextTransform(context);
+
+        context.beginPath();
+        context.arc(0, 0, 1, 0, Math.PI * 2);
+        if(context.isPointInPath(mouse.coords.x, mouse.coords.y))
+        {
+            if(context.isPointInPath(mouse.oldCoords.x, mouse.oldCoords.y))
+            {
+                // Stay
+                var colours = [
+                    "rgba(0, 0, 0, 0.5)",
+                    "rgba(255, 0, 0, 0.5)",
+                    "rgba(0, 255, 0, 0.5)",
+                    "rgba(255, 255, 0, 0.5)",
+                    "rgba(0, 0, 255, 0.5)",
+                    "rgba(255, 0, 255, 0.5)",
+                    "rgba(0, 255, 255, 0.5)",
+                    "rgba(255, 255, 255, 0.5)",
+                ];
+
+                context.fillStyle = colours[mouse.buttons];
+            }
+            else
+            {
+                // Come
+            }
+        }
+        else
+        {
+            if(context.isPointInPath(mouse.oldCoords.x, mouse.oldCoords.y))
+            {
+                // Leave
+            }
+            else
+            {
+                // Just not here
+                context.fillStyle = "rgba(0, 0, 0, 0.2)";
+            }
+        }
+        context.fill();
+
+        for(var i = 0; i < this.children.length; i++)
+        {
+            this.children[i].drawEdit(context, mouse);
+        }
+
+        this.releaseContextTransform(context);
+    }
+});
+
 Object.defineProperty(Transform2.prototype, 'releaseContextTransform', {
     value: function(context){
         context.restore();
