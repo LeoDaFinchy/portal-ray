@@ -226,6 +226,27 @@ var rays = [
     new Ray(new Vector2(-5.0, 3.0))
 ];
 
+var mouse = {
+    coords: new Vector2(),
+    oldCoords: new Vector2(),
+    alt: false,
+    ctrl: false,
+    shift: false,
+    buttons: 0,
+    type: ""
+};
+
+mouse.refresh = function(event){
+    this.oldCoords = this.coords;
+    this.coords = new Vector2(event.clientX, event.clientY)
+        .subtract(new Vector2(event.target.offsetLeft, event.target.offsetTop));
+    this.ctrl = event.ctrlKey;
+    this.alt = event.altKey;
+    this.shift = event.shiftKey;
+    this.type = event.type;
+    this.buttons = event.buttons;
+};
+
 var root = new Transform2(Matrix3.identity().translate(new Vector2(5, 2)).rotate(1));
 var child1 = new Transform2(Matrix3.identity().translate(new Vector2(1, 6)));
 var child2 = new Transform2(Matrix3.identity().translate(new Vector2(3, -2)));
@@ -252,6 +273,8 @@ if(window && document)
         context.translate(GraphSize.x / 2.0, -GraphSize.y / 2.0);
 
         canvas.onmousemove = mouseMoved;
+        canvas.onmousedown = mouseDown;
+        canvas.oncontextmenu = function(){return false;}
 
         window.PortalRay = {
             canvas: canvas,
@@ -263,7 +286,7 @@ if(window && document)
 
     function mouseMoved(e){
         var canvasSpaceMouse = new Vector2(e.clientX, e.clientY).subtract(new Vector2(e.target.offsetLeft, e.target.offsetTop));
-        var graphSpaceMouse = canvasSpaceMouse.multiplyByVector2(Scaling.reciprocal).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
+        var graphSpaceMouse = canvasSpaceMouse._.multiplyByVector2(Scaling.reciprocal).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
         for(var x = 0; x < rays.length; x++)
         {
             rays[x].direction = graphSpaceMouse.subtract(rays[x].origin);
@@ -272,7 +295,20 @@ if(window && document)
         portal = castRaysAgainstPortals(rays, lineSegments, 10);
         toDraw.rays = portal.rays;
         toDraw.raycasts = portal.hits;
+
+        mouse.refresh(e);
     };
+
+    function mouseDown(e)
+    {
+        console.log(e);
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        e.cancelBubble = true;
+        mouse.refresh(e);
+        return false;
+    }
 
     function draw(){
         context = window.PortalRay.context;
@@ -287,6 +323,8 @@ if(window && document)
         drawLineSegments(context, toDraw.lineSegments);
         drawRays(context, toDraw.rays);
         drawRaycasts(context, toDraw.raycasts);
+
+        root.drawEdit(context, mouse);
 
         window.setTimeout(draw, 10);
     };
