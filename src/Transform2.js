@@ -49,14 +49,14 @@ Object.defineProperty(Transform2.prototype, 'drawEdit', {
             }
             else
             {
-                // Come
+                context.fillStyle = "rgba(255, 0, 0, 1.0)";
             }
         }
         else
         {
             if(context.isPointInPath(mouse.oldCoords.x, mouse.oldCoords.y))
             {
-                // Leave
+                context.fillStyle = "rgba(0, 255, 255, 1.0)";
             }
             else
             {
