@@ -4,6 +4,7 @@ var Matrix3 = require('./Matrix3.js').Matrix3;
 var Transform2 = require('./Transform2.js').Transform2;
 var DebugVisage = require('./DebugVisage.js').DebugVisage;
 var Actor = require('./Actor').Actor;
+var Context2 = require('./Context2.js').Context2;
 
 Vector2.prototype.rotation = function()
 {
@@ -249,13 +250,19 @@ mouse.refresh = function(event){
     this.buttons = event.buttons;
 };
 
-var root = new Transform2(Matrix3.identity().translate(new Vector2(5, 2)).rotate(1));
-var child1 = new Transform2(Matrix3.identity().translate(new Vector2(1, 6)));
-var child2 = new Transform2(Matrix3.identity().translate(new Vector2(3, -2)));
-var grandchild11 = new Transform2(Matrix3.identity().translate(new Vector2(2,0)));
-root.children.push(child1);
-root.children.push(child2);
-child1.children.push(grandchild11);
+var root = new Actor();
+new Transform2(Matrix3.identity().translate(new Vector2(5, 2)).rotate(1)).attach(root);
+new DebugVisage().attach(root);
+var child1 = root.clone;
+child1.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(1, 6)));
+var child2 = root.clone;
+child2.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(3, -2)));
+var grandchild11 = root.clone;
+grandchild11.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(2,0)));
+
+root.transform2.children.push(child1);
+root.transform2.children.push(child2);
+child1.transform2.children.push(grandchild11);
 
 Portal(lineSegments[0], lineSegments[1]);
 
@@ -317,7 +324,6 @@ if(window && document)
 
     function mouseDown(e)
     {
-        console.log(e);
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -331,18 +337,18 @@ if(window && document)
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
 
-        root.drawDebug(context);
-
-        root.matrix.rotate(0.01);
-        child1.matrix.rotate(-0.03);
+        root.transform2.matrix.rotate(0.01);
+        child1.transform2.matrix.rotate(-0.03);
 
         drawLineSegments(context, toDraw.lineSegments);
         drawRays(context, toDraw.rays);
         drawRaycasts(context, toDraw.raycasts);
 
-        root.drawEdit(context, mouse);
+        // root.drawEdit(context, mouse);
 
-        actor.debugVisage.draw(context, ["transform2"]);
+        var con = new Context2(context);
+        actor.debugVisage.draw(con, ["transform2"]);
+        root.debugVisage.draw(con, ["transform2"]);
 
         window.setTimeout(draw, 10);
     };
