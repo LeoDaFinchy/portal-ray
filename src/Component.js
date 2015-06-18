@@ -17,5 +17,8 @@ Object.defineProperty(Component.prototype, "attach", {
         }, undefined);
         actor.components.push(this);
         actor[this.name] = this;
+        this.actor = actor;
+
+        return this;
     }
 });
