@@ -22,7 +22,7 @@ Object.defineProperty(DebugVisage.prototype, '_', {
 Object.defineProperty(DebugVisage.prototype, 'draw', {
     value: function(context, components)
     {
-        components = components || DebugVisage.drawFunctions.keys();
+        components = components || Object.keys(DebugVisage.drawFunctions);
 
         components.filter(function(c){
             return this.hasOwnProperty(c);
@@ -34,7 +34,7 @@ Object.defineProperty(DebugVisage.prototype, 'draw', {
         }, this);
 
         this.actor.transform2.children.map(function(a){
-            a.draw(context);
+            a.debugVisage.draw(context);
         });
     }
 });
@@ -46,35 +46,35 @@ Object.defineProperty(DebugVisage, 'drawFunctions', {
 });
 
 Object.defineProperty(DebugVisage.prototype, 'drawTransform2', {
-    value: function(context)
+    value: function(con)
     {
         var transform = this.actor.transform2;
 
-        transform.applyContextTransform(context);
+        con.push(transform);
 
-        context.beginPath();
-        context.moveTo(0,0);
-        context.lineTo(1,0);
-        context.lineTo(1,1);
-        context.lineTo(0,1);
-        context.lineTo(0,0);
-        context.fillStyle = "rgba(0, 0, 255, 0.2)";
-        context.fill();
+        con.context.beginPath();
+        con.context.moveTo(0,0);
+        con.context.lineTo(1,0);
+        con.context.lineTo(1,1);
+        con.context.lineTo(0,1);
+        con.context.lineTo(0,0);
+        con.context.fillStyle = "rgba(0, 0, 255, 0.2)";
+        con.context.fill();
 
-        context.beginPath();
-        context.moveTo(0,0);
-        context.lineTo(1,0);
-        context.strokeStyle = "rgba(255, 0, 0, 1.0)";
-        context.lineWidth = 0.2;
-        context.stroke();
+        con.context.beginPath();
+        con.context.moveTo(0,0);
+        con.context.lineTo(1,0);
+        con.context.strokeStyle = "rgba(255, 0, 0, 1.0)";
+        con.context.lineWidth = 0.2;
+        con.context.stroke();
 
-        context.beginPath();
-        context.moveTo(0,0);
-        context.lineTo(0,1);
-        context.strokeStyle = "rgba(0, 255, 0, 1.0)";
-        context.lineWidth = 0.2;
-        context.stroke();
+        con.context.beginPath();
+        con.context.moveTo(0,0);
+        con.context.lineTo(0,1);
+        con.context.strokeStyle = "rgba(0, 255, 0, 1.0)";
+        con.context.lineWidth = 0.2;
+        con.context.stroke();
 
-        transform.releaseContextTransform(context);
+        con.pop();
     }
 });
