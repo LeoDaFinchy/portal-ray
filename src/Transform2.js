@@ -10,7 +10,27 @@ var Transform2 = function(m)
 
 exports['Transform2'] = Transform2;
 
-Transform2.prototype = new Component();
+Transform2.prototype = new Component("transform2");
+
+Object.defineProperty(Transform2, 'cloneable', {
+    value: true
+});
+
+Object.defineProperty(Transform2.prototype, 'clone', {
+    get: function()
+    {
+        var clone = new Transform2(this.matrix._);
+        clone.children = this.children.map(function(i){return i._;});
+        clone.parent = this.parent;
+        return clone;
+    }
+});
+
+Object.defineProperty(Transform2.prototype, '_', {
+    get: function(){
+        return this.clone;
+    }
+});
 
 Object.defineProperty(Transform2.prototype, 'applyContextTransform', {
     value: function(context){

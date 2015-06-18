@@ -1,7 +1,7 @@
-var Component = function(prereqs)
+var Component = function(name, prereqs)
 {
     this.prereqs = prereqs || [];
-    this.name = "component";
+    this.name = name || "component";
 };
 
 exports["Component"] = Component;
