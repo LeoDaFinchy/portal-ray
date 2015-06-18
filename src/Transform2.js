@@ -93,9 +93,3 @@ Object.defineProperty(Transform2.prototype, 'drawEdit', {
         this.releaseContextTransform(context);
     }
 });
-
-Object.defineProperty(Transform2.prototype, 'releaseContextTransform', {
-    value: function(context){
-        context.restore();
-    }
-});
