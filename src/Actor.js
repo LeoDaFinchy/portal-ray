@@ -13,3 +13,14 @@ Object.defineProperty(Actor, 'id', {
     writable: true,
     configurable: false,
 });
+
+Object.defineProperty(Actor.prototype, 'clone', {
+    get: function()
+    {
+        var clone = new Actor();
+        clone.components = this.components.map(function(a){
+            return a._.attach(this);
+        }, clone);
+        return clone;
+    }
+});
