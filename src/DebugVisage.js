@@ -28,14 +28,17 @@ Object.defineProperty(DebugVisage.prototype, 'draw', {
             return this.hasOwnProperty(c);
         }, this.actor);
 
-        components.reduce(function(dbv, c){
-            dbv[DebugVisage.drawFunctions[c]](context);
-            return dbv;
+        context.push(this.actor.transform2);
+
+        components.map(function(c){
+            this[DebugVisage.drawFunctions[c]](context);
         }, this);
 
         this.actor.transform2.children.map(function(a){
-            a.debugVisage.draw(context);
+            a.debugVisage.draw(context, components);
         });
+
+        context.pop();
     }
 });
 
@@ -49,8 +52,6 @@ Object.defineProperty(DebugVisage.prototype, 'drawTransform2', {
     value: function(con)
     {
         var transform = this.actor.transform2;
-
-        con.push(transform);
 
         con.context.beginPath();
         con.context.moveTo(0,0);
@@ -74,7 +75,5 @@ Object.defineProperty(DebugVisage.prototype, 'drawTransform2', {
         con.context.strokeStyle = "rgba(0, 255, 0, 1.0)";
         con.context.lineWidth = 0.2;
         con.context.stroke();
-
-        con.pop();
     }
 });
