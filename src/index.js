@@ -2,6 +2,8 @@ var Vector2 = require('./Vector2.js').Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
 var Matrix3 = require('./Matrix3.js').Matrix3;
 var Transform2 = require('./Transform2.js').Transform2;
+var DebugVisage = require('./DebugVisage.js').DebugVisage;
+var Actor = require('./Actor').Actor;
 
 Vector2.prototype.rotation = function()
 {
@@ -257,6 +259,20 @@ child1.children.push(grandchild11);
 
 Portal(lineSegments[0], lineSegments[1]);
 
+var actor = new Actor();
+new Transform2().attach(actor);
+new DebugVisage().attach(actor);
+actor.transform2.matrix.translate(new Vector2(2,0));
+console.log(actor.transform2.matrix.m);
+
+var bctor = actor.clone;
+console.log(bctor.transform2.matrix.m);
+
+actor.transform2.matrix.translate(new Vector2(0,3));
+
+console.log(actor.transform2.matrix.m);
+console.log(bctor.transform2.matrix.m);
+
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
 if(window && document)
@@ -325,6 +341,8 @@ if(window && document)
         drawRaycasts(context, toDraw.raycasts);
 
         root.drawEdit(context, mouse);
+
+        actor.debugVisage.draw(context, ["transform2"]);
 
         window.setTimeout(draw, 10);
     };
