@@ -8,7 +8,16 @@ exports["Context2"] = Context2;
 Object.defineProperty(Context2.prototype, 'push', {
     value: function(transform)
     {
-        transform.applyContextTransform(this.context);
+        this.context.save();
+        this.context.transform(
+            transform.matrix.m[0],
+            transform.matrix.m[3],
+            transform.matrix.m[1],
+            transform.matrix.m[4],
+            transform.matrix.m[2],
+            transform.matrix.m[5]
+        );
+
         this.transformStack.push(transform);
 
         if(transform.parent && transform.parent != this.activeTransform)
@@ -21,7 +30,7 @@ Object.defineProperty(Context2.prototype, 'push', {
 Object.defineProperty(Context2.prototype, 'pop', {
     value: function()
     {
-        this.activeTransform.releaseContextTransform(this.context);
+        this.context.restore();
         return this.transformStack.pop();
     }
 });
