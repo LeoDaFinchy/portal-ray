@@ -12,9 +12,14 @@ Object.defineProperty(Component.prototype, "attach", {
         var needed = this.prereqs.filter(function(c){
             return this.components.indexOf(c.constructor) === -1;
         }, actor);
-        needed.reduce(function(c){
-            c.attach(actor);
-        }, undefined);
+        if(needed.length > 0)
+        {
+            needed.reduce(function(c){
+                console.log(c);
+                c.attach(actor);
+                return c;
+            });
+        }
         actor.components.push(this);
         actor[this.name] = this;
         this.actor = actor;
