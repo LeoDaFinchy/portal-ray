@@ -28,20 +28,6 @@ Object.defineProperty(Transform2.prototype, '_', {
     }
 });
 
-Object.defineProperty(Transform2.prototype, 'applyContextTransform', {
-    value: function(context){
-        context.save();
-        context.transform(
-            this.matrix.m[0],
-            this.matrix.m[3],
-            this.matrix.m[1],
-            this.matrix.m[4],
-            this.matrix.m[2],
-            this.matrix.m[5]
-        );
-    }
-});
-
 Object.defineProperty(Transform2.prototype, 'drawEdit', {
     value: function(context, mouse){
         this.applyContextTransform(context);
