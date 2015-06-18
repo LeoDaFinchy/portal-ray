@@ -8,14 +8,19 @@ Object.defineProperty(Context2.prototype, 'push', {
     {
         transform.applyContextTransform(this.context);
         this.transformStack.push(transform);
+
+        if(transform.parent && transform.parent != this.activeTransform)
+        {
+            console.warn("Applying a transform on top of one that isn't it's parent");
+        }
     }
 });
 
 Object.defineProperty(Context2.prototype, 'pop', {
-    value: function(transform)
+    value: function()
     {
-        transform.releaseContextTransform(this.context);
-        this.transformStack.pop();
+        this.activeTransform.releaseContextTransform(this.context);
+        return this.transformStack.pop();
     }
 });
 
