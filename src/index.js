@@ -3,6 +3,7 @@ var Matrix2 = require('./Matrix2.js').Matrix2;
 var Matrix3 = require('./Matrix3.js').Matrix3;
 var Transform2 = require('./Transform2.js').Transform2;
 var DebugVisage = require('./DebugVisage.js').DebugVisage;
+var Visage = require('./Visage').Visage;
 var Actor = require('./Actor').Actor;
 var Context2 = require('./Context2.js').Context2;
 
@@ -253,12 +254,29 @@ mouse.refresh = function(event){
 var root = new Actor();
 new Transform2(Matrix3.identity().translate(new Vector2(5, 2)).rotate(1)).attach(root);
 new DebugVisage().attach(root);
+new Visage(function(context){
+    context.strokeStyle = "black";
+    context.lineWidth = 0.1;
+    context.fillStyle = "red";
+
+    context.beginPath();
+    context.moveTo(0.0, 0.0);
+    context.lineTo(1.0, -0.5);
+    context.lineTo(1.5, 1.0);
+    context.lineTo(3.0, 3.0);
+    context.lineTo(1.0, 1.5);
+    context.lineTo(-0.5, 1.0);
+    context.lineTo(0.0, 0.0);
+    context.fill();
+    context.stroke();
+}).attach(root);
 var child1 = root.clone;
 child1.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(1, 6)));
 var child2 = root.clone;
 child2.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(3, -2)));
 var grandchild11 = root.clone;
 grandchild11.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(2,0)));
+
 
 root.transform2.children.push(child1);
 root.transform2.children.push(child2);
@@ -334,6 +352,7 @@ if(window && document)
 
         var con = new Context2(context);
         root.debugVisage.draw(con, ["transform2"]);
+        root.visage.draw(con);
 
         window.setTimeout(draw, 10);
     };
