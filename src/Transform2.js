@@ -12,10 +12,6 @@ exports['Transform2'] = Transform2;
 
 Transform2.prototype = new Component("transform2");
 
-Object.defineProperty(Transform2, 'cloneable', {
-    value: true
-});
-
 Object.defineProperty(Transform2.prototype, 'clone', {
     get: function()
     {
