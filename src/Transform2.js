@@ -1,4 +1,5 @@
 var Matrix3 = require('./Matrix3.js').Matrix3;
+var Component = require('./Component.js').Component;
 
 var Transform2 = function(m)
 {
@@ -8,6 +9,8 @@ var Transform2 = function(m)
 };
 
 exports['Transform2'] = Transform2;
+
+Transform2.prototype = new Component();
 
 Object.defineProperty(Transform2.prototype, 'applyContextTransform', {
     value: function(context){
