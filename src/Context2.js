@@ -3,6 +3,8 @@ var Context2 = function(context){
     this.transformStack = [];
 };
 
+exports["Context2"] = Context2;
+
 Object.defineProperty(Context2.prototype, 'push', {
     value: function(transform)
     {
@@ -27,6 +29,6 @@ Object.defineProperty(Context2.prototype, 'pop', {
 Object.defineProperty(Context2.prototype, 'activeTransform', {
     get: function()
     {
-        return transformStack[transformStack.length - 1];
+        return this.transformStack[this.transformStack.length - 1];
     }
 });
