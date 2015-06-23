@@ -6,6 +6,7 @@ var DebugVisage = require('./DebugVisage.js').DebugVisage;
 var Visage = require('./Visage').Visage;
 var Actor = require('./Actor').Actor;
 var Context2 = require('./Context2.js').Context2;
+var HitRegion = require('./HitRegion').HitRegion;
 
 Vector2.prototype.rotation = function()
 {
@@ -270,6 +271,18 @@ new Visage(function(context){
     context.fill();
     context.stroke();
 }).attach(root);
+new HitRegion(function(context){
+    context.beginPath();
+    context.moveTo(0.0, 0.0);
+    context.lineTo(1.0, -0.5);
+    context.lineTo(1.5, 1.0);
+    context.lineTo(3.0, 3.0);
+    context.lineTo(1.0, 1.5);
+    context.lineTo(-0.5, 1.0);
+    context.lineTo(0.0, 0.0);
+    context.fill();
+    context.stroke();
+}).attach(root);
 var child1 = root.clone;
 child1.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(1, 6)));
 var child2 = root.clone;
@@ -333,6 +346,9 @@ if(window && document)
         e.stopImmediatePropagation();
         e.cancelBubble = true;
         mouse.refresh(e);
+
+        var con = new Context2(window.PortalRay.context);
+        console.log(root.hitRegion.detectHit(con, mouse.coords));
         return false;
     }
 
@@ -341,8 +357,8 @@ if(window && document)
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
 
-        root.transform2.matrix.rotate(0.01);
-        child1.transform2.matrix.rotate(-0.03);
+        root.transform2.matrix.rotate(0.001);
+        child1.transform2.matrix.rotate(-0.003);
 
         drawLineSegments(context, toDraw.lineSegments);
         drawRays(context, toDraw.rays);
