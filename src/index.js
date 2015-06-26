@@ -7,6 +7,8 @@ var Visage = require('./Visage').Visage;
 var Actor = require('./Actor').Actor;
 var Context2 = require('./Context2.js').Context2;
 var HitRegion = require('./HitRegion').HitRegion;
+var Ray = require("./Ray").Ray;
+var Raycast = require("./Raycast").Raycast;
 
 Vector2.prototype.rotation = function()
 {
@@ -55,136 +57,6 @@ LineSegment.prototype.normal = function()
     return this.offset().normal;
 }
 
-var Ray = function(origin, direction){
-    this.origin = origin || new Vector2();
-    this.direction = direction ? direction.tangent : new Vector2(1.0, 0.0);
-    this.matrix = Matrix3.translation(this.origin).rotate(Math.atan2(this.direction.y, this.direction.x));
-    // console.log(this.matrix);
-};
-
-
-Ray.prototype.forward = function(distance){
-    return this.origin._.add(this.direction);
-}
-Ray.prototype.castAgainstLineSegment = function(lineSegment){
-    a = lineSegment.a;
-    b = lineSegment.b;
-    c = this.origin;
-    d = this.forward(1.0);
-
-    x = new Vector2(
-        (
-            (
-                (
-                    ((a.x*b.y)-(a.y*b.x)) * (c.x-d.x)) -
-                    ((a.x-b.x) * ((c.x*d.y)-(c.y*d.x))
-                )
-            )/(
-                (((a.x-b.x)*(c.y-d.y)) - ((a.y-b.y)*(c.x-d.x))))
-        ),(
-            (
-                (
-                    ((a.x*b.y)-(a.y*b.x)) * (c.y-d.y)) -
-                    ((a.y-b.y) * ((c.x*d.y)-(c.y*d.x))
-                )
-            )/(
-                (((a.x-b.x)*(c.y-d.y)) - ((a.y-b.y)*(c.x-d.x)))
-            )
-        )
-    );
-
-    this.matrix.inverse.applyMatrix3(lineSegment.matrix);
-
-    var offset = lineSegment.offset();
-    var segmentFraction = offset.x > offset.y?
-        ((x.x - a.x) / lineSegment.offset().x):
-        ((x.y - a.y) / lineSegment.offset().y);
-
-    return new Raycast(
-        x,
-        ((x.x - this.origin.x) / this.direction.x) || ((x.y - this.origin.y) / this.direction.y),
-        segmentFraction,
-        this,
-        lineSegment
-    );
-}
-
-Ray.prototype.castAgainstLineSegments = function(lineSegments)
-{
-    return lineSegments.map(function(segment){
-        return this.castAgainstLineSegment(segment);
-    }, this);
-}
-
-Ray.prototype.findNearestHitOnSegments = function(lineSegments)
-{
-    return this.castAgainstLineSegments(lineSegments).filter(function(raycast){
-        return raycast.isHit();
-    }).reduce(function(prev, current){
-        if(!prev){return current};
-        if(current.rayDistance < prev.rayDistance){
-            return current;
-        }else{return prev;}
-    }, undefined);
-}
-
-Ray.fromLineSegment = function(lineSegment)
-{
-    return new Ray(lineSegment.a._, lineSegment.b.tangent);
-}
-
-
-var Raycast = function(incidence, rayDistance, segmentFraction, ray, segment){
-    this.incidence = incidence;
-    this.rayDistance = rayDistance;
-    this.segmentFraction = segmentFraction;
-    this.ray = ray;
-    this.segment = segment;
-}
-
-Raycast.prototype.isForward = function()
-{
-    return this.rayDistance > 0.0;
-}
-
-Raycast.prototype.isInBounds = function()
-{
-    return this.segmentFraction >= 0.0 && this.segmentFraction <= 1.0;
-}
-
-Raycast.prototype.isHit = function()
-{
-    return this.isForward() && this.isInBounds();
-}
-
-Raycast.prototype.againstNormal = function()
-{
-    return Vector2.crossProductMagnitude(this.ray.direction, this.segment.offset()) < 0.0;
-}
-
-Raycast.prototype.isHittingFront = function()
-{
-    return this.isHit() && this.againstNormal();
-}
-
-Raycast.prototype.portalExitRay = function()
-{
-    var thisSide = this.segment;
-    var otherSide = thisSide.portal;
-    var exitDirection = this.ray.direction._
-        .tangent
-        .rotate(thisSide.normal().rotation().inverse)
-        .rotate(otherSide.normal().rotation())
-        .rotate(new Vector2(-1,0).rotation());
-    var exitPosition = otherSide.a._
-        .add(otherSide.offset().multiplyByScalar(1.0 - this.segmentFraction))
-        .add(exitDirection.multiplyByScalar(0.1));
-    var exitRay = new Ray(
-        exitPosition,
-        exitDirection
-    );
-    return exitRay;
-}
 
 
 var Portal = function(a, b){
