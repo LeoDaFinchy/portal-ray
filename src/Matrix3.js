@@ -153,6 +153,11 @@ Object.defineProperties(Matrix3.prototype, {
 });
 
 Object.defineProperties(Matrix3, {
+    'identity': {
+        get: function(){
+            return new Matrix3();
+        }
+    },
     'coordFromIndex': {
         value: function(index){
             var col = index % 3;
@@ -163,11 +168,6 @@ Object.defineProperties(Matrix3, {
     'indexFromCoord': {
         value: function(coord){
             return coord.x + (coord.y * 3.0);
-        }
-    },
-    'identity': {
-        value: function(){
-            return new Matrix3();
         }
     },
     'scale': {

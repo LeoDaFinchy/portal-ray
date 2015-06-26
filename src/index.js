@@ -125,7 +125,7 @@ mouse.refresh = function(event){
 };
 
 var root = new Actor();
-new Transform2(Matrix3.identity().translate(new Vector2(5, 2)).rotate(1)).attach(root);
+new Transform2(Matrix3.identity.translate(new Vector2(5, 2)).rotate(1)).attach(root);
 new DebugVisage().attach(root);
 new Visage(function(context){
     context.strokeStyle = "black";
@@ -156,11 +156,11 @@ new HitRegion(function(context){
     context.stroke();
 }).attach(root);
 var child1 = root.clone;
-child1.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(1, 6)));
+child1.transform2 = new Transform2(Matrix3.identity.translate(new Vector2(1, 6)));
 var child2 = root.clone;
-child2.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(3, -2)));
+child2.transform2 = new Transform2(Matrix3.identity.translate(new Vector2(3, -2)));
 var grandchild11 = root.clone;
-grandchild11.transform2 = new Transform2(Matrix3.identity().translate(new Vector2(2,0)));
+grandchild11.transform2 = new Transform2(Matrix3.identity.translate(new Vector2(2,0)));
 
 
 root.transform2.children.push(child1);
