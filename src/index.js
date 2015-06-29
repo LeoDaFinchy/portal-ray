@@ -10,6 +10,7 @@ var HitRegion = require('./HitRegion').HitRegion;
 var Ray = require("./Ray").Ray;
 var Raycast = require("./Raycast").Raycast;
 
+
 Vector2.prototype.rotation = function()
 {
     var angle = Math.atan2(this.y, this.x);
@@ -51,7 +52,15 @@ LineSegment.prototype.normal = function()
 };
 
 
-
+hexLineSegment = new LineSegment(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
+hexMatrices = [
+    Matrix3.identity,
+    Matrix3.rotation(Math.PI/3.0),
+    Matrix3.rotation(Math.PI/3.0 * 2.0),
+    Matrix3.rotation(Math.PI/3.0 * 3.0),
+    Matrix3.rotation(Math.PI/3.0 * 4.0),
+    Matrix3.rotation(Math.PI/3.0 * 5.0),
+];
 
 var Portal = function(a, b){
     //  clear up any prexisting links
@@ -90,6 +99,7 @@ var lineSegments = [
     new LineSegment(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
     new LineSegment(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
     new LineSegment(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
+    hexLineSegment
 ];
 
 var rays = [
