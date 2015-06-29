@@ -120,5 +120,11 @@ Object.defineProperties(Vector2, {
         {
             return this.x;
         }
+    },
+    'crossProductMagnitude': {
+        value: function(a, b)
+        {
+            return (a.x * b.y) - (a.y * b.x);
+        }
     }
 });

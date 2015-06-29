@@ -21,12 +21,6 @@ Vector2.prototype.rotation = function()
 Vector2.prototype.rotate = function(matrix){
     return matrix.rotateVector2(this);
 }
-Vector2.crossProductMagnitude = function(a, b)
-{
-    return (a.x * b.y) - (a.y * b.x);
-}
-
-
 Matrix2.prototype.rotateVector2 = function(vector)
 {
     return new Vector2((vector.x * this.m[0]) + (vector.y * this.m[1]), (vector.x * this.m[2]) + (vector.y * this.m[3]));
