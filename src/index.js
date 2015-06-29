@@ -37,7 +37,6 @@ Matrix2.prototype.rotateVector2 = function(vector)
     one to another aka 'which matrix M satisfiess M x B = A
 **/ 
 
-
 var LineSegment = function (a, b){
     this.a = a || new Vector2();
     this.b = b || new Vector2();
@@ -55,7 +54,8 @@ LineSegment.prototype.offset = function(){
 LineSegment.prototype.normal = function()
 {
     return this.offset().normal;
-}
+};
+
 
 
 
@@ -103,70 +103,6 @@ var rays = [
     new Ray(new Vector2(-5.0, 3.0))
 ];
 
-var mouse = {
-    coords: new Vector2(),
-    oldCoords: new Vector2(),
-    alt: false,
-    ctrl: false,
-    shift: false,
-    buttons: 0,
-    type: ""
-};
-
-mouse.refresh = function(event){
-    this.oldCoords = this.coords;
-    this.coords = new Vector2(event.clientX, event.clientY)
-        .subtract(new Vector2(event.target.offsetLeft, event.target.offsetTop));
-    this.ctrl = event.ctrlKey;
-    this.alt = event.altKey;
-    this.shift = event.shiftKey;
-    this.type = event.type;
-    this.buttons = event.buttons;
-};
-
-var root = new Actor();
-new Transform2(Matrix3.identity.translate(new Vector2(5, 2)).rotate(1)).attach(root);
-new DebugVisage().attach(root);
-new Visage(function(context){
-    context.strokeStyle = "black";
-    context.lineWidth = 0.1;
-    context.fillStyle = "red";
-
-    context.beginPath();
-    context.moveTo(0.0, 0.0);
-    context.lineTo(1.0, -0.5);
-    context.lineTo(1.5, 1.0);
-    context.lineTo(3.0, 3.0);
-    context.lineTo(1.0, 1.5);
-    context.lineTo(-0.5, 1.0);
-    context.lineTo(0.0, 0.0);
-    context.fill();
-    context.stroke();
-}).attach(root);
-new HitRegion(function(context){
-    context.beginPath();
-    context.moveTo(0.0, 0.0);
-    context.lineTo(1.0, -0.5);
-    context.lineTo(1.5, 1.0);
-    context.lineTo(3.0, 3.0);
-    context.lineTo(1.0, 1.5);
-    context.lineTo(-0.5, 1.0);
-    context.lineTo(0.0, 0.0);
-    context.fill();
-    context.stroke();
-}).attach(root);
-var child1 = root.clone;
-child1.transform2 = new Transform2(Matrix3.identity.translate(new Vector2(1, 6)));
-var child2 = root.clone;
-child2.transform2 = new Transform2(Matrix3.identity.translate(new Vector2(3, -2)));
-var grandchild11 = root.clone;
-grandchild11.transform2 = new Transform2(Matrix3.identity.translate(new Vector2(2,0)));
-
-
-root.transform2.children.push(child1);
-root.transform2.children.push(child2);
-child1.transform2.children.push(grandchild11);
-
 Portal(lineSegments[0], lineSegments[1]);
 
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
@@ -185,7 +121,6 @@ if(window && document)
         context.translate(GraphSize.x / 2.0, -GraphSize.y / 2.0);
 
         canvas.onmousemove = mouseMoved;
-        canvas.onmousedown = mouseDown;
         canvas.oncontextmenu = function(){return false;}
 
         window.PortalRay = {
@@ -207,30 +142,12 @@ if(window && document)
         portal = castRaysAgainstPortals(rays, lineSegments, 10);
         toDraw.rays = portal.rays;
         toDraw.raycasts = portal.hits;
-
-        mouse.refresh(e);
     };
-
-    function mouseDown(e)
-    {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        e.cancelBubble = true;
-        mouse.refresh(e);
-
-        var con = new Context2(window.PortalRay.context);
-        console.log(root.hitRegion.detectHit(con, mouse.coords));
-        return false;
-    }
 
     function draw(){
         context = window.PortalRay.context;
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
-
-        root.transform2.matrix.rotate(0.001);
-        child1.transform2.matrix.rotate(-0.003);
 
         drawLineSegments(context, toDraw.lineSegments);
         drawRays(context, toDraw.rays);
@@ -239,8 +156,6 @@ if(window && document)
         // root.drawEdit(context, mouse);
 
         var con = new Context2(context);
-        root.debugVisage.draw(con, ["transform2"]);
-        root.visage.draw(con);
 
         window.setTimeout(draw, 10);
     };
