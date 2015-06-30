@@ -93,6 +93,11 @@ Object.defineProperties(Matrix3.prototype, {
             return new Vector2((this.m[0] * vector.x) + (this.m[1] * vector.y) + this.m[2],(this.m[3] * vector.x) + (this.m[4] * vector.y) + this.m[5]);
         }
     },
+    'transformBiVector2': {
+        value: function(biVector){
+            return new BiVector2(this.transformVector2(biVector.a), this.transformVector2(biVector.b));
+        }
+    },
     'rotateVector2': {
         value: function(vector){
             return new Vector2((this.m[0] * vector.x) + (this.m[1] * vector.y),(this.m[3] * vector.x) + (this.m[4] * vector.y));
