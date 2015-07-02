@@ -35,7 +35,14 @@ Object.defineProperties(LineSegment2.prototype, {
             .scale(new Vector2(this.offset.length, 1))
             ;
         }
-    }
+    },
+    intersect:{
+        value: function(targets){
+            return targets.map(function(value){
+                return new Intersect2(this, value);
+            }, this);
+        }
+    },
 });
 
 Object.defineProperties(LineSegment2Collection.prototype, {
