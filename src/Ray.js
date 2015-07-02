@@ -43,10 +43,10 @@ Ray.prototype.castAgainstLineSegment = function(lineSegment){
 
     this.matrix.inverse.applyMatrix3(lineSegment.matrix);
 
-    var offset = lineSegment.offset();
+    var offset = lineSegment.offset;
     var segmentFraction = offset.x > offset.y?
-        ((x.x - a.x) / lineSegment.offset().x):
-        ((x.y - a.y) / lineSegment.offset().y);
+        ((x.x - a.x) / lineSegment.offset.x):
+        ((x.y - a.y) / lineSegment.offset.y);
 
     return new Raycast(
         x,
