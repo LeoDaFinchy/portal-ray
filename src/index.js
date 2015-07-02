@@ -9,8 +9,11 @@ var Context2 = require('./Context2.js').Context2;
 var HitRegion = require('./HitRegion').HitRegion;
 var Ray = require("./Ray").Ray;
 var Raycast = require("./Raycast").Raycast;
-var LineSegment2 = require("./LineSegment2").LineSegment2;
 var Intersect2 = require("./Intersect2").Intersect2;
+
+var LineSegment2JS = require("./LineSegment2");
+var LineSegment2 = LineSegment2JS.LineSegment2;
+var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 
 
 Vector2.prototype.rotation = function()
@@ -64,30 +67,44 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 
     for(var r = 0; r < rays.length; r++)
     {
-        hits.push(rays[r].findNearestHitOnSegments(lineSegments));
+        hits.push(rays[r].intersect(lineSegments).reduce(function(first, second){
+            return first.fractionA < second.fractionA ? first : second;
+        }));
     }
-    hits = hits.filter(function(raycast){ return raycast;});
-    ports = hits.filter(function(raycast){
-        return raycast.segment.portal && raycast.isHittingFront();
-    }).map(function(raycast){return raycast.portalExitRay();});
-    result = castRaysAgainstPortals(ports, lineSegments, generations - 1);
-    rays = rays.concat(result.rays);
-    hits = hits.concat(result.hits);
+
+    hits = hits.filter(function(intersect){ return intersect;});
+    // ports = hits.filter(function(intersect){
+    //     return intersect.b.portal && raycast.isHittingFront();
+    // }).map(function(raycast){return raycast.portalExitRay();});
+    // result = castRaysAgainstPortals(ports, lineSegments, generations - 1);
+    // rays = rays.concat(result.rays);
+    // hits = hits.concat(result.hits);
     return {rays:rays, hits:hits};
 }
 
-var lineSegments = [
-    // new LineSegment(new Vector2(-1.0, 7.0), new Vector2(-2.0, -12.0)),
+// var lineSegments = [
+//     // new LineSegment(new Vector2(-1.0, 7.0), new Vector2(-2.0, -12.0)),
+//     new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
+//     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
+//     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
+//     hexLineSegment
+// ];
+
+// var rays = [
+//     // new Ray(new Vector2(0.0, 1.0)),
+//     new Ray(new Vector2(-5.0, 3.0))
+// ];
+
+var lineSegments = new LineSegment2Collection();
+lineSegments.push(
     new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
     hexLineSegment
-];
+);
 
-var rays = [
-    // new Ray(new Vector2(0.0, 1.0)),
-    new Ray(new Vector2(-5.0, 3.0))
-];
+var rays = new LineSegment2Collection();
+rays.push(new LineSegment2(Vector2.zero, new Vector2(-5.0, 3.0)));
 
 Portal(lineSegments[0], lineSegments[1]);
 
@@ -122,8 +139,7 @@ if(window && document)
         var graphSpaceMouse = canvasSpaceMouse._.multiplyByVector2(Scaling.reciprocal).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
         for(var x = 0; x < rays.length; x++)
         {
-            rays[x].direction = graphSpaceMouse.subtract(rays[x].origin);
-            rays[x].matrix = Matrix3.translation(rays[x].origin).rotate(Math.atan2(rays[x].direction.y, rays[x].direction.x));
+            rays[x].b = graphSpaceMouse;
         }
         portal = castRaysAgainstPortals(rays, lineSegments, 10);
         toDraw.rays = portal.rays;
@@ -190,78 +206,31 @@ if(window && document)
 
             context.lineWidth = 0.1;
 
+            raycast.solve();
+
             //incidence
-            context.strokeStyle = raycast.isHittingFront() ? "#cccc33" : "#cc3333";
-            context.beginPath();
-            context.arc(raycast.incidence.x, raycast.incidence.y, 0.2, 0, Math.PI * 2);
-            context.stroke();
-
-            //ray path
-            context.beginPath();
-            context.moveTo(raycast.ray.origin.x, raycast.ray.origin.y);
-            dist = raycast.ray.direction._.multiplyByScalar(raycast.rayDistance).add(raycast.ray.origin);
-            context.lineTo(dist.x, dist.y);
-            context.stroke();
-
-            //lineSegment fraction
-            context.strokeStyle = "#33cc33";
-            context.beginPath();
-            context.moveTo(raycast.segment.a.x, raycast.segment.a.y);
-            portion = raycast.segment.offset.multiplyByScalar(raycast.segmentFraction).add(raycast.segment.a);
-            context.lineTo(portion.x, portion.y);
-            context.stroke();
-
-            // MATRIX
-
-            // 0 = mx + c;
-
-            var rayMat = raycast.ray.matrix;
-            var segMat = raycast.segment.matrix;
-
-            var A = segMat.inverse.applyMatrix3(rayMat).transformVector2(Vector2.zero);
-            var B = segMat.inverse.applyMatrix3(rayMat).transformVector2(Vector2.x);
-            var C = Vector2.zero;
-            var D = Vector2.x;
-            var R = B._.subtract(A);
-
-            var X = R.x === 0 ? new Vector2(A.x, 0.0) : new Vector2(A.x - ((R.x/R.y) * A.y), 0.0);
-            var X2 = segMat.transformVector2(X._);
-
-            context.strokeStyle = "#cc33cc";
-            context.beginPath();
-            context.moveTo(A.x, A.y);
-            context.lineTo(B.x, B.y);
-            context.stroke();
-            context.beginPath();
-            context.moveTo(C.x, C.y);
-            context.lineTo(D.x, D.y);
-            context.stroke();
-
-            context.beginPath();
-            context.arc(X.x, X.y, 0.2, 0, Math.PI * 2);
-            context.stroke();
-
-            context.beginPath();
-            context.arc(X2.x, X2.y, 0.2, 0, Math.PI * 2);
-            context.stroke();
-
-            if(raycast.segment.portal)
+            if(raycast.x)
             {
-                var portMat = raycast.segment.portal.matrix;
-
-                var exit = portMat._
-                    .translate(new Vector2(1.0, 0.0))
-                    .scale(new Vector2(-1,0));
-
-                var O = exit.transformVector2(X._);
-                var O2 = rayMat._.applyMatrix3(portMat).rotateVector2(Vector2.y).add(O);
+                context.strokeStyle = /*raycast.isHittingFront() ? "#cccc33" :*/ "#cc3333";
                 context.beginPath();
-                context.arc(O.x, O.y, 0.2, 0, Math.PI * 2);
-                context.moveTo(O.x, O.y);
-                context.lineTo(O2.x, O2.y);
+                context.arc(raycast.x.x, raycast.x.y, 0.2, 0, Math.PI * 2);
+                context.stroke();
+
+                //ray path
+                context.beginPath();
+                context.moveTo(raycast.a.a.x, raycast.a.a.y);
+                dist = raycast.a.offset._.multiplyByScalar(raycast.fractionA).add(raycast.a.a);
+                context.lineTo(dist.x, dist.y);
+                context.stroke();
+
+                //lineSegment fraction
+                context.strokeStyle = "#33cc33";
+                context.beginPath();
+                context.moveTo(raycast.b.a.x, raycast.b.a.y);
+                portion = raycast.b.offset.multiplyByScalar(raycast.fractionB).add(raycast.b.a);
+                context.lineTo(portion.x, portion.y);
                 context.stroke();
             }
-
         }
     };
 
@@ -274,21 +243,10 @@ if(window && document)
 
             ray = rays[i];
             context.beginPath();
-            context.arc(ray.origin.x, ray.origin.y, 0.2, 0, Math.PI * 2);
-            context.moveTo(ray.origin.x, ray.origin.y);
-            context.lineTo(ray.forward().x, ray.forward().y);
+            context.arc(ray.a.x, ray.a.y, 0.2, 0, Math.PI * 2);
+            context.moveTo(ray.a.x, ray.a.y);
+            context.lineTo(ray.b.x, ray.b.y);
 
-            context.stroke();
-
-            //MATRIX
-
-            var A = ray.matrix.transformVector2(Vector2.zero);
-            var B = ray.matrix.transformVector2(Vector2.x);
-            
-            context.strokeStyle = "#cccc33";
-            context.beginPath();
-            context.moveTo(B.x, B.y);
-            context.lineTo(A.x, A.y);
             context.stroke();
         }
     };
