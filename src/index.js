@@ -9,6 +9,7 @@ var Context2 = require('./Context2.js').Context2;
 var HitRegion = require('./HitRegion').HitRegion;
 var Ray = require("./Ray").Ray;
 var Raycast = require("./Raycast").Raycast;
+var LineSegment2 = require("./LineSegment2").LineSegment2;
 
 
 Vector2.prototype.rotation = function()
@@ -32,27 +33,7 @@ Matrix2.prototype.rotateVector2 = function(vector)
     one to another aka 'which matrix M satisfiess M x B = A
 **/ 
 
-var LineSegment = function (a, b){
-    this.a = a || new Vector2();
-    this.b = b || new Vector2();
-    this.matrix = Matrix3.translation(a)
-        .rotate(Math.atan2(this.offset().y, this.offset().x))
-        .scale(new Vector2(this.offset().length, 1))
-        ;
-    // console.log(this.matrix);
-};
-
-LineSegment.prototype.offset = function(){
-    return this.b._.subtract(this.a);
-}
-
-LineSegment.prototype.normal = function()
-{
-    return this.offset().normal;
-};
-
-
-hexLineSegment = new LineSegment(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
+hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
     Matrix3.identity,
     Matrix3.rotation(Math.PI/3.0),
@@ -96,9 +77,9 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 
 var lineSegments = [
     // new LineSegment(new Vector2(-1.0, 7.0), new Vector2(-2.0, -12.0)),
-    new LineSegment(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
-    new LineSegment(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
-    new LineSegment(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
+    new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
+    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
+    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
     hexLineSegment
 ];
 
@@ -177,7 +158,7 @@ if(window && document)
             context.lineTo(segment.b.x, segment.b.y);
             context.stroke();
 
-            var normalPosition = segment.a._.add(segment.normal());
+            var normalPosition = segment.a._.add(segment.normal);
             context.strokeStyle = "#33cc33";
             context.lineWidth = 0.1;
             context.beginPath();
@@ -225,7 +206,7 @@ if(window && document)
             context.strokeStyle = "#33cc33";
             context.beginPath();
             context.moveTo(raycast.segment.a.x, raycast.segment.a.y);
-            portion = raycast.segment.offset().multiplyByScalar(raycast.segmentFraction).add(raycast.segment.a);
+            portion = raycast.segment.offset.multiplyByScalar(raycast.segmentFraction).add(raycast.segment.a);
             context.lineTo(portion.x, portion.y);
             context.stroke();
 

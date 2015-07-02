@@ -28,7 +28,7 @@ Raycast.prototype.isHit = function()
 
 Raycast.prototype.againstNormal = function()
 {
-    return Vector2.crossProductMagnitude(this.ray.direction, this.segment.offset()) < 0.0;
+    return Vector2.crossProductMagnitude(this.ray.direction, this.segment.offset) < 0.0;
 }
 
 Raycast.prototype.isHittingFront = function()
@@ -42,11 +42,11 @@ Raycast.prototype.portalExitRay = function()
     var otherSide = thisSide.portal;
     var exitDirection = this.ray.direction._
         .tangent
-        .rotate(thisSide.normal().rotation().inverse)
-        .rotate(otherSide.normal().rotation())
+        .rotate(thisSide.normal.rotation().inverse)
+        .rotate(otherSide.normal.rotation())
         .rotate(new Vector2(-1,0).rotation());
     var exitPosition = otherSide.a._
-        .add(otherSide.offset().multiplyByScalar(1.0 - this.segmentFraction))
+        .add(otherSide.offset.multiplyByScalar(1.0 - this.segmentFraction))
         .add(exitDirection.multiplyByScalar(0.1));
     var exitRay = new Ray(
         exitPosition,
