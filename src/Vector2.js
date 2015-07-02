@@ -43,6 +43,12 @@ Object.defineProperties(Vector2.prototype, {
             return Vector2.one.divideByVector2(this);
         }
     },
+    angle: {
+        get: function()
+        {
+            return atan2(this.y, this.x);
+        }
+    },
     //  Function
     add: {
         value: function(other)
