@@ -22,7 +22,7 @@ var LineSegment2 = require('./LineSegment2.js');
 
 Object.defineProperties(Matrix3.prototype, {
     //  Get
-    'clone': {
+    clone: {
         get:function(){
             return new Matrix3([
                 this.m[0],
@@ -40,14 +40,14 @@ Object.defineProperties(Matrix3.prototype, {
     '_': {
         get: function(){return this.clone;}
     },
-    'determinant': {
+    determinant: {
         get: function(){
             return (this.m[0] * this.cofactor(0)) +
                 (this.m[1] * this.cofactor(1)) +
                 (this.m[2] * this.cofactor(2));
         }
     },
-    'inverse': {
+    inverse: {
         get: function(){
             var det = this.determinant;
             return new Matrix3([
@@ -63,7 +63,7 @@ Object.defineProperties(Matrix3.prototype, {
             ]).transpose;
         }
     },
-    'transpose': {
+    transpose: {
         get: function(){
             return new Matrix3([
                 this.m[0],  this.m[3],  this.m[6],
@@ -73,7 +73,7 @@ Object.defineProperties(Matrix3.prototype, {
         }
     },
     //  Function
-    'applyMatrix3': {
+    applyMatrix3: {
         value: function(other){
             this.m = [
                 (this.m[0] * other.m[0]) + (this.m[1] * other.m[3]) + (this.m[2] * other.m[6]),
@@ -89,33 +89,33 @@ Object.defineProperties(Matrix3.prototype, {
             return this;
         }
     },
-    'transformVector2': {
+    transformVector2: {
         value: function(vector){
             return new Vector2((this.m[0] * vector.x) + (this.m[1] * vector.y) + this.m[2],(this.m[3] * vector.x) + (this.m[4] * vector.y) + this.m[5]);
         }
     },
-    'transformLineSegment2': {
+    transformLineSegment2: {
         value: function(segment){
             return new LineSegment2(this.transformVector2(segment.a), this.transformVector2(segment.b));
         }
     },
-    'rotateVector2': {
+    rotateVector2: {
         value: function(vector){
             return new Vector2((this.m[0] * vector.x) + (this.m[1] * vector.y),(this.m[3] * vector.x) + (this.m[4] * vector.y));
         }
     },
-    'getAtCoord': {
+    getAtCoord: {
         value: function(coord){
             return this.m[Matrix3.indexFromCoord(coord)];
         }
     },
-    'setAtCoord': {
+    setAtCoord: {
         value: function(coord, value){
             this.m[Matrix3.indexFromCoord(coord)] = value;
             return this;
         }
     },
-    'cofactor': {
+    cofactor: {
         value: function(index){
             var coord = Matrix3.coordFromIndex(index);
             var xs = [0, 1, 2];
@@ -132,25 +132,25 @@ Object.defineProperties(Matrix3.prototype, {
             return ((coord.x + coord.y) % 2) === 0 ? det : -det;
         }
     },
-    'scale': {
+    scale: {
         value:function(factor){
             this.applyMatrix3(Matrix3.scale(factor));
             return this;
         }
     },
-    'translate': {
+    translate: {
         value:function(vector){
             this.applyMatrix3(Matrix3.translation(vector));
             return this;
         }
     },
-    'rotate': {
+    rotate: {
         value:function(angle){
             this.applyMatrix3(Matrix3.rotation(angle));
             return this;
         }
     },
-    'shear': {
+    shear: {
         value:function(factor){
             this.applyMatrix3(Matrix3.shear(factor));
             return this;
@@ -159,24 +159,24 @@ Object.defineProperties(Matrix3.prototype, {
 });
 
 Object.defineProperties(Matrix3, {
-    'identity': {
+    identity: {
         get: function(){
             return new Matrix3();
         }
     },
-    'coordFromIndex': {
+    coordFromIndex: {
         value: function(index){
             var col = index % 3;
             var row = (index - col) / 3.0;
             return new Vector2(col, row);
         }
     },
-    'indexFromCoord': {
+    indexFromCoord: {
         value: function(coord){
             return coord.x + (coord.y * 3.0);
         }
     },
-    'scale': {
+    scale: {
         value: function(factor){
             return new Matrix3([
                 factor.x, 0, 0,
@@ -185,7 +185,7 @@ Object.defineProperties(Matrix3, {
             ]);
         }
     },
-    'translation': {
+    translation: {
         value: function(vector){
             return new Matrix3([
                 1, 0, vector.x,
@@ -194,7 +194,7 @@ Object.defineProperties(Matrix3, {
             ]);
         }
     },
-    'rotation': {
+    rotation: {
         value: function(angle){
             return new Matrix3([
                 Math.cos(angle), -Math.sin(angle), 0,
@@ -203,7 +203,7 @@ Object.defineProperties(Matrix3, {
             ]);
         }
     },
-    'shear': {
+    shear: {
         value: function(factor){
             return new Matrix3([
                 Math.cos(factor.y), -Math.sin(factor.x), 0,

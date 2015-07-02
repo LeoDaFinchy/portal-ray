@@ -19,12 +19,12 @@ var Vector2 = require('./Vector2.js').Vector2;
 
 Object.defineProperties(Matrix2.prototype, {
     //  Get
-    'determinant': {
+    determinant: {
         get: function(){
             return (this.m[0] * this.m[3]) - (this.m[1] * this.m[2]);
         }
     },
-    'transpose': {
+    transpose: {
         get: function(){
             return new Matrix2([
                 this.m[0],
@@ -34,7 +34,7 @@ Object.defineProperties(Matrix2.prototype, {
             ]);
         }
     },
-    'inverse': {
+    inverse: {
         get: function(){
             return new Matrix2([
                 this.m[0],
@@ -45,7 +45,7 @@ Object.defineProperties(Matrix2.prototype, {
         }
     },
     //  Function
-    'applyMatrix2': {
+    applyMatrix2: {
         value: function(other){
             this.m = [
                 (this.m[0] * other.m[0]) + (this.m[1] * other.m[2]),
@@ -56,12 +56,12 @@ Object.defineProperties(Matrix2.prototype, {
             return this;
         }
     },
-    'getAtCoord': {
+    getAtCoord: {
         value: function(coord){
             return this.m[Matrix3.indexFromCoord(coord)];
         }
     },
-    'setAtCoord': {
+    setAtCoord: {
         value: function(coord, value){
             this.m[Matrix3.indexFromCoord(coord)] = value;
             return this;
@@ -70,14 +70,14 @@ Object.defineProperties(Matrix2.prototype, {
 });
 
 Object.defineProperties(Matrix2, {
-    'coordFromIndex': {
+    coordFromIndex: {
         value: function(index){
             var col = index % 2;
             var row = (index - col) / 2.0;
             return new Vector2(col, row);
         }
     },
-    'indexFromCoord': {
+    indexFromCoord: {
         value: function(coord){
             return coord.x + (coord.y * 2.0);
         }

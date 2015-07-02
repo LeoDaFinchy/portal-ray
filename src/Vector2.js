@@ -7,44 +7,44 @@ exports['Vector2'] = Vector2;
 
 Object.defineProperties(Vector2.prototype, {
     //  Get
-    'length': {
+    length: {
         get: function()
         {
             return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
         }
     },
-    'clone': {
+    clone: {
         get: function()
         {
             return new Vector2(this.x, this.y);
         }
     },
-    '_': {
+    _: {
         get: function()
         {
             return this.clone;
         }
     },
-    'tangent': {
+    tangent: {
         get: function()
         {
             return this.clone.divideByScalar(this.length);
         }
     },
-    'normal': {
+    normal: {
         get: function()
         {
             return new Vector2(-this.y, this.x).tangent;
         }
     },
-    'reciprocal': {
+    reciprocal: {
         get: function()
         {
             return Vector2.one.divideByVector2(this);
         }
     },
     //  Function
-    'add': {
+    add: {
         value: function(other)
         {
             this.x = this.x + other.x;
@@ -52,7 +52,7 @@ Object.defineProperties(Vector2.prototype, {
             return this;
         }
     },
-    'subtract': {
+    subtract: {
         value: function(other)
         {
             this.x = this.x - other.x;
@@ -60,7 +60,7 @@ Object.defineProperties(Vector2.prototype, {
             return this;
         }
     },
-    'multiplyByScalar': {
+    multiplyByScalar: {
         value: function(scalar)
         {
             this.x = this.x * scalar;
@@ -68,7 +68,7 @@ Object.defineProperties(Vector2.prototype, {
             return this;
         }
     },
-    'multiplyByVector2': {
+    multiplyByVector2: {
         value: function(other)
         {
             this.x = this.x * other.x;
@@ -76,7 +76,7 @@ Object.defineProperties(Vector2.prototype, {
             return this;
         }
     },
-    'divideByScalar': {
+    divideByScalar: {
         value: function(scalar)
         {
             this.x = this.x / scalar;
@@ -84,7 +84,7 @@ Object.defineProperties(Vector2.prototype, {
             return this;
         }
     },
-    'divideByVector2': {
+    divideByVector2: {
         value: function(other)
         {
             this.x = this.x / other.x;
@@ -95,33 +95,33 @@ Object.defineProperties(Vector2.prototype, {
 });
 
 Object.defineProperties(Vector2, {
-    'x': {
+    x: {
         get: function(){
             return new Vector2(1, 0);
         }
     },
-    'y': {
+    y: {
         get: function(){
             return new Vector2(0, 1);
         }
     },
-    'zero': {
+    zero: {
         get:function(){
             return new Vector2(0, 0);
         }
     },
-    'one': {
+    one: {
         get:function(){
             return new Vector2(1, 1);
         }
     },
-    'unit': {
+    unit: {
         get: function()
         {
             return this.x;
         }
     },
-    'crossProductMagnitude': {
+    crossProductMagnitude: {
         value: function(a, b)
         {
             return (a.x * b.y) - (a.y * b.x);
