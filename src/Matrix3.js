@@ -18,6 +18,7 @@ exports['Matrix3'] = Matrix3;
 
 var Vector2 = require('./Vector2.js').Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
+var LineSegment2 = require('./LineSegment2.js');
 
 Object.defineProperties(Matrix3.prototype, {
     //  Get
@@ -93,9 +94,9 @@ Object.defineProperties(Matrix3.prototype, {
             return new Vector2((this.m[0] * vector.x) + (this.m[1] * vector.y) + this.m[2],(this.m[3] * vector.x) + (this.m[4] * vector.y) + this.m[5]);
         }
     },
-    'transformBiVector2': {
-        value: function(biVector){
-            return new BiVector2(this.transformVector2(biVector.a), this.transformVector2(biVector.b));
+    'transformLineSegment2': {
+        value: function(segment){
+            return new LineSegment2(this.transformVector2(segment.a), this.transformVector2(segment.b));
         }
     },
     'rotateVector2': {
