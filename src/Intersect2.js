@@ -26,33 +26,38 @@ Object.defineProperties(Intersect2.prototype, {
                 return this;
             }
 
+            var a = this.a.a;
+            var b = this.a.b;
+            var c = this.b.a;
+            var d = this.b.b;
+
             this.x = new Vector2(
                 (
                     (
                         (
-                            ((a.a.x*a.b.y)-(a.a.y*a.b.x)) * (b.a.x-b.b.x)) -
-                            ((a.a.x-a.b.x) * ((b.a.x*b.b.y)-(b.a.y*b.b.x))
+                            ((a.x*b.y)-(a.y*b.x)) * (c.x-d.x)) -
+                            ((a.x-b.x) * ((c.x*d.y)-(c.y*d.x))
                         )
                     )/(
-                        (((a.a.x-a.b.x)*(b.a.y-b.b.y)) - ((a.a.y-a.b.y)*(b.a.x-b.b.x))))
+                        (((a.x-b.x)*(c.y-d.y)) - ((a.y-b.y)*(c.x-d.x))))
                 ),(
                     (
                         (
-                            ((a.a.x*a.b.y)-(a.a.y*a.b.x)) * (b.a.y-b.b.y)) -
-                            ((a.a.y-a.b.y) * ((b.a.x*b.b.y)-(b.a.y*b.b.x))
+                            ((a.x*b.y)-(a.y*b.x)) * (c.y-d.y)) -
+                            ((a.y-b.y) * ((c.x*d.y)-(c.y*d.x))
                         )
                     )/(
-                        (((a.a.x-a.b.x)*(b.a.y-b.b.y)) - ((a.a.y-a.b.y)*(b.a.x-b.b.x)))
+                        (((a.x-b.x)*(c.y-d.y)) - ((a.y-b.y)*(c.x-d.x)))
                     )
                 )
             );
 
-            this.fractionA = a.offset.x > a.offset.y?
-                ((x.x - a.a.x) / a.offset.x):
-                ((x.y - a.a.y) / a.offset.y);
-            this.fractionB = b.offset.x > b.offset.y?
-                ((x.x - b.a.x) / b.offset.x):
-                ((x.y - b.a.y) / b.offset.y);
+            this.fractionA = this.a.offset.x > this.a.offset.y?
+                ((this.x.x - a.x) / this.a.offset.x):
+                ((this.x.y - a.y) / this.a.offset.y);
+            this.fractionB = this.b.offset.x > this.b.offset.y?
+                ((this.x.x - c.x) / this.b.offset.x):
+                ((this.x.y - c.y) / this.b.offset.y);
 
             return this;
         }
