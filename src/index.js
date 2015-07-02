@@ -10,6 +10,7 @@ var HitRegion = require('./HitRegion').HitRegion;
 var Ray = require("./Ray").Ray;
 var Raycast = require("./Raycast").Raycast;
 var LineSegment2 = require("./LineSegment2").LineSegment2;
+var Intersect2 = require("./Intersect2").Intersect2;
 
 
 Vector2.prototype.rotation = function()
