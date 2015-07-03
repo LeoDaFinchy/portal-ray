@@ -67,12 +67,13 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 
     for(var r = 0; r < rays.length; r++)
     {
-        hits.push(rays[r].intersect(lineSegments).reduce(function(first, second){
+        hits.push(rays[r].intersect(lineSegments).filter(function(intersect){intersect.solve(); return intersect.x})/*.reduce(function(first, second){
             return first.fractionA < second.fractionA ? first : second;
-        }));
+        })*/);
     }
+    hits = hits.reduce(function(result, current){return result.concat(current);}, []);
 
-    hits = hits.filter(function(intersect){ return intersect;});
+    // hits = hits.filter(function(intersect){console.warn(intersect); intersect.solve(); return intersect.x;});
     // ports = hits.filter(function(intersect){
     //     return intersect.b.portal && raycast.isHittingFront();
     // }).map(function(raycast){return raycast.portalExitRay();});
@@ -205,8 +206,6 @@ if(window && document)
             raycast = raycasts[i];
 
             context.lineWidth = 0.1;
-
-            raycast.solve();
 
             //incidence
             if(raycast.x)
