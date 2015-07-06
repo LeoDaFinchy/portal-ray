@@ -16,7 +16,7 @@ Object.defineProperties(Intersect2.prototype, {
     solve: {
         value: function(){
 
-            this.angle = Math.asin(Vector2.crossProductMagnitude(this.a, this.b));
+            this.angle = Math.asin(Vector2.crossProductMagnitude(this.a.tangent, this.b.tangent));
 
             if(this.angle === 0)
             {
