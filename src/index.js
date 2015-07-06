@@ -210,20 +210,22 @@ if(window && document)
             //incidence
             if(raycast.x)
             {
-                context.strokeStyle = /*raycast.isHittingFront() ? "#cccc33" :*/ "#cc3333";
+                context.strokeStyle = raycast.angle > 0 ? "#33cc33" : "#cc3333";
                 context.beginPath();
                 context.arc(raycast.x.x, raycast.x.y, 0.2, 0, Math.PI * 2);
                 context.stroke();
 
                 //ray path
                 context.beginPath();
+
+                context.strokeStyle = raycast.fractionA > 0 ? "#3333cc" : "#cc9933";
                 context.moveTo(raycast.a.a.x, raycast.a.a.y);
                 dist = raycast.a.offset._.multiplyByScalar(raycast.fractionA).add(raycast.a.a);
                 context.lineTo(dist.x, dist.y);
                 context.stroke();
 
                 //lineSegment fraction
-                context.strokeStyle = "#33cc33";
+                context.strokeStyle = raycast.fractionB > 0 ? "#3333cc" : "#cc9933";
                 context.beginPath();
                 context.moveTo(raycast.b.a.x, raycast.b.a.y);
                 portion = raycast.b.offset.multiplyByScalar(raycast.fractionB).add(raycast.b.a);
