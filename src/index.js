@@ -67,9 +67,15 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 
     for(var r = 0; r < rays.length; r++)
     {
-        hits.push(rays[r].intersect(lineSegments).filter(function(intersect){intersect.solve(); return intersect.x})/*.reduce(function(first, second){
-            return first.fractionA < second.fractionA ? first : second;
-        })*/);
+        var intersects = rays[r].intersect(lineSegments).filter(function(intersect){intersect.solve(); return intersect.x;});
+        intersects = intersects.filter(function(intersect){return intersect.fractionA > 0;});
+        if(intersects.length > 1)
+        {
+            intersects = intersects.reduce(function(first, second){
+                return first ? first.fractionA < second.fractionA ? first : second : second;
+            });
+        }
+        hits.push(intersects);
     }
     hits = hits.reduce(function(result, current){return result.concat(current);}, []);
 
