@@ -52,10 +52,10 @@ Object.defineProperties(Intersect2.prototype, {
                 )
             );
 
-            this.fractionA = this.a.offset.x > this.a.offset.y?
+            this.fractionA = Math.abs(this.a.offset.x) > Math.abs(this.a.offset.y)?
                 ((this.x.x - a.x) / this.a.offset.x):
                 ((this.x.y - a.y) / this.a.offset.y);
-            this.fractionB = this.b.offset.x > this.b.offset.y?
+            this.fractionB = Math.abs(this.b.offset.x) > Math.abs(this.b.offset.y)?
                 ((this.x.x - c.x) / this.b.offset.x):
                 ((this.x.y - c.y) / this.b.offset.y);
 
