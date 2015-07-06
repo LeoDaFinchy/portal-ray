@@ -69,6 +69,7 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     {
         var intersects = rays[r].intersect(lineSegments).filter(function(intersect){intersect.solve(); return intersect.x;});
         intersects = intersects.filter(function(intersect){return intersect.fractionA > 0;});
+        intersects = intersects.filter(function(intersect){return intersect.fractionB >= 0 && intersect.fractionB <= 1;});
         if(intersects.length > 1)
         {
             intersects = intersects.reduce(function(first, second){
