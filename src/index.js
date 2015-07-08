@@ -13,28 +13,6 @@ var LineSegment2JS = require("./LineSegment2");
 var LineSegment2 = LineSegment2JS.LineSegment2;
 var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 
-
-Vector2.prototype.rotation = function()
-{
-    var angle = Math.atan2(this.y, this.x);
-    return new Matrix2([
-        Math.cos(angle), -Math.sin(angle),
-        Math.sin(angle), Math.cos(angle)]
-    );
-}
-Vector2.prototype.rotate = function(matrix){
-    return matrix.rotateVector2(this);
-}
-Matrix2.prototype.rotateVector2 = function(vector)
-{
-    return new Vector2((vector.x * this.m[0]) + (vector.y * this.m[1]), (vector.x * this.m[2]) + (vector.y * this.m[3]));
-}
-/** TODO Functions
-    We need a function for rotating a Matrix by a Matrix i.e. A x B = M
-    We need a function to find the difference'difference' rotation matrix to get from 
-    one to another aka 'which matrix M satisfiess M x B = A
-**/ 
-
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
     Matrix3.identity,
