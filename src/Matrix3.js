@@ -211,5 +211,15 @@ Object.defineProperties(Matrix3, {
                 0, 0, 1,
             ]);
         }
+    },
+    fromReferencePoints: {
+        value: function(origin, x, y){
+            var ab = x._.subtract(origin);
+            var ac = y._.subtract(origin);
+            return Matrix3.identity
+                .translate(origin)
+                .scale(new Vector2(ab.length, ac.length))
+                .shear(new Vector2(Math.atan2(ab.y, ab.x), Math.atan2(ac.y, ac.x)));
+        }
     }
 });
