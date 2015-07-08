@@ -190,19 +190,6 @@ if(window && document)
             context.moveTo(segment.a.x, segment.a.y);
             context.lineTo(normalPosition.x, normalPosition.y);
             context.stroke();
-
-            //MATRIX
-
-            var A = segment.matrix.transformVector2(Vector2.zero);
-            var B = segment.matrix.transformVector2(Vector2.x);
-            var C = segment.matrix.transformVector2(Vector2.y);
-
-            context.strokeStyle = "#cc3333";
-            context.beginPath();
-            context.moveTo(B.x, B.y);
-            context.lineTo(A.x, A.y);
-            context.lineTo(C.x, C.y);
-            context.stroke();
         }
     };
 

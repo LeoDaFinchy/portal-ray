@@ -28,14 +28,6 @@ Object.defineProperties(LineSegment2.prototype, {
             return this.offset.normal;
         }
     },
-    matrix:{
-        get: function(){
-            return Matrix3.translation(this.a)
-            .rotate(Math.atan2(this.offset.y, this.offset.x))
-            .scale(new Vector2(this.offset.length, 1))
-            ;
-        }
-    },
     intersect:{
         value: function(targets){
             return targets.map(function(value){
