@@ -7,8 +7,6 @@ var Visage = require('./Visage').Visage;
 var Actor = require('./Actor').Actor;
 var Context2 = require('./Context2.js').Context2;
 var HitRegion = require('./HitRegion').HitRegion;
-var Ray = require("./Ray").Ray;
-var Raycast = require("./Raycast").Raycast;
 var Intersect2 = require("./Intersect2").Intersect2;
 
 var LineSegment2JS = require("./LineSegment2");
