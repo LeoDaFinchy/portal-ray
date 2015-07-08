@@ -1,3 +1,5 @@
+var _ = require('underscore')._;
+
 var Vector2 = require('./Vector2.js').Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
 var Matrix3 = require('./Matrix3.js').Matrix3;
@@ -39,32 +41,23 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 {
     if(generations <= 0 || rays.length <= 0){return {rays:[], hits:[]}};
 
-    var hits = [];
+    var hits = _.chain(rays).map(function(ray, i, rays){
 
-    for(var r = 0; r < rays.length; r++)
-    {
-        var intersects = rays[r].intersect(lineSegments).filter(function(intersect){intersect.solve(); return intersect.x;});
-        intersects = intersects.filter(function(intersect){return intersect.fractionA > 0;});
-        intersects = intersects.filter(function(intersect){return intersect.fractionB >= 0 && intersect.fractionB <= 1;});
-        if(intersects.length > 1)
-        {
-            intersects = intersects.reduce(function(first, second){
-                return first ? first.fractionA < second.fractionA ? first : second : second;
-            });
-        }
-        hits.push(intersects);
-    }
-    hits = hits.reduce(function(result, current){return result.concat(current);}, []);
+        return _.chain(ray.intersect(lineSegments))
+            .each(function(x){x.solve();})                                          //  Prepare
+            .filter(function(x){return x.x;})                                       //  Get rid of non-intersects (parallels)
+            .filter(function(x){return x.fractionA > 0;})                           //  Get rid of intersects in the wrong direction
+            .filter(function(x){return x.fractionB >= 0 && x.fractionB <= 1;})      //  Get rid of intersects that miss the segment
+            .sortBy('fractionA')
+            .first()
+            .value();
 
-    // hits = hits.filter(function(intersect){console.warn(intersect); intersect.solve(); return intersect.x;});
-    // ports = hits.filter(function(intersect){
-    //     return intersect.b.portal && raycast.isHittingFront();
-    // }).map(function(raycast){return raycast.portalExitRay();});
-    // result = castRaysAgainstPortals(ports, lineSegments, generations - 1);
-    // rays = rays.concat(result.rays);
-    // hits = hits.concat(result.hits);
+    })
+        .compact()
+        .value();
+
     return {rays:rays, hits:hits};
-}
+};
 
 var lineSegments = new LineSegment2Collection();
 lineSegments.push(
@@ -76,6 +69,8 @@ lineSegments.push(
 
 var rays = new LineSegment2Collection();
 rays.push(new LineSegment2(Vector2.zero, new Vector2(-5.0, 3.0)));
+rays.push(new LineSegment2(new Vector2(0.0, 5.0), new Vector2(-5.0, 3.0)));
+rays.push(new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0)));
 
 Portal(lineSegments[0], lineSegments[1]);
 
