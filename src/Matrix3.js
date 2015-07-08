@@ -214,6 +214,8 @@ Object.defineProperties(Matrix3, {
     },
     fromReferencePoints: {
         value: function(origin, x, y){
+            x = x ? x : Vector2.x;
+            y = y ? y : Vector2.y;
             var ab = x._.subtract(origin);
             var ac = y._.subtract(origin);
             return Matrix3.identity
