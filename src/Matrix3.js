@@ -18,7 +18,7 @@ exports['Matrix3'] = Matrix3;
 
 var Vector2 = require('./Vector2.js').Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
-var LineSegment2 = require('./LineSegment2.js');
+var LineSegment2 = require('./LineSegment2.js').LineSegment2;
 
 Object.defineProperties(Matrix3.prototype, {
     //  Get
