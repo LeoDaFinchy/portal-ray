@@ -1,0 +1,27 @@
+{
+  "name": "portal-ray",
+  "version": "0.0.0",
+  "description": "An experiment to develop a method for casting 2D view 'cones' through portals",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/leodafinchy/portal-ray"
+  },
+  "keywords": [
+    "portal",
+    "ray",
+    "beam",
+    "cast",
+    "collision"
+  ],
+  "author": "Adam Finch",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/leodafinchy/portal-ray/issues"
+  }
+}
