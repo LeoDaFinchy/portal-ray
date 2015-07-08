@@ -64,7 +64,8 @@ lineSegments.push(
     new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
-    hexLineSegment
+    hexLineSegment,
+    Matrix3.fromReferencePoints(hexLineSegment.a, hexLineSegment.b, hexLineSegment.normal.add(hexLineSegment.a)).transformLineSegment2(new LineSegment2(Vector2.zero, Vector2.y))
 );
 
 var rays = new LineSegment2Collection();
