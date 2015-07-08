@@ -66,19 +66,6 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     return {rays:rays, hits:hits};
 }
 
-// var lineSegments = [
-//     // new LineSegment(new Vector2(-1.0, 7.0), new Vector2(-2.0, -12.0)),
-//     new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
-//     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
-//     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
-//     hexLineSegment
-// ];
-
-// var rays = [
-//     // new Ray(new Vector2(0.0, 1.0)),
-//     new Ray(new Vector2(-5.0, 3.0))
-// ];
-
 var lineSegments = new LineSegment2Collection();
 lineSegments.push(
     new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
