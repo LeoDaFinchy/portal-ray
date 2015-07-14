@@ -3,12 +3,6 @@ var _ = require('underscore')._;
 var Vector2 = require('./Vector2.js').Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
 var Matrix3 = require('./Matrix3.js').Matrix3;
-var Transform2 = require('./Transform2.js').Transform2;
-var DebugVisage = require('./DebugVisage.js').DebugVisage;
-var Visage = require('./Visage').Visage;
-var Actor = require('./Actor').Actor;
-var Context2 = require('./Context2.js').Context2;
-var HitRegion = require('./HitRegion').HitRegion;
 var Intersect2 = require("./Intersect2").Intersect2;
 
 var LineSegment2JS = require("./LineSegment2");
@@ -123,8 +117,6 @@ if(window && document)
         drawRaycasts(context, toDraw.raycasts);
 
         // root.drawEdit(context, mouse);
-
-        var con = new Context2(context);
 
         window.setTimeout(draw, 10);
     };
