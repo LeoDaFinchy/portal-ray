@@ -9,6 +9,8 @@ var LineSegment2JS = require("./LineSegment2");
 var LineSegment2 = LineSegment2JS.LineSegment2;
 var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 
+var Polygon2 = require('./Polygon2').Polygon2;
+
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
     Matrix3.identity,
@@ -30,6 +32,12 @@ var Portal = function(a, b){
     a.portal = b;
     b.portal = a;
 }
+
+var hex = new Polygon2(
+    _.map(hexMatrices, function(matrix){
+        return matrix.transformVector2(Vector2.unit);
+    })
+);
 
 var castRaysAgainstPortals = function(rays, lineSegments, generations)
 {
@@ -57,10 +65,14 @@ var lineSegments = new LineSegment2Collection();
 lineSegments.push(
     new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
-    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0)),
-    hexLineSegment,
-    Matrix3.fromReferencePoints(hexLineSegment.a, hexLineSegment.b, hexLineSegment.normal.add(hexLineSegment.a)).transformLineSegment2(new LineSegment2(Vector2.zero, Vector2.y))
+    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0))
+    // hexLineSegment,
+    // Matrix3.fromReferencePoints(hexLineSegment.a, hexLineSegment.b, hexLineSegment.normal.add(hexLineSegment.a)).transformLineSegment2(new LineSegment2(Vector2.zero, Vector2.y))
 );
+
+lineSegments.push(hex.edges);
+
+lineSegments = _.flatten(lineSegments);
 
 var rays = new LineSegment2Collection();
 rays.push(new LineSegment2(Vector2.zero, new Vector2(-5.0, 3.0)));
