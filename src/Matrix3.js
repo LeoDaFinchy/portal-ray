@@ -220,8 +220,8 @@ Object.defineProperties(Matrix3, {
             var ac = y._.subtract(origin);
             return Matrix3.identity
                 .translate(origin)
+                .shear(new Vector2(Math.atan2(-ac.x, ac.y), Math.atan2(ab.y, ab.x)))
                 .scale(new Vector2(ab.length, ac.length))
-                .shear(new Vector2(Math.atan2(ab.y, ab.x), Math.atan2(ac.y, ac.x)));
         }
     }
 });
