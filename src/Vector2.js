@@ -46,7 +46,7 @@ Object.defineProperties(Vector2.prototype, {
     angle: {
         get: function()
         {
-            return atan2(this.y, this.x);
+            return Math.atan2(this.y, this.x);
         }
     },
     //  Function
