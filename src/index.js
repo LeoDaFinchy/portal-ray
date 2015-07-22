@@ -183,22 +183,14 @@ if(window && document)
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
 
-        drawLineSegments(context, toDraw.lineSegments);
-        drawRays(context, toDraw.rays);
+        _.map(toDraw.lineSegments, function(x){LineSegmentVisualiser.draw(x, context);});
+        _.map(toDraw.rays, function(x){RayVisualiser.draw(x, context);});
+
         drawRaycasts(context, toDraw.raycasts);
 
         // root.drawEdit(context, mouse);
 
         window.setTimeout(draw, 10);
-    };
-
-    function drawLineSegments(context, segments)
-    {
-        for(var i = 0; i < segments.length; i++)
-        {
-            segment = segments[i];
-            LineSegmentVisualiser.draw(segment, context);
-        }
     };
 
     function drawRaycasts(context, raycasts)
@@ -234,15 +226,6 @@ if(window && document)
                 context.lineTo(portion.x, portion.y);
                 context.stroke();
             }
-        }
-    };
-
-    function drawRays(context, rays)
-    {
-        for(var i = 0; i < rays.length; i++)
-        {
-            ray = rays[i];
-            RayVisualiser.draw(ray, context);
         }
     };
 
