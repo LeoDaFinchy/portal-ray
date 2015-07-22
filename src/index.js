@@ -39,6 +39,8 @@ var hex = new Polygon2(
     })
 );
 
+var hex = Polygon2.regular(3, 0.5, 1);
+
 var castRaysAgainstPortals = function(rays, lineSegments, generations)
 {
     if(generations <= 0 || rays.length <= 0){return {rays:[], hits:[]}};
@@ -86,25 +88,22 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     return {rays:rays, hits:hits};
 };
 
-var lineSegments = new LineSegment2Collection();
-lineSegments.push(
-    new LineSegment2(new Vector2(-11.0, 7.0), new Vector2(-10.0, -12.0)),
-    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-9.0, 7.0)),
+var lineSegments = [
+    new LineSegment2(new Vector2(-10.0, -12.0), new Vector2(-10.2, 7.0)),
+    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-8.05, 7.0)),
+    new LineSegment2(new Vector2(7.95, 7.0), new Vector2(8.0, -12.0)),
     new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0))
-    // hexLineSegment,
-    // Matrix3.fromReferencePoints(hexLineSegment.a, hexLineSegment.b, hexLineSegment.normal.add(hexLineSegment.a)).transformLineSegment2(new LineSegment2(Vector2.zero, Vector2.y))
-);
+];
 
-lineSegments.push(hex.edges);
+lineSegments = _.union(lineSegments, hex.edges);
 
-lineSegments = _.flatten(lineSegments);
+var rays = [
+    new LineSegment2(Vector2.zero, new Vector2(-5.0, 3.0)),
+    new LineSegment2(new Vector2(0.0, 5.0), new Vector2(-5.0, 3.0)),
+    new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0))
+];
 
-var rays = new LineSegment2Collection();
-rays.push(new LineSegment2(Vector2.zero, new Vector2(-5.0, 3.0)));
-rays.push(new LineSegment2(new Vector2(0.0, 5.0), new Vector2(-5.0, 3.0)));
-rays.push(new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0)));
-
-Portal(lineSegments[0], lineSegments[1]);
+Portal(lineSegments[1], lineSegments[2]);
 
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
@@ -139,7 +138,7 @@ if(window && document)
         {
             rays[x].b = graphSpaceMouse;
         }
-        portal = castRaysAgainstPortals(rays, lineSegments, 10);
+        portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
         toDraw.raycasts = portal.hits;
     };
