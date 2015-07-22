@@ -33,6 +33,19 @@ var LineSegmentVisualiser = new Visualiser2([
     )
 ]);
 
+var RayVisualiser = new Visualiser2([
+    Visualiser2.line(
+        Visualiser2.key('a'),
+        Visualiser2.key('b'),
+        {lineColour: "#ff3333", lineWidth: 0.3}
+    ),
+    Visualiser2.circle(
+        Visualiser2.key('a'),
+        Visualiser2.value(0.3),
+        {lineColour: "#ff3333", lineWidth: 0.1, fillColour: "#cc0000"}
+    )
+]);
+
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
     Matrix3.identity,
@@ -228,16 +241,8 @@ if(window && document)
     {
         for(var i = 0; i < rays.length; i++)
         {
-            context.lineWidth = 0.2;
-            context.strokeStyle = "#33cccc";
-
             ray = rays[i];
-            context.beginPath();
-            context.arc(ray.a.x, ray.a.y, 0.2, 0, Math.PI * 2);
-            context.moveTo(ray.a.x, ray.a.y);
-            context.lineTo(ray.b.x, ray.b.y);
-
-            context.stroke();
+            RayVisualiser.draw(ray, context);
         }
     };
 
