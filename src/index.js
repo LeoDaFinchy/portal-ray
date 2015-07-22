@@ -58,6 +58,31 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
         .compact()
         .value();
 
+    var portalRays = _.chain(hits)
+    .filter(function(x){
+        return x.b.portal;
+    })
+    .map(function(x){
+        var front = x.b;
+        var back = x.b.portal;
+        var matFront = Matrix3.fromReferencePoints(front.a, front.b, front.normal.add(front.a));
+        var matBack = Matrix3.fromReferencePoints(back.a, back.b, back.normal.add(back.a));
+        var matWarp = Matrix3.identity
+            .applyMatrix3(matBack)
+            .applyMatrix3(Matrix3.scale(new Vector2(1.0, -1.0)))
+            .applyMatrix3(matFront.inverse);
+
+        var exitDir = matWarp.transformVector2(x.a.tangent.add(x.x));
+        var exitPoint = matWarp.transformVector2(x.x._).subtract(exitDir._.multiplyByScalar(0.00001));
+        return new LineSegment2(exitPoint, exitDir);
+    })
+    .value();
+
+    var result = castRaysAgainstPortals(portalRays, lineSegments, generations - 1);
+
+    rays = _.union(rays, result.rays);
+    hits = _.union(hits, result.hits);
+
     return {rays:rays, hits:hits};
 };
 
