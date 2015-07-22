@@ -11,6 +11,22 @@ var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 
 var Polygon2 = require('./Polygon2').Polygon2;
 
+var Visualiser2 = require('./Visualiser2').Visualiser2;
+
+
+
+var LineSegmentVisualiser = new Visualiser2([
+    Visualiser2.circle(
+        Visualiser2.key('a'),
+        Visualiser2.value(0.2),
+        {lineColour: "#ffcc33", lineWidth: 0.2}
+    ),
+    Visualiser2.circle(
+        Visualiser2.key('b'),
+        Visualiser2.value(0.2),
+        {lineColour: "#33ccff", lineWidth: 0.2})
+]);
+
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
     Matrix3.identity,
@@ -161,22 +177,8 @@ if(window && document)
     {
         for(var i = 0; i < segments.length; i++)
         {
-            context.lineWidth = 0.3;
-            context.strokeStyle = "#3333cc";
-
             segment = segments[i];
-            context.beginPath();
-            context.moveTo(segment.a.x, segment.a.y);
-            context.lineTo(segment.b.x, segment.b.y);
-            context.stroke();
-
-            var normalPosition = segment.a._.add(segment.normal);
-            context.strokeStyle = "#33cc33";
-            context.lineWidth = 0.1;
-            context.beginPath();
-            context.moveTo(segment.a.x, segment.a.y);
-            context.lineTo(normalPosition.x, normalPosition.y);
-            context.stroke();
+            LineSegmentVisualiser.draw(segment, context);
         }
     };
 
