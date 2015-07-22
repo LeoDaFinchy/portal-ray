@@ -16,6 +16,11 @@ var Visualiser2 = require('./Visualiser2').Visualiser2;
 
 
 var LineSegmentVisualiser = new Visualiser2([
+    Visualiser2.line(
+        Visualiser2.key('a'),
+        Visualiser2.key('b'),
+        {lineColour: "#333333", lineWidth: 0.2}
+    ),
     Visualiser2.circle(
         Visualiser2.key('a'),
         Visualiser2.value(0.2),
@@ -24,7 +29,8 @@ var LineSegmentVisualiser = new Visualiser2([
     Visualiser2.circle(
         Visualiser2.key('b'),
         Visualiser2.value(0.2),
-        {lineColour: "#33ccff", lineWidth: 0.2})
+        {lineColour: "#33ccff", lineWidth: 0.2}
+    )
 ]);
 
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
