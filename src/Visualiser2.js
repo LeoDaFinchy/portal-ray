@@ -54,6 +54,22 @@ Object.defineProperties(Visualiser2, {
             context.stroke();
         }
     },
+    drawLine: {
+        value: function(subject, context, kwargs)
+        {
+            var posA = this.fetch(subject, kwargs.positionA);
+            var posB = this.fetch(subject, kwargs.positionB);
+
+            context.strokeStyle = kwargs.lineColour;
+            context.fillStyle = kwargs.fillColour;
+            context.lineWidth = kwargs.lineWidth;
+
+            context.beginPath();
+            context.moveTo(posA.x, posA.y);
+            context.lineTo(posB.x, posB.y);
+            context.stroke();
+        }
+    },
     circle: {
         value: function(position, radius, styleKWArgs)
         {
@@ -62,6 +78,21 @@ Object.defineProperties(Visualiser2, {
                 kwargs: {
                     position: position ? position : Visualiser2.value(Vector2.zero),
                     radius: radius ? radius : Visualiser2.value(5),
+                    lineWidth: styleKWArgs.lineWidth || 1,
+                    lineColour: styleKWArgs.lineColour || '#000000',
+                    fillColour: styleKWArgs.fillColour || '#ffffff'
+                }
+            };
+        }
+    },
+    line: {
+        value: function(positionA, positionB, styleKWArgs)
+        {
+            return {
+                name: "drawLine",
+                kwargs: {
+                    positionA: positionA ? positionA : Visualiser2.value(Vector2.zero),
+                    positionB: positionB ? positionB : Visualiser2.value(Vector2.unit),
                     lineWidth: styleKWArgs.lineWidth || 1,
                     lineColour: styleKWArgs.lineColour || '#000000',
                     fillColour: styleKWArgs.fillColour || '#ffffff'
