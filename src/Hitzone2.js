@@ -3,6 +3,7 @@ var _ = require('underscore')._;
 var Hitzone2 = function(visualiser){
     this.visualiser = visualiser || new Visualiser2();
     this.downListeners = [];
+    this.dragListeners = [];
 };
 
 exports['Hitzone2'] = Hitzone2;
@@ -22,6 +23,11 @@ Object.defineProperties(Hitzone2.prototype,{
                 {
                     _.each(this.downListeners, function(x){x(event);});
                 }
+
+                if((event.type === "mousemove" && event.buttons & 1) || event.type === "touchmove")
+                {
+                    _.each(this.dragListeners, function(x){x(event);});
+                }
             }
         }
     },
@@ -29,6 +35,12 @@ Object.defineProperties(Hitzone2.prototype,{
         value: function(listener)
         {
             this.downListeners.push(listener);
+        }
+    },
+    onDrag: {
+        value: function(listener)
+        {
+            this.dragListeners.push(listener);
         }
     }
 });
