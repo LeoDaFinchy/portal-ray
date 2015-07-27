@@ -162,6 +162,8 @@ Portal(lineSegments[1], lineSegments[2]);
 
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
+hitzoneA.onDrag(function(e){lineSegments[1].a.x += e.movementX;});
+
 if(window && document)
 {
     var CanvasSize = new Vector2(800, 600);
@@ -181,6 +183,7 @@ if(window && document)
         hitContext.translate(GraphSize.x / 2.0, -GraphSize.y / 2.0);
 
         canvas.onmousemove = mouseMoved;
+        canvas.onmousedown = down;
         canvas.oncontextmenu = function(){return false;}
 
         window.PortalRay = {
@@ -206,6 +209,11 @@ if(window && document)
         hitzoneA.checkHit(window.PortalRay.hitContext, e);
         hitzoneB.checkHit(window.PortalRay.hitContext, e);
     };
+
+    function down(e){
+        hitzoneA.checkHit(window.PortalRay.hitContext, e);
+        hitzoneB.checkHit(window.PortalRay.hitContext, e);
+    }
 
     function draw(){
         context = window.PortalRay.context;
