@@ -12,7 +12,7 @@ var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 var Polygon2 = require('./Polygon2').Polygon2;
 
 var Visualiser2 = require('./Visualiser2').Visualiser2;
-
+var Hitzone2 = require('./Hitzone2').Hitzone2;
 
 
 var LineSegmentVisualiser = new Visualiser2([
@@ -75,6 +75,26 @@ var hex = new Polygon2(
 );
 
 var hex = Polygon2.regular(3, 0.5, 1);
+
+var hitzoneA = new Hitzone2(new Visualiser2([
+    Visualiser2.circle(
+        Visualiser2.value(new Vector2(5, 0)),
+        Visualiser2.value(1.0),
+        {
+            lineWidth: 0.1
+        }
+    )
+]));
+
+var hitzoneB = new Hitzone2(new Visualiser2([
+    Visualiser2.circle(
+        Visualiser2.value(new Vector2(0, 5)),
+        Visualiser2.value(1.0),
+        {
+            lineWidth: 0.1
+        }
+    )
+]));
 
 var castRaysAgainstPortals = function(rays, lineSegments, generations)
 {
@@ -155,12 +175,18 @@ if(window && document)
         context.scale(Scaling.x, Scaling.y);
         context.translate(GraphSize.x / 2.0, -GraphSize.y / 2.0);
 
+        hitCanvas = document.getElementById('hitCanvas');
+        hitContext = hitCanvas.getContext("2d");
+        hitContext.scale(Scaling.x, Scaling.y);
+        hitContext.translate(GraphSize.x / 2.0, -GraphSize.y / 2.0);
+
         canvas.onmousemove = mouseMoved;
         canvas.oncontextmenu = function(){return false;}
 
         window.PortalRay = {
             canvas: canvas,
-            context: context
+            context: context,
+            hitContext: hitContext
         }
 
         window.setTimeout(draw, 100);
@@ -176,6 +202,9 @@ if(window && document)
         portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
         toDraw.raycasts = portal.hits;
+
+        hitzoneA.checkHit(window.PortalRay.hitContext, e);
+        hitzoneB.checkHit(window.PortalRay.hitContext, e);
     };
 
     function draw(){
