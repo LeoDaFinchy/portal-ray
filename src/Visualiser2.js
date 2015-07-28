@@ -10,10 +10,21 @@ var Vector2 = require('./Vector2').Vector2;
 
 Object.defineProperties(Visualiser2.prototype,{
     draw: {
-        value: function (subject, context) {
-            _.each(this.commands, function(command){
-                Visualiser2[command.name](subject, context, command.kwargs);
-            });
+        value: function (subject, context, hitPoint) {
+            if(hitPoint)
+            {
+                var hits = _.map(this.commands, function(command){
+                    Visualiser2[command.name](subject, context, command.kwargs);
+                    return context.isPointInPath(hitPoint.x, hitPoint.y);
+                });
+                return _.some(hits);
+            }
+            else
+            {
+                _.each(this.commands, function(command){
+                    Visualiser2[command.name](subject, context, command.kwargs);
+                });
+            }
         }
     }
 });

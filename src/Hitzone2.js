@@ -1,7 +1,8 @@
 var _ = require('underscore')._;
 
-var Hitzone2 = function(visualiser){
+var Hitzone2 = function(visualiser, visualiserTarget){
     this.visualiser = visualiser || new Visualiser2();
+    this.visualiserTarget = visualiserTarget;
     this.downListeners = [];
     this.dragListeners = [];
 };
@@ -15,8 +16,7 @@ Object.defineProperties(Hitzone2.prototype,{
         value: function (context, event) {
             var coords = new Vector2(event.clientX, event.clientY)
                 .subtract(new Vector2(event.target.offsetLeft, event.target.offsetTop));
-            this.visualiser.draw(null, context);
-            var hit = context.isPointInPath(coords.x, coords.y);
+            var hit = this.visualiser.draw(this.visualiserTarget, context, coords);
 
             if(hit){
                 if(event.type === "mousedown" || event.type === "touchstart")
