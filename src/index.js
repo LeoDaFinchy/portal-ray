@@ -51,6 +51,19 @@ var RayVisualiser = new Visualiser2([
     )
 ]);
 
+var PortalVisualiser = new Visualiser2([
+    Visualiser2.line(
+        Visualiser2.key('aa'),
+        Visualiser2.key('bb'),
+        {lineColour: "#3333cc", lineWidth: 0.3}
+    ),
+    Visualiser2.line(
+        Visualiser2.key('ab'),
+        Visualiser2.key('ba'),
+        {lineColour: "#3333cc", lineWidth: 0.3}
+    )
+]);
+
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
     Matrix3.identity,
@@ -250,6 +263,20 @@ if(window && document)
         _.map(toDraw.rays, function(x){RayVisualiser.draw(x, context);});
 
         drawRaycasts(context, toDraw.raycasts);
+
+        PortalVisualiser.draw({
+            aa: lineSegments[0].a,
+            ab: lineSegments[0].b,
+            ba: lineSegments[0].portal.a,
+            bb: lineSegments[0].portal.b
+        }, context);
+
+        PortalVisualiser.draw({
+            aa: lineSegments[2].a,
+            ab: lineSegments[2].b,
+            ba: lineSegments[2].portal.a,
+            bb: lineSegments[2].portal.b
+        }, context);
 
         // root.drawEdit(context, mouse);
 
