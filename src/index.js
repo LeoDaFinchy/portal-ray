@@ -76,26 +76,6 @@ var hex = new Polygon2(
 
 var hex = Polygon2.regular(3, 0.5, 1);
 
-var hitzoneA = new Hitzone2(new Visualiser2([
-    Visualiser2.circle(
-        Visualiser2.value(new Vector2(5, 0)),
-        Visualiser2.value(1.0),
-        {
-            lineWidth: 0.1
-        }
-    )
-]));
-
-var hitzoneB = new Hitzone2(new Visualiser2([
-    Visualiser2.circle(
-        Visualiser2.value(new Vector2(0, 5)),
-        Visualiser2.value(1.0),
-        {
-            lineWidth: 0.1
-        }
-    )
-]));
-
 var castRaysAgainstPortals = function(rays, lineSegments, generations)
 {
     if(generations <= 0 || rays.length <= 0){return {rays:[], hits:[]}};
@@ -162,13 +142,48 @@ Portal(lineSegments[1], lineSegments[2]);
 
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
-hitzoneA.onDrag(function(e){lineSegments[1].a.x += e.movementX;});
-
 if(window && document)
 {
     var CanvasSize = new Vector2(800, 600);
     var GraphSize = new Vector2(40, 30);
-    var Scaling = new Vector2(CanvasSize.x / GraphSize.x, -CanvasSize.y / GraphSize.y)
+    var Scaling = new Vector2(CanvasSize.x / GraphSize.x, -CanvasSize.y / GraphSize.y);
+
+    var dragVector = function(e, vector){
+        delta = new Vector2(e.movementX, e.movementY)
+            .divideByVector2(Scaling);
+        vector.add(delta);
+    }
+
+    var lineSegmentAHitzoneVisualiser = new Visualiser2([
+        Visualiser2.circle(
+            Visualiser2.key('a'),
+            Visualiser2.value(1.0),
+            {
+                lineWidth: 0.1
+            }
+        ),
+    ]);
+
+    var lineSegmentBHitzoneVisualiser = new Visualiser2([
+        Visualiser2.circle(
+            Visualiser2.key('b'),
+            Visualiser2.value(1.0),
+            {
+                lineWidth: 0.1
+            }
+        ),
+    ]);
+
+    var hitzones = _.chain(lineSegments)
+        .map(function(x){
+            var a = new Hitzone2(lineSegmentAHitzoneVisualiser, x);
+            var b = new Hitzone2(lineSegmentBHitzoneVisualiser, x);
+            a.onDrag(_.partial(dragVector, _, x.a));
+            b.onDrag(_.partial(dragVector, _, x.b));
+            return [a,b];
+        })
+        .flatten()
+        .value();
 
     window.onload = function(){
         window.PortalRay = {};
@@ -206,16 +221,16 @@ if(window && document)
         toDraw.rays = portal.rays;
         toDraw.raycasts = portal.hits;
 
-        hitzoneA.checkHit(window.PortalRay.hitContext, e);
-        hitzoneB.checkHit(window.PortalRay.hitContext, e);
+        _.each(hitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
     };
 
     function down(e){
-        hitzoneA.checkHit(window.PortalRay.hitContext, e);
-        hitzoneB.checkHit(window.PortalRay.hitContext, e);
+        _.each(hitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
     }
 
     function draw(){
+        window.PortalRay.hitContext.clearRect(-1000,-1000, 2000, 2000);
+
         context = window.PortalRay.context;
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
