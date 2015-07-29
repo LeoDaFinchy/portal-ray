@@ -21,6 +21,11 @@ var LineSegmentVisualiser = new Visualiser2([
         Visualiser2.key('b'),
         {lineColour: "#333333", lineWidth: 0.2}
     ),
+    Visualiser2.line(
+        Visualiser2.key('a'),
+        Visualiser2.key('normalPoint'),
+        {lineColour: "#333333", lineWidth: 0.2}
+    ),
     Visualiser2.circle(
         Visualiser2.key('a'),
         Visualiser2.value(0.2),
@@ -37,12 +42,12 @@ var RayVisualiser = new Visualiser2([
     Visualiser2.line(
         Visualiser2.key('a'),
         Visualiser2.key('b'),
-        {lineColour: "#ff3333", lineWidth: 0.3}
+        {lineColour: "#cccc00", lineWidth: 0.3}
     ),
     Visualiser2.circle(
         Visualiser2.key('a'),
         Visualiser2.value(0.3),
-        {lineColour: "#ff3333", lineWidth: 0.1, fillColour: "#cc0000"}
+        {lineColour: "#cccc00", lineWidth: 0.1, fillColour: "#ffff33"}
     )
 ]);
 
