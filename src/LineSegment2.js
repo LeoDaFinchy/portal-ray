@@ -35,6 +35,11 @@ Object.defineProperties(LineSegment2.prototype, {
             }, this);
         }
     },
+    normalPoint:{
+        get: function(){
+            return this.a._.add(this.normal);
+        }
+    }
 });
 
 Object.defineProperties(LineSegment2Collection.prototype, {
