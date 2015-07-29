@@ -129,10 +129,10 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 };
 
 var lineSegments = [
-    new LineSegment2(new Vector2(-10.0, -12.0), new Vector2(-10.2, 7.0)),
-    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-8.05, 7.0)),
-    new LineSegment2(new Vector2(7.95, 7.0), new Vector2(8.0, -12.0)),
-    new LineSegment2(new Vector2(-8.0, -12.0), new Vector2(-2.0, -12.0))
+    new LineSegment2(new Vector2(-10.0,  10.0), new Vector2(-10.0, -10.0)),
+    new LineSegment2(new Vector2(-12.0, -10.0), new Vector2(-12.0,  10.0)),
+    new LineSegment2(new Vector2(-17.0,  10.0), new Vector2(-17.0, -10.0)),
+    new LineSegment2(new Vector2( 10.0, -10.0), new Vector2( 10.0,  10.0)),
 ];
 
 lineSegments = _.union(lineSegments, hex.edges);
@@ -143,7 +143,8 @@ var rays = [
     new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0))
 ];
 
-Portal(lineSegments[1], lineSegments[2]);
+Portal(lineSegments[0], lineSegments[1]);
+Portal(lineSegments[2], lineSegments[3]);
 
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
