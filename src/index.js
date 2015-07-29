@@ -104,6 +104,9 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     .filter(function(x){
         return x.b.portal;
     })
+    .filter(function(x){
+        return x.angle > 0;
+    })
     .map(function(x){
         var front = x.b;
         var back = x.b.portal;
@@ -111,11 +114,13 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
         var matBack = Matrix3.fromReferencePoints(back.a, back.b, back.normal.add(back.a));
         var matWarp = Matrix3.identity
             .applyMatrix3(matBack)
-            .applyMatrix3(Matrix3.scale(new Vector2(1.0, -1.0)))
-            .applyMatrix3(matFront.inverse);
+            .applyMatrix3(Matrix3.translation(new Vector2(1.0, 0.0)))
+            .applyMatrix3(Matrix3.scale(new Vector2(-1.0, -1.0)))
+            .applyMatrix3(matFront.inverse)
 
-        var exitDir = matWarp.transformVector2(x.a.tangent.add(x.x));
-        var exitPoint = matWarp.transformVector2(x.x._).subtract(exitDir._.multiplyByScalar(0.00001));
+        var exitDir = matWarp.transformVector2(x.a.offset.add(x.x))
+        var exitPoint = matWarp.transformVector2(x.x._);
+        exitPoint.add(exitDir._.subtract(exitPoint).multiplyByScalar(0.000001));
         return new LineSegment2(exitPoint, exitDir);
     })
     .value();
