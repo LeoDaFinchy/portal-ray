@@ -138,7 +138,19 @@ Object.defineProperties(Visualiser2Value, {
             2: function(subject){
                 var result = _.chain([subject]);
                 _.each(this._value, function(x){
-                    result = result.pluck(x);
+                    result.tap(
+                        function(z)
+                        {
+                            if(_.isArray(z[0]))
+                            {
+                                result = result.map(function(y){return _.pluck(y, x);}).flatten();
+                            }
+                            else
+                            {
+                                result = result.pluck(x);
+                            }
+                        }
+                    );
                 });
                 return result;
             }
