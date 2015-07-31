@@ -88,6 +88,23 @@ Object.defineProperties(Visualiser2, {
             context.stroke();
         }
     },
+    drawDots: {
+        value: function(subject, context, kwargs)
+        {
+            var positions = kwargs.positions.value(subject);
+            var radius = kwargs.radius.value(subject);
+
+            context.strokeStyle = kwargs.lineColour;
+            context.fillStyle = kwargs.fillColour;
+            context.lineWidth = kwargs.lineWidth;
+
+            _.each(positions, function(pos){
+                context.beginPath();
+                context.arc(pos.x, pos.y, radius, 0, Math.PI * 2.0);
+                context.fill();
+            })
+        }
+    },
     circle: {
         value: function(position, radius, styleKWArgs)
         {
@@ -111,6 +128,21 @@ Object.defineProperties(Visualiser2, {
                 kwargs: {
                     positionA: positionA ? positionA : Visualiser2.value(Vector2.zero),
                     positionB: positionB ? positionB : Visualiser2.value(Vector2.unit),
+                    lineWidth: styleKWArgs.lineWidth || 1,
+                    lineColour: styleKWArgs.lineColour || '#000000',
+                    fillColour: styleKWArgs.fillColour || '#ffffff'
+                }
+            };
+        }
+    },
+    dots: {
+        value: function(positions, radius, styleKWArgs)
+        {
+            return {
+                name: "drawDots",
+                kwargs: {
+                    positions: positions ? positions : Visualiser2.value([Vector2.zero]),
+                    radius: radius ? radius : Visualiser2.value(1),
                     lineWidth: styleKWArgs.lineWidth || 1,
                     lineColour: styleKWArgs.lineColour || '#000000',
                     fillColour: styleKWArgs.fillColour || '#ffffff'
