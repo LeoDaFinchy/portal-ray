@@ -4,6 +4,12 @@ var Visualiser2 = function(commands){
     this.commands = commands || [];
 };
 
+var Visualiser2Value = function(type, value)
+{
+    this._value = value;
+    this.value = Visualiser2Value.fetchFunctions[type];
+}
+
 exports['Visualiser2'] = Visualiser2;
 
 var Vector2 = require('./Vector2').Vector2;
@@ -112,3 +118,31 @@ Object.defineProperties(Visualiser2, {
         }
     }
 });
+
+Object.defineProperties(Visualiser2Value, {
+    types: {
+        value: {
+            VALUE: 0,
+            KEY: 1,
+            PATH: 2
+        }
+    },
+    fetchFunctions: {
+        value: {
+            0: function(subject){
+                return this._value;
+            },
+            1: function(subject){
+                return subject[this._value];
+            },
+            2: function(subject){
+                var result = _.chain([subject]);
+                _.each(this._value, function(x){
+                    result = result.pluck(x);
+                });
+                return result;
+            }
+        }
+    }
+});
+
