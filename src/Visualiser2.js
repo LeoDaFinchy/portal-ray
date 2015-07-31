@@ -176,7 +176,7 @@ Object.defineProperties(Visualiser2Value, {
                         {
                             if(_.isArray(z[0]))
                             {
-                                result = result.map(function(y){return _.pluck(y, x);}).flatten();
+                                result = result.map(function(y){return _.pluck(y, x);});
                             }
                             else
                             {
@@ -185,7 +185,7 @@ Object.defineProperties(Visualiser2Value, {
                         }
                     );
                 });
-                return result;
+                return result.value()[0];
             }
         }
     }
