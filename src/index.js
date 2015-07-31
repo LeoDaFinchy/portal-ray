@@ -38,6 +38,19 @@ var LineSegmentVisualiser = new Visualiser2([
     )
 ]);
 
+LineSegment2CollectionVisualiser = new Visualiser2([
+    Visualiser2.dots(
+        Visualiser2.path(['a']),
+        Visualiser2.value(0.4),
+        {fillColour: "#ffccff"}
+    ),
+    Visualiser2.dots(
+        Visualiser2.path(['normalPoint']),
+        Visualiser2.value(0.4),
+        {fillColour: "#ff99ff"}
+    )
+])
+
 var RayVisualiser = new Visualiser2([
     Visualiser2.line(
         Visualiser2.key('a'),
@@ -53,13 +66,13 @@ var RayVisualiser = new Visualiser2([
 
 var PortalVisualiser = new Visualiser2([
     Visualiser2.line(
-        Visualiser2.key('aa'),
-        Visualiser2.key('bb'),
+        Visualiser2.path(['a']),
+        Visualiser2.path(['portal', 'b']),
         {lineColour: "#3333cc", lineWidth: 0.3}
     ),
     Visualiser2.line(
-        Visualiser2.key('ab'),
-        Visualiser2.key('ba'),
+        Visualiser2.key('b'),
+        Visualiser2.path(['portal', 'a']),
         {lineColour: "#3333cc", lineWidth: 0.3}
     )
 ]);
@@ -264,19 +277,10 @@ if(window && document)
 
         drawRaycasts(context, toDraw.raycasts);
 
-        PortalVisualiser.draw({
-            aa: lineSegments[0].a,
-            ab: lineSegments[0].b,
-            ba: lineSegments[0].portal.a,
-            bb: lineSegments[0].portal.b
-        }, context);
+        PortalVisualiser.draw(lineSegments[0], context);
+        PortalVisualiser.draw(lineSegments[2], context);
 
-        PortalVisualiser.draw({
-            aa: lineSegments[2].a,
-            ab: lineSegments[2].b,
-            ba: lineSegments[2].portal.a,
-            bb: lineSegments[2].portal.b
-        }, context);
+        LineSegment2CollectionVisualiser.draw(lineSegments, context);
 
         // root.drawEdit(context, mouse);
 
