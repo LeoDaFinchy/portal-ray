@@ -109,7 +109,6 @@ Object.defineProperties(Visualiser2, {
         value: function(subject, context, kwargs)
         {
             var positions = kwargs.positions.value(subject);
-            var radius = kwargs.radius.value(subject);
 
             context.strokeStyle = kwargs.lineColour;
             context.fillStyle = kwargs.fillColour;
@@ -121,6 +120,26 @@ Object.defineProperties(Visualiser2, {
             _.each(positions.slice(1), function(pos){
                 context.lineTo(pos.x, pos.y);
             })
+            context.stroke();
+        }
+    },
+    drawPolygon: {
+        value: function(subject, context, kwargs)
+        {
+            var positions = kwargs.positions.value(subject);
+
+            context.strokeStyle = kwargs.lineColour;
+            context.fillStyle = kwargs.fillColour;
+            context.lineWidth = kwargs.lineWidth;
+
+            context.beginPath();
+            context.moveTo(positions[0].x, positions[0].y);
+
+            _.each(positions.slice(1), function(pos){
+                context.lineTo(pos.x, pos.y);
+            })
+            context.lineTo(positions[0].x, positions[0].y);
+            context.fill();
             context.stroke();
         }
     },
@@ -176,7 +195,20 @@ Object.defineProperties(Visualiser2, {
                 name: "drawLinePath",
                 kwargs: {
                     positions: positions ? positions : Visualiser2.value([Vector2.zero, Vector2.one]),
-                    radius: radius ? radius : Visualiser2.value(1),
+                    lineWidth: styleKWArgs.lineWidth || 1,
+                    lineColour: styleKWArgs.lineColour || '#000000',
+                    fillColour: styleKWArgs.fillColour || '#ffffff'
+                }
+            };
+        }
+    },
+    polygon: {
+        value: function(positions, radius, styleKWArgs)
+        {
+            return {
+                name: "drawPolygon",
+                kwargs: {
+                    positions: positions ? positions : Visualiser2.value([Vector2.zero, Vector2.one]),
                     lineWidth: styleKWArgs.lineWidth || 1,
                     lineColour: styleKWArgs.lineColour || '#000000',
                     fillColour: styleKWArgs.fillColour || '#ffffff'
