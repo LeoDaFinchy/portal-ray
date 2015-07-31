@@ -8,6 +8,7 @@ var Visualiser2Value = function(type, value)
 {
     this._value = value;
     this.value = Visualiser2Value.fetchFunctions[type];
+    this.type = type;
 }
 
 exports['Visualiser2'] = Visualiser2;
