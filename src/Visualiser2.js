@@ -36,29 +36,29 @@ Object.defineProperties(Visualiser2.prototype,{
 });
 
 Object.defineProperties(Visualiser2, {
-    fetch: {
-        value: function(subject, key)
-        {
-            return key.subject ? subject[key.value] : key.value;
-        }
-    },
     value: {
         value: function(value)
         {
-            return {subject: false, value: value};
+            return new Visualiser2Value(Visualiser2Value.types.VALUE, value);
         }
     },
     key: {
         value: function(key)
         {
-            return {subject: true, value: key};
+            return new Visualiser2Value(Visualiser2Value.types.KEY, key);
+        }
+    },
+    path: {
+        value: function(path)
+        {
+            return new Visualiser2Value(Visualiser2Value.types.PATH, path)
         }
     },
     drawCircle: {
         value: function(subject, context, kwargs)
         {
-            var pos = this.fetch(subject, kwargs.position);
-            var radius = this.fetch(subject, kwargs.radius);
+            var pos = kwargs.position.value(subject);
+            var radius = kwargs.radius.value(subject);
 
             context.strokeStyle = kwargs.lineColour;
             context.fillStyle = kwargs.fillColour;
@@ -74,8 +74,8 @@ Object.defineProperties(Visualiser2, {
     drawLine: {
         value: function(subject, context, kwargs)
         {
-            var posA = this.fetch(subject, kwargs.positionA);
-            var posB = this.fetch(subject, kwargs.positionB);
+            var posA = kwargs.positionA.value(subject);
+            var posB = kwargs.positionB.value(subject);
 
             context.strokeStyle = kwargs.lineColour;
             context.fillStyle = kwargs.fillColour;
