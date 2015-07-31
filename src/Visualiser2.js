@@ -235,23 +235,41 @@ Object.defineProperties(Visualiser2Value, {
                 return subject[this._value];
             },
             2: function(subject){
-                var result = _.chain([subject]);
-                _.each(this._value, function(x){
-                    result.tap(
-                        function(z)
+                var data = subject;
+                _.each(this._value, function(key){
+                    if(_.isArray(data))
+                    {
+                        if(_.isArray(key))
                         {
-                            if(_.isArray(z[0]))
-                            {
-                                result = result.map(function(y){return _.pluck(y, x);});
-                            }
-                            else
-                            {
-                                result = result.pluck(x);
-                            }
+                            data = _.map(data, function(item){
+                                return _.values(
+                                    _.pick(item, key)
+                                );
+                            });
+                            data = _.flatten(data, true);
                         }
-                    );
+                        else
+                        {
+                            data = _.map(data, function(item){
+                                return item[key];
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if(_.isArray(key))
+                        {
+                            data = _.values(
+                                _.pick(data, key)
+                            );
+                        }
+                        else
+                        {
+                            data = data[key];
+                        }
+                    }
                 });
-                return result.value()[0];
+                return data;
             }
         }
     }
