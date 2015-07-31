@@ -189,7 +189,7 @@ Object.defineProperties(Visualiser2, {
         }
     },
     linePath: {
-        value: function(positions, radius, styleKWArgs)
+        value: function(positions, styleKWArgs)
         {
             return {
                 name: "drawLinePath",
@@ -203,7 +203,7 @@ Object.defineProperties(Visualiser2, {
         }
     },
     polygon: {
-        value: function(positions, radius, styleKWArgs)
+        value: function(positions, styleKWArgs)
         {
             return {
                 name: "drawPolygon",
