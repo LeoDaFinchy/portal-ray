@@ -1,8 +1,31 @@
 <html>
     <head>
         <script type="text/javascript" src="./script.js"></script>
+        <link rel="stylesheet" type="text/css" href="./style.css"/>
     </head>
     <body>
+        <div id="controls">
+            <label class="control" for="showRay">
+                Show Rays
+                <input id="showRay" type="checkbox"/>
+            </label>
+            <label class="control" for="showLineSegments">
+                Show Line Segments
+                <input id="showLineSegments" type="checkbox"/>
+            </label>
+            <label class="control" for="showPortals">
+                Show Portals
+                <input id="showPortals" type="checkbox"/>
+            </label>
+            <label class="control" for="showBeams">
+                Show Beams
+                <input id="showBeams" type="checkbox"/>
+            </label>
+            <label class="control" for="showIntersects">
+                Show Collisions
+                <input id="showIntersects" type="checkbox"/>
+            </label>
+        </div>
         <canvas id = "canvas" width=800 height=600>
         </canvas>
         <canvas id = "hitCanvas" width=800 height=600>
