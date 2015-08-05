@@ -137,22 +137,7 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     .filter(function(x){
         return x.angle > 0;
     })
-    .map(function(x){
-        var front = x.b;
-        var back = x.b.portal;
-        var matFront = Matrix3.fromReferencePoints(front.a, front.b, front.normal.add(front.a));
-        var matBack = Matrix3.fromReferencePoints(back.a, back.b, back.normal.add(back.a));
-        var matWarp = Matrix3.identity
-            .applyMatrix3(matBack)
-            .applyMatrix3(Matrix3.translation(new Vector2(1.0, 0.0)))
-            .applyMatrix3(Matrix3.scale(new Vector2(-1.0, -1.0)))
-            .applyMatrix3(matFront.inverse)
-
-        var exitDir = matWarp.transformVector2(x.a.offset.add(x.x))
-        var exitPoint = matWarp.transformVector2(x.x._);
-        exitPoint.add(exitDir._.subtract(exitPoint).multiplyByScalar(0.000001));
-        return new LineSegment2(exitPoint, exitDir);
-    })
+    .map(createExitRay)
     .value();
 
     var result = castRaysAgainstPortals(portalRays, lineSegments, generations - 1);
@@ -162,6 +147,24 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
 
     return {rays:rays, hits:hits};
 };
+
+var createExitRay = function(intersect)
+{
+    var front = intersect.b;
+    var back = intersect.b.portal;
+    var matFront = Matrix3.fromReferencePoints(front.a, front.b, front.normal.add(front.a));
+    var matBack = Matrix3.fromReferencePoints(back.a, back.b, back.normal.add(back.a));
+    var matWarp = Matrix3.identity
+        .applyMatrix3(matBack)
+        .applyMatrix3(Matrix3.translation(new Vector2(1.0, 0.0)))
+        .applyMatrix3(Matrix3.scale(new Vector2(-1.0, -1.0)))
+        .applyMatrix3(matFront.inverse)
+
+    var exitDir = matWarp.transformVector2(intersect.a.offset.add(intersect.x))
+    var exitPoint = matWarp.transformVector2(intersect.x._);
+    exitPoint.add(exitDir._.subtract(exitPoint).multiplyByScalar(0.000001));
+    return new LineSegment2(exitPoint, exitDir);
+}
 
 var lineSegments = [
     new LineSegment2(new Vector2(-10.0,  10.0), new Vector2(-10.0, -10.0)),
@@ -277,7 +280,7 @@ if(window && document)
         drawAxes(context);
 
         _.map(toDraw.lineSegments, function(x){LineSegmentVisualiser.draw(x, context);});
-        // _.map(toDraw.rays, function(x){RayVisualiser.draw(x, context);});
+        _.map(toDraw.rays, function(x){RayVisualiser.draw(x, context);});
 
         drawRaycasts(context, toDraw.raycasts);
 
