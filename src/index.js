@@ -49,6 +49,11 @@ var RayVisualiser = new Visualiser2([
         Visualiser2.key('a'),
         Visualiser2.value(0.3),
         {lineColour: "#cccc00", lineWidth: 0.1, fillColour: "#ffff33"}
+    ),
+    Visualiser2.circle(
+        Visualiser2.key('b'),
+        Visualiser2.value(0.2),
+        {lineColour: "#cccc00", lineWidth: 0.1, fillColour: "#cccc00"}
     )
 ]);
 
@@ -174,11 +179,11 @@ var lineSegments = [
     new LineSegment2(new Vector2( 10.0, -10.0), new Vector2( 10.0,  10.0)),
 ];
 
-lineSegments = _.union(lineSegments, hex.edges);
+// lineSegments = _.union(lineSegments, hex.edges);
 
 var rays = [
-    new LineSegment2(Vector2.zero, new Vector2(-5.0, 3.0)),
-    new LineSegment2(new Vector2(0.0, 5.0), new Vector2(-5.0, 3.0)),
+    new LineSegment2(Vector2.zero, Vector2.unit),
+    new LineSegment2(new Vector2(0.0, 5.0), new Vector2(1.0, 3.0)),
     new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0))
 ];
 
@@ -202,7 +207,7 @@ if(window && document)
     var lineSegmentAHitzoneVisualiser = new Visualiser2([
         Visualiser2.circle(
             Visualiser2.key('a'),
-            Visualiser2.value(1.0),
+            Visualiser2.value(0.4),
             {
                 lineWidth: 0.1
             }
@@ -212,14 +217,25 @@ if(window && document)
     var lineSegmentBHitzoneVisualiser = new Visualiser2([
         Visualiser2.circle(
             Visualiser2.key('b'),
-            Visualiser2.value(1.0),
+            Visualiser2.value(0.4),
             {
                 lineWidth: 0.1
             }
         ),
     ]);
 
-    var hitzones = _.chain(lineSegments)
+    var lineHitzones = _.chain(lineSegments)
+        .map(function(x){
+            var a = new Hitzone2(lineSegmentAHitzoneVisualiser, x);
+            var b = new Hitzone2(lineSegmentBHitzoneVisualiser, x);
+            a.onDrag(_.partial(dragVector, _, x.a));
+            b.onDrag(_.partial(dragVector, _, x.b));
+            return [a,b];
+        })
+        .flatten()
+        .value();
+
+    var rayHitzones = _.chain(rays)
         .map(function(x){
             var a = new Hitzone2(lineSegmentAHitzoneVisualiser, x);
             var b = new Hitzone2(lineSegmentBHitzoneVisualiser, x);
@@ -258,19 +274,17 @@ if(window && document)
     function mouseMoved(e){
         var canvasSpaceMouse = new Vector2(e.clientX, e.clientY).subtract(new Vector2(e.target.offsetLeft, e.target.offsetTop));
         var graphSpaceMouse = canvasSpaceMouse._.multiplyByVector2(Scaling.reciprocal).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
-        for(var x = 0; x < rays.length; x++)
-        {
-            rays[x].b = graphSpaceMouse;
-        }
         portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
         toDraw.raycasts = portal.hits;
 
-        _.each(hitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
+        _.each(lineHitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
+        _.each(rayHitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
     };
 
     function down(e){
-        _.each(hitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
+        _.each(lineHitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
+        _.each(rayHitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
     }
 
     function draw(){
