@@ -55,6 +55,12 @@ Object.defineProperties(Visualiser2, {
             return new Visualiser2Value(Visualiser2Value.types.PATH, path)
         }
     },
+    method: {
+        value: function(method)
+        {
+            return new Visualiser2Value(Visualiser2Value.types.METHOD, method)
+        }
+    },
     drawCircle: {
         value: function(subject, context, kwargs)
         {
@@ -223,7 +229,8 @@ Object.defineProperties(Visualiser2Value, {
         value: {
             VALUE: 0,
             KEY: 1,
-            PATH: 2
+            PATH: 2,
+            METHOD: 3,
         }
     },
     fetchFunctions: {
@@ -270,6 +277,9 @@ Object.defineProperties(Visualiser2Value, {
                     }
                 });
                 return data;
+            },
+            3: function(subject){
+                return this._value(subject);
             }
         }
     }
