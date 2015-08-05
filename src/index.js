@@ -1,4 +1,5 @@
 var _ = require('underscore')._;
+var $ = require('jquery');
 
 var Vector2 = require('./Vector2.js').Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
@@ -279,15 +280,31 @@ if(window && document)
         context.clearRect(-1000,-1000, 2000, 2000);
         drawAxes(context);
 
-        _.map(toDraw.lineSegments, function(x){LineSegmentVisualiser.draw(x, context);});
-        _.map(toDraw.rays, function(x){RayVisualiser.draw(x, context);});
+        if($('#showLineSegments').prop('checked'))
+        {
+            _.map(toDraw.lineSegments, function(x){LineSegmentVisualiser.draw(x, context);});
+        }
 
-        drawRaycasts(context, toDraw.raycasts);
+        if($('#showRays').prop('checked'))
+        {
+            _.map(toDraw.rays, function(x){RayVisualiser.draw(x, context);});
+        }
 
-        PortalVisualiser.draw(lineSegments[0], context);
-        PortalVisualiser.draw(lineSegments[2], context);
+        if($('#showIntersects').prop('checked'))
+        {
+            drawRaycasts(context, toDraw.raycasts);
+        }
 
-        BeamVisualiser.draw({a: rays[0], b: rays[1]}, context);
+        if($('#showPortals').prop('checked'))
+        {
+            PortalVisualiser.draw(lineSegments[0], context);
+            PortalVisualiser.draw(lineSegments[2], context);
+        }
+
+        if($('#showBeams').prop('checked'))
+        {
+            BeamVisualiser.draw({a: rays[0], b: rays[1]}, context);
+        }
 
         // root.drawEdit(context, mouse);
 
