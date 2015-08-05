@@ -58,6 +58,15 @@ var RayVisualiser = new Visualiser2([
 ]);
 
 var PortalVisualiser = new Visualiser2([
+    Visualiser2.polygon(
+        Visualiser2.method(function(subject){return [
+            subject.a,
+            subject.b,
+            subject.portal.a,
+            subject.portal.b
+        ]}),
+        {lineColour: "#33ff33", lineWidth: 0.2, fillColour: "rgba(63,63,191,0.4)"}
+    ),
     Visualiser2.line(
         Visualiser2.path(['a']),
         Visualiser2.path(['portal', 'b']),
@@ -72,8 +81,13 @@ var PortalVisualiser = new Visualiser2([
 
 var BeamVisualiser = new Visualiser2([
     Visualiser2.polygon(
-        Visualiser2.path([['a', 'b'], ['a', 'b']]),
-        {lineColour: "#33ff33", lineWidth: 0.2, fillColour: "#999999"}
+        Visualiser2.method(function(subject){return [
+            subject.a.a,
+            subject.a.b,
+            subject.b.b,
+            subject.b.a
+        ]}),
+        {lineColour: "#33ff33", lineWidth: 0.2, fillColour: "rgba(64,64,64,0.2)"}
     ),
     Visualiser2.line(
         Visualiser2.path(['a', 'a']),
