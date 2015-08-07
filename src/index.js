@@ -194,7 +194,7 @@ var createExitRay = function(intersect)
     }
     else
     {
-        var exitDir = matWarp.transformVector2(intersect.a.offset.add(intersect.x))
+        var exitDir = matWarp.transformVector2(intersect.a.offset.add(intersect.x));
     }
     exitPoint.add(exitDir._.subtract(exitPoint).multiplyByScalar(0.000001));
     return new LineSegment2(exitPoint, exitDir);
@@ -302,9 +302,6 @@ if(window && document)
     function mouseMoved(e){
         var canvasSpaceMouse = new Vector2(e.clientX, e.clientY).subtract(new Vector2(e.target.offsetLeft, e.target.offsetTop));
         var graphSpaceMouse = canvasSpaceMouse._.multiplyByVector2(Scaling.reciprocal).subtract(GraphSize._.multiplyByVector2(new Vector2(0.5,-0.5)));
-        portal = castRaysAgainstPortals(rays, lineSegments, 100);
-        toDraw.rays = portal.rays;
-        toDraw.raycasts = portal.hits;
 
         _.each(lineHitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
         _.each(rayHitzones, function(x){x.checkHit(window.PortalRay.hitContext, e)});
@@ -316,6 +313,11 @@ if(window && document)
     }
 
     function draw(){
+        
+        portal = castRaysAgainstPortals(rays, lineSegments, 100);
+        toDraw.rays = portal.rays;
+        toDraw.raycasts = portal.hits;
+
         window.PortalRay.hitContext.clearRect(-1000,-1000, 2000, 2000);
 
         context = window.PortalRay.context;
