@@ -1,19 +1,19 @@
 var _ = require('underscore')._;
 var $ = require('jquery');
 
-var Vector2 = require('./Vector2.js').Vector2;
-var Matrix2 = require('./Matrix2.js').Matrix2;
-var Matrix3 = require('./Matrix3.js').Matrix3;
-var Intersect2 = require("./Intersect2").Intersect2;
+var Vector2 = require('./lib/Vector2.js').Vector2;
+var Matrix2 = require('./lib/Matrix2.js').Matrix2;
+var Matrix3 = require('./lib/Matrix3.js').Matrix3;
+var Intersect2 = require("./lib/Intersect2").Intersect2;
 
-var LineSegment2JS = require("./LineSegment2");
+var LineSegment2JS = require("./lib/LineSegment2");
 var LineSegment2 = LineSegment2JS.LineSegment2;
 var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 
-var Polygon2 = require('./Polygon2').Polygon2;
+var Polygon2 = require('./lib/Polygon2').Polygon2;
 
-var Visualiser2 = require('./Visualiser2').Visualiser2;
-var Hitzone2 = require('./Hitzone2').Hitzone2;
+var Visualiser2 = require('./lib/Visualiser2').Visualiser2;
+var Hitzone2 = require('./lib/Hitzone2').Hitzone2;
 
 
 var LineSegmentVisualiser = new Visualiser2([
