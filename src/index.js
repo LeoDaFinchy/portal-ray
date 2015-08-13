@@ -15,6 +15,7 @@ var Polygon2 = require('./lib/Polygon2').Polygon2;
 var Visualiser2 = require('./lib/Visualiser2').Visualiser2;
 var Hitzone2 = require('./lib/Hitzone2').Hitzone2;
 
+var Portal = require('./engine/Portal').Portal;
 
 var LineSegmentVisualiser = new Visualiser2([
     Visualiser2.line(
@@ -111,26 +112,6 @@ hexMatrices = [
     Matrix3.rotation(Math.PI/3.0 * 5.0),
 ];
 
-var Portal = function(a, b){
-    //  clear up any prexisting links
-    if(a.portal){
-        delete(a.portal.portal)
-    }
-    if(b.portal){
-        delete(b.portal.portal)
-    }
-    a.portal = b;
-    b.portal = a;
-}
-
-var hex = new Polygon2(
-    _.map(hexMatrices, function(matrix){
-        return matrix.transformVector2(Vector2.unit);
-    })
-);
-
-var hex = Polygon2.regular(3, 0.5, 1);
-
 var castRaysAgainstPortals = function(rays, lineSegments, generations)
 {
     if(generations <= 0 || rays.length <= 0){return {rays:[], hits:[]}};
@@ -157,7 +138,9 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     .filter(function(x){
         return x.angle > 0;
     })
-    .map(createExitRay)
+    .map(function(x){
+        return x.b.portal.createExitRay(x);
+    })
     .value();
 
     var result = castRaysAgainstPortals(portalRays, lineSegments, generations - 1);
@@ -168,37 +151,6 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     return {rays:rays, hits:hits};
 };
 
-var createExitRay = function(intersect)
-{
-    var front = intersect.b;
-    var back = intersect.b.portal;
-    var matFront = Matrix3.fromReferencePoints(front.a, front.b, front.normal.add(front.a));
-    var matBack = Matrix3.fromReferencePoints(back.a, back.b, back.normal.add(back.a));
-    var matWarp = Matrix3.identity
-        .applyMatrix3(matBack)
-        .applyMatrix3(Matrix3.translation(new Vector2(1.0, 0.0)))
-        .applyMatrix3(Matrix3.scale(new Vector2(-1.0, -1.0)))
-        .applyMatrix3(matFront.inverse)
-
-    var exitPoint = matWarp.transformVector2(intersect.x._);
-
-    if($('#portalFunction').prop('checked'))
-    {
-        var rotFront = Matrix3.rotation(front.offset.angle);
-        var rotBack = Matrix3.rotation(back.offset.angle);
-        var rotWarp = Matrix3.identity
-            .applyMatrix3(rotBack)
-            .applyMatrix3(Matrix3.scale(new Vector2(-1.0, -1.0)))
-            .applyMatrix3(rotFront.inverse)
-        var exitDir = rotWarp.transformVector2(intersect.a.offset).add(exitPoint);
-    }
-    else
-    {
-        var exitDir = matWarp.transformVector2(intersect.a.offset.add(intersect.x));
-    }
-    exitPoint.add(exitDir._.subtract(exitPoint).multiplyByScalar(0.000001));
-    return new LineSegment2(exitPoint, exitDir);
-}
 
 var lineSegments = [
     new LineSegment2(new Vector2(-10.0,  10.0), new Vector2(-10.0, -10.0)),
@@ -215,8 +167,8 @@ var rays = [
     new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0))
 ];
 
-Portal(lineSegments[0], lineSegments[1]);
-Portal(lineSegments[2], lineSegments[3]);
+new Portal(lineSegments[0], lineSegments[1]);
+new Portal(lineSegments[2], lineSegments[3]);
 
 var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
 
