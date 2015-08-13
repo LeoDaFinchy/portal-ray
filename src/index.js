@@ -16,6 +16,7 @@ var Visualiser2 = require('./lib/Visualiser2').Visualiser2;
 var Hitzone2 = require('./lib/Hitzone2').Hitzone2;
 
 var Portal = require('./engine/Portal').Portal;
+var Beam = require('./engine/Beam').Beam;
 
 var LineSegmentVisualiser = new Visualiser2([
     Visualiser2.line(
@@ -167,10 +168,19 @@ var rays = [
     new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0))
 ];
 
+var beams = [
+    new Beam(rays[0], rays[1])
+]
+
 new Portal(lineSegments[0], lineSegments[1]);
 new Portal(lineSegments[2], lineSegments[3]);
 
-var toDraw = {rays:rays, lineSegments:lineSegments, raycasts:[]};
+var toDraw = {
+    rays:rays,
+    lineSegments:lineSegments,
+    raycasts:[],
+    beams:beams
+};
 
 if(window && document)
 {
@@ -299,7 +309,7 @@ if(window && document)
 
         if($('#showBeams').prop('checked'))
         {
-            BeamVisualiser.draw({a: rays[0], b: rays[1]}, context);
+            _.map(toDraw.beams, function(x){BeamVisualiser.draw(x, context);});
         }
 
         // root.drawEdit(context, mouse);
