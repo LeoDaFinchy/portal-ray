@@ -13,95 +13,82 @@ var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 var Polygon2 = require('./lib/Polygon2').Polygon2;
 
 var Visualiser2 = require('./lib/Visualiser2').Visualiser2;
+var Shapes = require('./lib/Shapes').Shapes;
 var Hitzone2 = require('./lib/Hitzone2').Hitzone2;
 
 var Portal = require('./engine/Portal').Portal;
 var Beam = require('./engine/Beam').Beam;
 
-var LineSegmentVisualiser = new Visualiser2([
-    Visualiser2.line(
-        Visualiser2.key('a'),
-        Visualiser2.key('b'),
-        {lineColour: "#333333", lineWidth: 0.2}
-    ),
-    Visualiser2.line(
-        Visualiser2.key('a'),
-        Visualiser2.key('normalPoint'),
-        {lineColour: "#333333", lineWidth: 0.2}
-    ),
-    Visualiser2.circle(
-        Visualiser2.key('a'),
-        Visualiser2.value(0.2),
-        {lineColour: "#ffcc33", lineWidth: 0.2}
-    ),
-    Visualiser2.circle(
-        Visualiser2.key('b'),
-        Visualiser2.value(0.2),
-        {lineColour: "#33ccff", lineWidth: 0.2}
-    )
-]);
+var visualiseLineSegment = function(lineSegment, context){
+    var a = lineSegment.a;
+    var b = lineSegment.b;
+    var n = lineSegment.normalPoint;
+    var r = 0.2;
 
-var RayVisualiser = new Visualiser2([
-    Visualiser2.line(
-        Visualiser2.key('a'),
-        Visualiser2.key('b'),
-        {lineColour: "#cccc00", lineWidth: 0.3}
-    ),
-    Visualiser2.circle(
-        Visualiser2.key('a'),
-        Visualiser2.value(0.3),
-        {lineColour: "#cccc00", lineWidth: 0.1, fillColour: "#ffff33"}
-    ),
-    Visualiser2.circle(
-        Visualiser2.key('b'),
-        Visualiser2.value(0.2),
-        {lineColour: "#cccc00", lineWidth: 0.1, fillColour: "#cccc00"}
-    )
-]);
+    context.strokeStyle = 'rgb(51, 51, 51)';
+    context.fillStyle = null;
+    context.lineWidth = 0.2;
 
-var PortalVisualiser = new Visualiser2([
-    Visualiser2.polygon(
-        Visualiser2.method(function(subject){return [
-            subject.a,
-            subject.b,
-            subject.portal.a,
-            subject.portal.b
-        ]}),
-        {lineColour: "#33ff33", lineWidth: 0.2, fillColour: "rgba(63,63,191,0.4)"}
-    ),
-    Visualiser2.line(
-        Visualiser2.path(['a']),
-        Visualiser2.path(['portal', 'b']),
-        {lineColour: "#3333cc", lineWidth: 0.3}
-    ),
-    Visualiser2.line(
-        Visualiser2.key('b'),
-        Visualiser2.path(['portal', 'a']),
-        {lineColour: "#3333cc", lineWidth: 0.3}
-    ),
-]);
+    Shapes.line(context, a, b);
+    Shapes.line(context, a, n);
 
-var BeamVisualiser = new Visualiser2([
-    Visualiser2.polygon(
-        Visualiser2.method(function(subject){return [
-            subject.a.a,
-            subject.a.b,
-            subject.b.b,
-            subject.b.a
-        ]}),
-        {lineColour: "#33ff33", lineWidth: 0.2, fillColour: "rgba(64,64,64,0.2)"}
-    ),
-    Visualiser2.line(
-        Visualiser2.path(['a', 'a']),
-        Visualiser2.path(['a', 'b']),
-        {lineColour: "#ff3333", lineWidth: 0.2}
-    ),
-    Visualiser2.line(
-        Visualiser2.path(['b', 'a']),
-        Visualiser2.path(['b', 'b']),
-        {lineColour: "#33ff33", lineWidth: 0.2}
-    )
-]);
+    context.strokeStyle = "#ffcc33";
+    Shapes.circle(context, a, r);
+
+    context.strokeStyle = "#33ccff";
+    Shapes.circle(context, b, r);
+};
+
+var visualiseRay = function(ray, context)
+{
+    var a = ray.a;
+    var b = ray.b;
+    var rA = 0.3;
+    var rB = 0.2;
+
+    context.strokeStyle = "#cccc00"
+    context.lineWidth = 0.3;
+    context.fillStyle = null;
+    Shapes.line(context, a, b);
+
+    context.lineWidth = 0.1;
+    context.fillStyle = "#ffff33";
+    Shapes.circle(context, a, rA);
+
+    context.fillStyle = "#cccc00";
+    Shapes.circle(context, b, rB);
+}
+
+var visualisePortal = function(portal, context)
+{
+    var pts = [
+        portal.a,
+        portal.b,
+        portal.portal.other(portal).a,
+        portal.portal.other(portal).b
+    ];
+
+    context.strokeStyle = null;
+    context.lineWidth = 0.1;
+    context.fillStyle = "rgba(102,102,204,0.4)";
+    Shapes.polygon(context, pts, Shapes.styles.EDGELESS);
+}
+
+var visualiseBeam = function(beam, context)
+{
+    var pts = [
+        beam.a.a,
+        beam.a.b,
+        beam.b.b,
+        beam.b.a
+    ];
+
+    context.strokeStyle = null;
+    context.lineWidth = 0;
+    context.fillStyle = "rgba(51,51,51,0.2)";
+
+    Shapes.polygon(context, pts, Shapes.styles.EDGELESS);
+}
 
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
@@ -288,12 +275,12 @@ if(window && document)
 
         if($('#showLineSegments').prop('checked'))
         {
-            _.map(toDraw.lineSegments, function(x){LineSegmentVisualiser.draw(x, context);});
+            _.map(toDraw.lineSegments, function(x){visualiseLineSegment(x, context);});
         }
 
         if($('#showRays').prop('checked'))
         {
-            _.map(toDraw.rays, function(x){RayVisualiser.draw(x, context);});
+            _.map(toDraw.rays, function(x){visualiseRay(x, context);});
         }
 
         if($('#showIntersects').prop('checked'))
@@ -303,13 +290,13 @@ if(window && document)
 
         if($('#showPortals').prop('checked'))
         {
-            PortalVisualiser.draw(lineSegments[0], context);
-            PortalVisualiser.draw(lineSegments[2], context);
+            visualisePortal(lineSegments[0], context);
+            visualisePortal(lineSegments[2], context);
         }
 
         if($('#showBeams').prop('checked'))
         {
-            _.map(toDraw.beams, function(x){BeamVisualiser.draw(x, context);});
+            _.map(toDraw.beams, function(x){visualiseBeam(x, context);});
         }
 
         // root.drawEdit(context, mouse);
