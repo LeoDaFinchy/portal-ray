@@ -90,6 +90,22 @@ var visualiseBeam = function(beam, context)
     Shapes.polygon(context, pts, Shapes.styles.EDGELESS);
 }
 
+var visualiseBeamLineSegmentIntersect = function(intersect, context)
+{
+    var pts = [
+        intersect.a.a.a,     //  I.Left.Ray.Origin
+        intersect.b.a.a,     //  I.Right.Ray.Origin
+        intersect.b.x,
+        intersect.a.x,
+    ];
+
+    context.strokeStyle = null;
+    context.lineWidth = 0;
+    context.fillStyle = "rgba(153,153,51,0.2)";
+
+    Shapes.polygon(context, pts, Shapes.styles.EDGELESS);
+}
+
 hexLineSegment = new LineSegment2(Vector2.unit, Matrix3.rotation(Math.PI / 3.0).rotateVector2(Vector2.unit));
 hexMatrices = [
     Matrix3.identity,
@@ -139,6 +155,32 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     return {rays:rays, hits:hits};
 };
 
+var castBeamsAgainstPortals = function(beams, lineSegments, generations)
+{
+    if(generations <= 0 || rays.length <= 0){return {rays:[], hits:[]}};
+
+    var hits = _.chain(beams).map(function(beam, i, beams){
+        return _.chain(beam.intersect(lineSegments))
+            .each(function(x){x.solve();})                                          //  Prepare
+            .filter(function(x){return x.a.x || x.b.x})                             //  Get rid of non-intersects (both edges parallel)
+            .filter(function(x){return x.a.fractionA > 0 || x.b.fractionA > 0})     //  Get rid of intersects in the wrong direction (backwards to both edges)
+            .filter(function(x){return (                                            //  Get rid of intersects that completely miss
+                    x.a.fractionB >= 0 && x.a.fractionB <= 1                        //  Side A hits
+                ) || (
+                    x.b.fractionB >= 0 && x.b.fractionB <= 1                        //  Side B hits
+                ) || (
+                    x.a.fractionB <= 0 && x.b.fractionB >= 1                        //  Beam envelops line
+                ) || (
+                    x.b.fractionB <= 0 && x.a.fractionB >= 1                        //  Likewise but vice versa
+                )
+            })
+            .value();
+    })
+        .flatten()
+        .value();
+
+    return {beams: beams, hits: hits};
+}
 
 var lineSegments = [
     new LineSegment2(new Vector2(-10.0,  10.0), new Vector2(-10.0, -10.0)),
@@ -166,7 +208,8 @@ var toDraw = {
     rays:rays,
     lineSegments:lineSegments,
     raycasts:[],
-    beams:beams
+    beams:beams,
+    beamCasts: [],
 };
 
 if(window && document)
@@ -267,6 +310,10 @@ if(window && document)
         toDraw.rays = portal.rays;
         toDraw.raycasts = portal.hits;
 
+        beamCast = castBeamsAgainstPortals(beams, lineSegments, 10);
+        toDraw.beams = beamCast.beams;
+        toDraw.beamCasts = beamCast.hits;
+
         window.PortalRay.hitContext.clearRect(-1000,-1000, 2000, 2000);
 
         context = window.PortalRay.context;
@@ -297,6 +344,11 @@ if(window && document)
         if($('#showBeams').prop('checked'))
         {
             _.map(toDraw.beams, function(x){visualiseBeam(x, context);});
+        }
+
+        if($('#showBeamIntersects').prop('checked'))
+        {
+            _.map(toDraw.beamCasts, function(x){visualiseBeamLineSegmentIntersect(x, context);});
         }
 
         // root.drawEdit(context, mouse);
