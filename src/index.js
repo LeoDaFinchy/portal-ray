@@ -231,6 +231,24 @@ if(window && document)
         });
         circle.on('dragmove', function(e){console.log(e.target)})
         applet.backgroundLayer.add(circle);
+
+        shape = new Kinetic.Shape({
+            fill: "blue",
+            stroke: "black",
+            strokeWidth: 0.5,
+            x: 300,
+            y: 300,
+            drawFunc: function(context){
+                context.beginPath();
+                context.moveTo(lineSegments[0].a.x, lineSegments[0].a.y);
+                context.lineTo(lineSegments[0].b.x, lineSegments[0].b.y);
+                context.lineTo(lineSegments[0].normalPoint.x, lineSegments[0].normalPoint.y);
+                context.stroke();
+                context.fill();
+            }
+        });
+        applet.backgroundLayer.add(shape);
+
     });
 
     var CanvasSize = new Vector2(800, 600);
