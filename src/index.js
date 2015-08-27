@@ -19,6 +19,7 @@ var Hitzone2 = require('./lib/Hitzone2').Hitzone2;
 
 var Portal = require('./engine/Portal').Portal;
 var Beam = require('./engine/Beam').Beam;
+var Applet = require('./engine/Applet').Applet;
 
 var visualiseLineSegment = function(lineSegment, context){
     var a = lineSegment.a;
@@ -213,29 +214,14 @@ var toDraw = {
     beamCasts: [],
 };
 
-var canvasContainer;
-var stage;
-var layer;
-var circle;
+var applet;
 
 if(window && document)
 {   
 
     $('document').ready(function(){
-        canvasContainer = $('#canvasContainer');
-
-        stage = new Kinetic.Stage({
-            width: canvasContainer.width(),
-            height: canvasContainer.height(),
-            container: 'canvasContainer',
-        });
-
-        layer = new Kinetic.Layer({
-            width: canvasContainer.width(),
-            height: canvasContainer.height(),
-        });
-        stage.add(layer);
-
+        applet = new Applet();
+        applet.initialise('canvasContainer');
         circle = new Kinetic.Circle({
             radius: 20,
             fill: "red",
@@ -244,7 +230,7 @@ if(window && document)
             draggable: true,
         });
         circle.on('dragmove', function(e){console.log(e.target)})
-        layer.add(circle);
+        applet.backgroundLayer.add(circle);
     });
 
     var CanvasSize = new Vector2(800, 600);
@@ -339,7 +325,7 @@ if(window && document)
 
     function draw(){
 
-        layer.draw();
+        applet.backgroundLayer.draw();
         
         portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
