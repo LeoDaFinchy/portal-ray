@@ -1,5 +1,6 @@
 var _ = require('underscore')._;
 var $ = require('jquery');
+var Kinetic = require('kinetic');
 
 var Vector2 = require('./lib/Vector2.js').Vector2;
 var Matrix2 = require('./lib/Matrix2.js').Matrix2;
@@ -212,8 +213,40 @@ var toDraw = {
     beamCasts: [],
 };
 
+var canvasContainer;
+var stage;
+var layer;
+var circle;
+
 if(window && document)
-{
+{   
+
+    $('document').ready(function(){
+        canvasContainer = $('#canvasContainer');
+
+        stage = new Kinetic.Stage({
+            width: canvasContainer.width(),
+            height: canvasContainer.height(),
+            container: 'canvasContainer',
+        });
+
+        layer = new Kinetic.Layer({
+            width: canvasContainer.width(),
+            height: canvasContainer.height(),
+        });
+        stage.add(layer);
+
+        circle = new Kinetic.Circle({
+            radius: 20,
+            fill: "red",
+            stroke: "black",
+            strokeWidth: "4",
+            draggable: true,
+        });
+        circle.on('dragmove', function(e){console.log(e.target)})
+        layer.add(circle);
+    });
+
     var CanvasSize = new Vector2(800, 600);
     var GraphSize = new Vector2(40, 30);
     var Scaling = new Vector2(CanvasSize.x / GraphSize.x, -CanvasSize.y / GraphSize.y);
@@ -305,6 +338,8 @@ if(window && document)
     }
 
     function draw(){
+
+        layer.draw();
         
         portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
