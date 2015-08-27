@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "description": "An experiment to develop a method for casting 2D view 'cones' through portals",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "kinetic": "~5.2.0"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
