@@ -357,7 +357,10 @@ if(window && document)
         });
         circle.on('dragmove', function(e){console.log(e.target)})
         applet.backgroundLayer.add(circle);
-        var l = new LineSegment2UI(lineSegments[0], applet.backgroundLayer);
+
+        _.each(lineSegments, function(lineSegment){
+            new LineSegment2UI(lineSegment, applet.backgroundLayer);
+        });
 
         var CanvasSize = new Vector2(800, 600);
         var GraphSize = new Vector2(40, 30);
