@@ -132,5 +132,11 @@ Object.defineProperties(Vector2, {
         {
             return (a.x * b.y) - (a.y * b.x);
         }
+    },
+    fromObject: {
+        value: function(obj)
+        {
+            return new Vector2(obj.x, obj.y);
+        }
     }
 });
