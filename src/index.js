@@ -21,6 +21,132 @@ var Portal = require('./engine/Portal').Portal;
 var Beam = require('./engine/Beam').Beam;
 var Applet = require('./engine/Applet').Applet;
 
+var LineSegment2UI = function(lineSegment, layer){
+    this.layer = layer;
+    this.lineSegment = lineSegment;
+
+    this.group = new Kinetic.Group({
+        x: 0,
+        y: 0,
+        draggable: true
+    });
+    this.circleA = LineSegment2UI.circleA(this);
+    this.circleA.on('dragmove', this.onCircleADrag);
+    this.circleB = LineSegment2UI.circleB(this);
+    this.circleB.on('dragmove', this.onCircleBDrag);
+    this.shapeLine = LineSegment2UI.shapeLine(this);
+    this.group
+        .on('dragmove', this.onGroupDrag)
+        .on('dragend', this.onGroupDragEnd)
+        .add(
+            this.shapeLine,
+            this.circleA,
+            this.circleB
+        );
+    this.layer.add(this.group);
+}
+
+Object.defineProperties(LineSegment2UI.prototype, {
+    onCircleADrag: {
+        get: function(){
+            return _.bind(LineSegment2UI.circleADrag, this);
+        }
+    },
+    onCircleBDrag: {
+        get: function(){
+            return _.bind(LineSegment2UI.circleBDrag, this);
+        }
+    },
+    onGroupDrag: {
+        get: function(){
+            return _.bind(LineSegment2UI.groupDrag, this);
+        }
+    },
+    onGroupDragEnd: {
+        get: function(){
+            return _.bind(LineSegment2UI.groupDragEnd, this);
+        }
+    },
+    setLineSegmentA: {
+        value: function(){
+            this.lineSegment.a = new Vector2(this.circleA.x() + this.group.x(), this.circleA.y() + this.group.y());
+        }
+    },
+    setLineSegmentB: {
+        value: function(){
+            this.lineSegment.b = new Vector2(this.circleB.x() + this.group.x(), this.circleB.y() + this.group.y());
+        }
+    }
+})
+
+Object.defineProperties(LineSegment2UI, {
+    circleA: {
+        value: function(instance){
+            return new Kinetic.Circle({
+                x: instance.lineSegment.a.x,
+                y: instance.lineSegment.a.y,
+                radius: 0.2,
+                strokeWidth: 0.3,
+                stroke: "orange",
+                draggable: true,
+            });
+        }
+    },
+    circleB: {
+        value: function(instance){
+            return new Kinetic.Circle({
+                x: instance.lineSegment.b.x,
+                y: instance.lineSegment.b.y,
+                radius: 0.2,
+                strokeWidth: 0.3,
+                stroke: "cyan",
+                draggable: true,
+            });
+        }
+    },
+    shapeLine: {
+        value: function(instance){
+            return new Kinetic.Shape({
+                strokeWidth: 0.4,
+                stroke: 'black',
+                drawFunc: function(context){
+                    context.beginPath();
+                    context.moveTo(instance.lineSegment.b.x, instance.lineSegment.b.y);
+                    context.lineTo(instance.lineSegment.a.x, instance.lineSegment.a.y);
+                    context.lineTo(instance.lineSegment.normalPoint.x, instance.lineSegment.normalPoint.y);
+                    context.strokeShape(this);
+                },
+            });
+        }
+    },
+    circleADrag: {
+        value: function(e){
+            this.lineSegment.a = Vector2.fromObject(this.circleA.position());
+        }
+    },
+    circleBDrag: {
+        value: function(e){
+            this.lineSegment.b = Vector2.fromObject(this.circleB.position());
+        }
+    },
+    groupDrag: {
+        value: function(e){
+            var groupPosition = Vector2.fromObject(this.group.position());
+            this.lineSegment.a = Vector2.fromObject(this.circleA.position()).add(groupPosition);
+            this.lineSegment.b = Vector2.fromObject(this.circleB.position()).add(groupPosition);
+            this.shapeLine.position(groupPosition.multiplyByScalar(-1));
+        }
+    },
+    groupDragEnd: {
+        value: function(e){
+            this.circleA.position(this.lineSegment.a);
+            this.circleB.position(this.lineSegment.b);
+            this.group.position({x:0, y:0});
+            this.shapeLine.position({x:0, y:0});
+        }
+    }
+});
+
 var visualiseLineSegment = function(lineSegment, context){
     var a = lineSegment.a;
     var b = lineSegment.b;
@@ -231,23 +357,14 @@ if(window && document)
         });
         circle.on('dragmove', function(e){console.log(e.target)})
         applet.backgroundLayer.add(circle);
+        var l = new LineSegment2UI(lineSegments[0], applet.backgroundLayer);
 
-        shape = new Kinetic.Shape({
-            fill: "blue",
-            stroke: "black",
-            strokeWidth: 0.5,
-            x: 300,
-            y: 300,
-            drawFunc: function(context){
-                context.beginPath();
-                context.moveTo(lineSegments[0].a.x, lineSegments[0].a.y);
-                context.lineTo(lineSegments[0].b.x, lineSegments[0].b.y);
-                context.lineTo(lineSegments[0].normalPoint.x, lineSegments[0].normalPoint.y);
-                context.stroke();
-                context.fill();
-            }
-        });
-        applet.backgroundLayer.add(shape);
+        var CanvasSize = new Vector2(800, 600);
+        var GraphSize = new Vector2(40, 30);
+        var Scaling = new Vector2(CanvasSize.x / GraphSize.x, -CanvasSize.y / GraphSize.y);
+
+        applet.stage.scale(Scaling);
+        applet.stage.offset(GraphSize.multiplyByVector2(new Vector2(-0.5, 0.5)));
 
     });
 
