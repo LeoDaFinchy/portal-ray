@@ -53,12 +53,12 @@ Object.defineProperties(LineSegment2UI.prototype, {
     },
     setLineSegmentA: {
         value: function(){
-            this.lineSegment.a = Vector2.fromObject(this.circleA.getAbsolutePosition());
+            this.lineSegment.a = Vector2.fromObject(this.circleA.position()).add(Vector2.fromObject(this.group.position()));
         }
     },
     setLineSegmentB: {
         value: function(){
-            this.lineSegment.b = Vector2.fromObject(this.circleB.getAbsolutePosition());
+            this.lineSegment.b = Vector2.fromObject(this.circleA.position()).add(Vector2.fromObject(this.group.position()));
         }
     }
 })
