@@ -1,6 +1,8 @@
 var Kinetic = require('kinetic');
 var _ = require('underscore');
 
+var Vector2 = require('../lib/Vector2').Vector2;
+
 var LineSegment2UI = function(lineSegment, layer){
     this.layer = layer;
     this.lineSegment = lineSegment;
@@ -51,12 +53,12 @@ Object.defineProperties(LineSegment2UI.prototype, {
     },
     setLineSegmentA: {
         value: function(){
-            this.lineSegment.a = new Vector2(this.circleA.x() + this.group.x(), this.circleA.y() + this.group.y());
+            this.lineSegment.a = Vector2.fromObject(this.circleA.getAbsolutePosition());
         }
     },
     setLineSegmentB: {
         value: function(){
-            this.lineSegment.b = new Vector2(this.circleB.x() + this.group.x(), this.circleB.y() + this.group.y());
+            this.lineSegment.b = Vector2.fromObject(this.circleB.getAbsolutePosition());
         }
     }
 })
