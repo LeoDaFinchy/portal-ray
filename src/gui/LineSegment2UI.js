@@ -13,12 +13,13 @@ var LineSegment2UI = function(lineSegment, layer){
         draggable: true
     });
     this.circleA = LineSegment2UI.circleA(this);
-    this.circleA.on('dragmove', this.onCircleADrag);
+    this.circleA.on('dragmove', this.onDrag);
     this.circleB = LineSegment2UI.circleB(this);
-    this.circleB.on('dragmove', this.onCircleBDrag);
+    this.circleB.on('dragmove', this.onDrag);
     this.shapeLine = LineSegment2UI.shapeLine(this);
     this.group
         .on('dragmove', this.onGroupDrag)
+        .on('dragmove', this.onDrag)
         .on('dragend', this.onGroupDragEnd)
         .add(
             this.shapeLine,
@@ -31,14 +32,9 @@ var LineSegment2UI = function(lineSegment, layer){
 exports['LineSegment2UI'] = LineSegment2UI;
 
 Object.defineProperties(LineSegment2UI.prototype, {
-    onCircleADrag: {
+    onDrag: {
         get: function(){
-            return _.bind(LineSegment2UI.circleADrag, this);
-        }
-    },
-    onCircleBDrag: {
-        get: function(){
-            return _.bind(LineSegment2UI.circleBDrag, this);
+            return _.bind(LineSegment2UI.onDrag, this);
         }
     },
     onGroupDrag: {
@@ -53,8 +49,17 @@ Object.defineProperties(LineSegment2UI.prototype, {
     },
     export: {
         value: function(){
-            this.lineSegment.a = Vector2.fromObject(this.circleA.position()).add(Vector2.fromObject(this.group.position()));
-            this.lineSegment.b = Vector2.fromObject(this.circleA.position()).add(Vector2.fromObject(this.group.position()));
+            var groupPosition = Vector2.fromObject(this.group.position());
+            this.lineSegment.a = Vector2.fromObject(this.circleA.position()).add(groupPosition);
+            this.lineSegment.b = Vector2.fromObject(this.circleB.position()).add(groupPosition);
+        }
+    },
+    import: {
+        value: function(){
+            this.circleA.position(this.lineSegment.a);
+            this.circleB.position(this.lineSegment.b);
+            this.group.position({x:0, y:0});
+            this.shapeLine.position({x:0, y:0});
         }
     }
 })
@@ -99,30 +104,19 @@ Object.defineProperties(LineSegment2UI, {
             });
         }
     },
-    circleADrag: {
-        value: function(e){
-            this.export();
-        }
-    },
-    circleBDrag: {
+    drag: {
         value: function(e){
             this.export();
         }
     },
     groupDrag: {
         value: function(e){
-            var groupPosition = Vector2.fromObject(this.group.position());
-            this.lineSegment.a = Vector2.fromObject(this.circleA.position()).add(groupPosition);
-            this.lineSegment.b = Vector2.fromObject(this.circleB.position()).add(groupPosition);
-            this.shapeLine.position(groupPosition.multiplyByScalar(-1));
+            this.shapeLine.position(Vector2.fromObject(this.group.position()).multiplyByScalar(-1));
         }
     },
     groupDragEnd: {
         value: function(e){
-            this.circleA.position(this.lineSegment.a);
-            this.circleB.position(this.lineSegment.b);
-            this.group.position({x:0, y:0});
-            this.shapeLine.position({x:0, y:0});
+            this.import();
         }
     }
 });
