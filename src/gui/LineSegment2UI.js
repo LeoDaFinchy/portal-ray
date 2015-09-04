@@ -51,13 +51,9 @@ Object.defineProperties(LineSegment2UI.prototype, {
             return _.bind(LineSegment2UI.groupDragEnd, this);
         }
     },
-    setLineSegmentA: {
+    export: {
         value: function(){
             this.lineSegment.a = Vector2.fromObject(this.circleA.position()).add(Vector2.fromObject(this.group.position()));
-        }
-    },
-    setLineSegmentB: {
-        value: function(){
             this.lineSegment.b = Vector2.fromObject(this.circleA.position()).add(Vector2.fromObject(this.group.position()));
         }
     }
@@ -105,12 +101,12 @@ Object.defineProperties(LineSegment2UI, {
     },
     circleADrag: {
         value: function(e){
-            this.lineSegment.a = Vector2.fromObject(this.circleA.position());
+            this.export();
         }
     },
     circleBDrag: {
         value: function(e){
-            this.lineSegment.b = Vector2.fromObject(this.circleB.position());
+            this.export();
         }
     },
     groupDrag: {
