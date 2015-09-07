@@ -22,6 +22,7 @@ var Beam = require('./engine/Beam').Beam;
 var Applet = require('./engine/Applet').Applet;
 
 var LineSegment2UI = require("./gui/LineSegment2UI").LineSegment2UI;
+var RayUI = require("./gui/RayUI").RayUI;
 
 var visualiseLineSegment = function(lineSegment, context){
     var a = lineSegment.a;
@@ -236,6 +237,10 @@ if(window && document)
 
         _.each(lineSegments, function(lineSegment){
             new LineSegment2UI(lineSegment, applet.backgroundLayer);
+        });
+
+        _.each(rays, function(ray){
+            new RayUI(ray, applet.backgroundLayer);
         });
 
         var CanvasSize = new Vector2(800, 600);
