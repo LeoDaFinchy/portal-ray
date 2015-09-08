@@ -24,6 +24,7 @@ var Applet = require('./engine/Applet').Applet;
 var LineSegment2UI = require("./gui/LineSegment2UI").LineSegment2UI;
 var RayUI = require("./gui/RayUI").RayUI;
 var PortalUI = require("./gui/PortalUI").PortalUI;
+var BeamUI = require("./gui/BeamUI").BeamUI;
 
 var visualiseLineSegment = function(lineSegment, context){
     var a = lineSegment.a;
@@ -250,6 +251,10 @@ if(window && document)
 
         _.each(portals, function(portal){
             new PortalUI(portal, applet.namedLayers["InertLayer"]);
+        });
+
+        _.each(beams, function(beam){
+            new BeamUI(beam, applet.namedLayers["InertLayer"]);
         });
 
         var CanvasSize = new Vector2(800, 600);
