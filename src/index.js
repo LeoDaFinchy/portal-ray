@@ -228,6 +228,8 @@ if(window && document)
     $('document').ready(function(){
         applet = new Applet();
         applet.initialise('canvasContainer');
+        applet.addLayer("InertLayer");
+        applet.addLayer("InteractiveLayer");
         circle = new Kinetic.Circle({
             radius: 20,
             fill: "red",
@@ -239,15 +241,15 @@ if(window && document)
         applet.backgroundLayer.add(circle);
 
         _.each(lineSegments, function(lineSegment){
-            new LineSegment2UI(lineSegment, applet.backgroundLayer);
+            new LineSegment2UI(lineSegment, applet.namedLayers["InteractiveLayer"]);
         });
 
         _.each(rays, function(ray){
-            new RayUI(ray, applet.backgroundLayer);
+            new RayUI(ray, applet.namedLayers["InteractiveLayer"]);
         });
 
         _.each(portals, function(portal){
-            new PortalUI(portal, applet.backgroundLayer);
+            new PortalUI(portal, applet.namedLayers["InertLayer"]);
         });
 
         var CanvasSize = new Vector2(800, 600);
@@ -351,7 +353,7 @@ if(window && document)
 
     function draw(){
 
-        applet.backgroundLayer.draw();
+        applet.stage.draw();
         
         portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
