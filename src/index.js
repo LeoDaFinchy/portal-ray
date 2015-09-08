@@ -23,6 +23,7 @@ var Applet = require('./engine/Applet').Applet;
 
 var LineSegment2UI = require("./gui/LineSegment2UI").LineSegment2UI;
 var RayUI = require("./gui/RayUI").RayUI;
+var PortalUI = require("./gui/PortalUI").PortalUI;
 
 var visualiseLineSegment = function(lineSegment, context){
     var a = lineSegment.a;
@@ -206,8 +207,10 @@ var beams = [
     new Beam(rays[0], rays[1])
 ]
 
-new Portal(lineSegments[0], lineSegments[1]);
-new Portal(lineSegments[2], lineSegments[3]);
+var portals = [
+    new Portal(lineSegments[0], lineSegments[1]),
+    new Portal(lineSegments[2], lineSegments[3])
+];
 
 var toDraw = {
     rays:rays,
@@ -241,6 +244,10 @@ if(window && document)
 
         _.each(rays, function(ray){
             new RayUI(ray, applet.backgroundLayer);
+        });
+
+        _.each(portals, function(portal){
+            new PortalUI(portal, applet.backgroundLayer);
         });
 
         var CanvasSize = new Vector2(800, 600);
