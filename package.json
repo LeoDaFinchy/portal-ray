@@ -6,7 +6,8 @@
   "dependencies": {
     "kinetic": "~5.2.0",
     "jquery": "~2.1.4",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "geometry": "git://github.com/leodafinchy/geometry.git"
   },
   "devDependencies": {},
   "scripts": {
