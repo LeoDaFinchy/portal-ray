@@ -9,7 +9,8 @@ var Hitzone2 = function(visualiser, visualiserTarget){
 
 exports['Hitzone2'] = Hitzone2;
 
-var Vector2 = require('./Vector2').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 Object.defineProperties(Hitzone2.prototype,{
     checkHit: {

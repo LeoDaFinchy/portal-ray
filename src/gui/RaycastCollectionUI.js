@@ -1,7 +1,8 @@
 var Kinetic = require('kinetic');
 var _ = require('underscore');
 
-var Vector2 = require('../lib/Vector2').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 var RaycastCollectionUI = function(intersects, layer){
     this.layer = layer;

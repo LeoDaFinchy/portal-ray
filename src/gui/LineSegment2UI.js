@@ -1,7 +1,8 @@
 var Kinetic = require('kinetic');
 var _ = require('underscore');
 
-var Vector2 = require('../lib/Vector2').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 var LineSegment2UI = function(lineSegment, layer){
     this.layer = layer;

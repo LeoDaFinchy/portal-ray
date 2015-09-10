@@ -10,7 +10,8 @@ var Intersect2 = function(a, b)
 
 exports["Intersect2"] = Intersect2;
 
-var Vector2 = require('./Vector2').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 Object.defineProperties(Intersect2.prototype, {
     solve: {

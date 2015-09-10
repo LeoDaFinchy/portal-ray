@@ -15,7 +15,8 @@ var Portal = function(a, b){
 exports['Portal'] = Portal;
 
 
-var Vector2 = require('../lib/Vector2.js').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 var Matrix3 = require('../lib/Matrix3.js').Matrix3;
 var LineSegment2 = require('../lib/LineSegment2.js').LineSegment2;
 var $ = require('jquery');

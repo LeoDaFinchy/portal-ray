@@ -2,7 +2,8 @@ var _ = require('underscore')._;
 var $ = require('jquery');
 var Kinetic = require('kinetic');
 
-var Vector2 = require('./lib/Vector2.js').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 var Matrix2 = require('./lib/Matrix2.js').Matrix2;
 var Matrix3 = require('./lib/Matrix3.js').Matrix3;
 var Intersect2 = require("./lib/Intersect2").Intersect2;

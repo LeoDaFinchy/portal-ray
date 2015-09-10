@@ -13,7 +13,8 @@ var Visualiser2Value = function(type, value)
 
 exports['Visualiser2'] = Visualiser2;
 
-var Vector2 = require('./Vector2').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 Object.defineProperties(Visualiser2.prototype,{
     draw: {

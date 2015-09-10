@@ -12,7 +12,9 @@ exports['Polygon2'] = Polygon2;
 exports['Polygon2Collection'] = Polygon2Collection;
 
 var LineSegment2 = require('./LineSegment2').LineSegment2;
-var Vector2 = require('./Vector2').Vector2;
+
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 Object.defineProperties(Polygon2.prototype, {
     edges: {
