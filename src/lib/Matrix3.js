@@ -16,7 +16,8 @@ var Matrix3 = function(initial)
 
 exports['Matrix3'] = Matrix3;
 
-var Vector2 = require('./Vector2.js').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 var Matrix2 = require('./Matrix2.js').Matrix2;
 var LineSegment2 = require('./LineSegment2.js').LineSegment2;
 

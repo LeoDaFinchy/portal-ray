@@ -4,7 +4,8 @@ var Shapes = {};
 
 exports['Shapes'] = Shapes;
 
-var Vector2 = require('./Vector2').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 Object.defineProperties(Shapes, {
     draw: {

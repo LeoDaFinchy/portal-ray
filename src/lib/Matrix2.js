@@ -15,7 +15,8 @@ var Matrix2 = function(initial)
 
 exports["Matrix2"] = Matrix2;
 
-var Vector2 = require('./Vector2.js').Vector2;
+var Geometry = require('geometry');
+var Vector2 = Geometry.Vector2;
 
 Object.defineProperties(Matrix2.prototype, {
     //  Get
