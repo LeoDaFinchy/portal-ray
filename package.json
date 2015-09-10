@@ -4,7 +4,9 @@
   "description": "An experiment to develop a method for casting 2D view 'cones' through portals",
   "main": "index.js",
   "dependencies": {
-    "kinetic": "~5.2.0"
+    "kinetic": "~5.2.0",
+    "jquery": "~2.1.4",
+    "underscore": "~1.8.3"
   },
   "devDependencies": {},
   "scripts": {
