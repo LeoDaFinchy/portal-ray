@@ -7,9 +7,6 @@ var Vector2 = Geometry.Vector2;
 var RaycastCollectionUI = function(intersects, layer){
     this.layer = layer;
 
-    Object.defineProperty(this, 'intersects', {
-        get: function(){return intersects}
-    })
     this.intersects = intersects;
 
     this.group = new Kinetic.Group({

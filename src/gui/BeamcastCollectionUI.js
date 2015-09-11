@@ -7,9 +7,6 @@ var Vector2 = Geometry.Vector2;
 var BeamcastCollectionUI = function(intersects, layer){
     this.layer = layer;
 
-    Object.defineProperty(this, 'intersects', {
-        get: function(){return intersects}
-    })
     this.intersects = intersects;
 
     this.group = new Kinetic.Group({
@@ -35,7 +32,6 @@ Object.defineProperties(BeamcastCollectionUI, {
                 fill: 'rgba(204, 153, 51, 0.2)',
                 listening: false,
                 drawFunc: function(context){
-                    console.log(instance.intersects())
                     _.each(instance.intersects(), function(intersect){
                         if(intersect.a.x || intersect.b.x)
                         {
