@@ -28,6 +28,7 @@ var RayUI = require("./gui/RayUI").RayUI;
 var PortalUI = require("./gui/PortalUI").PortalUI;
 var BeamUI = require("./gui/BeamUI").BeamUI;
 var RaycastCollectionUI = require("./gui/RaycastCollectionUI").RaycastCollectionUI;
+var BeamcastCollectionUI = require("./gui/BeamcastCollectionUI").BeamcastCollectionUI;
 
 var visualiseLineSegment = function(lineSegment, context){
     var a = lineSegment.a;
@@ -229,6 +230,11 @@ Object.defineProperties(toDraw, {
         value: _.bind(function(){
             return this.raycasts;
         }, toDraw)
+    },
+    getBeamcasts: {
+        value: _.bind(function(){
+            return this.beamCasts;
+        }, toDraw)
     }
 });
 
@@ -260,6 +266,7 @@ if(window && document)
         });
 
         new RaycastCollectionUI(toDraw.getRaycasts, applet.namedLayers["InteractiveLayer"]);
+        new BeamcastCollectionUI(toDraw.getBeamcasts, applet.namedLayers["InteractiveLayer"]);
 
         var CanvasSize = new Vector2(800, 600);
         var GraphSize = new Vector2(40, 30);
