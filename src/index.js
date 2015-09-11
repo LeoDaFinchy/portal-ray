@@ -241,15 +241,6 @@ if(window && document)
         applet.initialise('canvasContainer');
         applet.addLayer("InertLayer");
         applet.addLayer("InteractiveLayer");
-        circle = new Kinetic.Circle({
-            radius: 20,
-            fill: "red",
-            stroke: "black",
-            strokeWidth: "4",
-            draggable: true,
-        });
-        circle.on('dragmove', function(e){console.log(e.target)})
-        applet.backgroundLayer.add(circle);
 
         _.each(lineSegments, function(lineSegment){
             new LineSegment2UI(lineSegment, applet.namedLayers["InteractiveLayer"]);
