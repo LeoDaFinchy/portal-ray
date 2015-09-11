@@ -17,8 +17,8 @@ exports['Portal'] = Portal;
 
 var Geometry = require('geometry');
 var Vector2 = Geometry.Vector2;
-var Matrix3 = require('../lib/Matrix3.js').Matrix3;
-var LineSegment2 = require('../lib/LineSegment2.js').LineSegment2;
+var Matrix3 = Geometry.Matrix3;
+var LineSegment2 = Geometry.LineSegment2;
 var $ = require('jquery');
 
 Object.defineProperties(Portal.prototype, {

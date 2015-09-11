@@ -4,13 +4,14 @@ var Kinetic = require('kinetic');
 
 var Geometry = require('geometry');
 var Vector2 = Geometry.Vector2;
-var Matrix2 = require('./lib/Matrix2.js').Matrix2;
-var Matrix3 = require('./lib/Matrix3.js').Matrix3;
-var Intersect2 = require("./lib/Intersect2").Intersect2;
+var Matrix2 = Geometry.Matrix2;
+var Matrix3 = Geometry.Matrix3;
+var Intersect2 = Geometry.Intersect2;
+var LineSegment2 = Geometry.LineSegment2;
 
-var LineSegment2JS = require("./lib/LineSegment2");
-var LineSegment2 = LineSegment2JS.LineSegment2;
-var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
+// var LineSegment2JS = require("./lib/LineSegment2");
+// var LineSegment2 = LineSegment2JS.LineSegment2;
+// var LineSegment2Collection = LineSegment2JS.LineSegment2Collection;
 
 var Polygon2 = require('./lib/Polygon2').Polygon2;
 

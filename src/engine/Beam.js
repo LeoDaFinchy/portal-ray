@@ -6,7 +6,8 @@ var Beam = function(a, b)
 
 exports['Beam'] = Beam;
 
-var Intersect2 = require('../lib/Intersect2').Intersect2;
+var Geometry = require('geometry');
+var Intersect2 = Geometry.Intersect2;
 
 Object.defineProperties(Beam.prototype, {
     crossPoint: {
