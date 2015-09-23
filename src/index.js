@@ -11,6 +11,7 @@ var LineSegment2 = Geometry.LineSegment2;
 
 var Portal = require('./engine/Portal').Portal;
 var Beam = require('./engine/Beam').Beam;
+var Hex = require('./engine/Hex').Hex;
 var Applet = require('./engine/Applet').Applet;
 
 var LineSegment2UI = require("./gui/LineSegment2UI").LineSegment2UI;
@@ -95,27 +96,15 @@ var castBeamsAgainstPortals = function(beams, lineSegments, generations)
     return {beams: beams, hits: hits};
 }
 
-var lineSegments = [
-    new LineSegment2(new Vector2(-10.0,  10.0), new Vector2(-10.0, -10.0)),
-    new LineSegment2(new Vector2(-12.0, -10.0), new Vector2(-12.0,  10.0)),
-    new LineSegment2(new Vector2(-17.0,  10.0), new Vector2(-17.0, -10.0)),
-    new LineSegment2(new Vector2( 10.0, -10.0), new Vector2( 10.0,  10.0)),
-];
+var hex = new Hex();
 
-var rays = [
-    new LineSegment2(Vector2.zero, Vector2.unit),
-    new LineSegment2(new Vector2(0.0, 5.0), new Vector2(1.0, 3.0)),
-    new LineSegment2(new Vector2(-3.0, 0.0), new Vector2(-5.0, 3.0))
-];
+var lineSegments = Hex.edges;
 
-var beams = [
-    new Beam(rays[0], rays[1])
-]
+var rays = [];
 
-var portals = [
-    new Portal(lineSegments[0], lineSegments[1]),
-    new Portal(lineSegments[2], lineSegments[3])
-];
+var beams = []
+
+var portals = [];
 
 var toDraw = {
     rays:rays,
