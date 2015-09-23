@@ -12,7 +12,7 @@ var Intersect2 = Geometry.Intersect2;
 Object.defineProperties(Beam.prototype, {
     crossPoint: {
         get: function(){
-            return new Intersect2(this.a, this.b).x;
+            return new Intersect2(this.a, this.b).solve().x;
         }
     },
     intersect:{
