@@ -92,7 +92,7 @@ var castBeamsAgainstPortals = function(beams, lineSegments, generations)
         .flatten()
         .value();
 
-    return {beams: beams, hits: casts};
+    return {beams: beams, hits: hits};
 }
 
 var lineSegments = [
