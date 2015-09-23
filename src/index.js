@@ -59,9 +59,18 @@ var castRaysAgainstPortals = function(rays, lineSegments, generations)
     return {rays:rays, hits:hits};
 };
 
+var getNonParallelForwardCollisionsByDistance = function(ray, lineSegments){
+    return _.chain(ray.intersect(lineSegments))
+        .each(function(x){x.solve();})
+        .filter(function(x){return x.x;})
+        .filter(function(x){return x.fractionA > 0;})
+        .sortBy('fractionA')
+        .value();
+}
+
 var castBeamsAgainstPortals = function(beams, lineSegments, generations)
 {
-    if(generations <= 0 || rays.length <= 0){return {rays:[], hits:[]}};
+    if(generations <= 0 || beams.length <= 0){return {beams:[], hits:[]}};
 
     var hits = _.chain(beams).map(function(beam, i, beams){
         return _.chain(beam.intersect(lineSegments))
@@ -83,7 +92,7 @@ var castBeamsAgainstPortals = function(beams, lineSegments, generations)
         .flatten()
         .value();
 
-    return {beams: beams, hits: hits};
+    return {beams: beams, hits: casts};
 }
 
 var lineSegments = [
