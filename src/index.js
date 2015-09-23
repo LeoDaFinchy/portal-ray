@@ -96,9 +96,7 @@ var castBeamsAgainstPortals = function(beams, lineSegments, generations)
     return {beams: beams, hits: hits};
 }
 
-var hex = new Hex();
-
-var lineSegments = Hex.edges;
+var lineSegments = [];
 
 var rays = [];
 
@@ -137,6 +135,75 @@ if(window && document)
         applet.initialise('canvasContainer');
         applet.addLayer("InertLayer");
         applet.addLayer("InteractiveLayer");
+        applet.hex = new Hex();
+
+        applet.eye = new Kinetic.Circle({
+            x: 2.0,
+            y: 3.0,
+            radius: 0.5,
+            draggable: true,
+            stroke: 'black',
+            strokeWidth: 0.1,
+            fill: 'green'
+        })
+
+        applet.namedLayers["InteractiveLayer"].add(applet.eye);
+        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+            fill: 'rgba(255,0,0,0.2)',
+            drawFunc: function(context){
+                context.beginPath();
+                context.moveTo(Hex.corners[0].x, Hex.corners[0].y);
+                context.lineTo(Hex.corners[1].x, Hex.corners[1].y);
+                context.lineTo(Hex.corners[2].x, Hex.corners[2].y);
+                context.lineTo(Hex.corners[3].x, Hex.corners[3].y);
+                context.lineTo(Hex.corners[4].x, Hex.corners[4].y);
+                context.lineTo(Hex.corners[5].x, Hex.corners[5].y);
+                context.lineTo(Hex.corners[0].x, Hex.corners[0].y);
+                context.fillShape(this);
+            }
+        }));
+        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+            fill: 'blue',
+            drawFunc: function(context){
+                var vis = applet.hex.visibility(applet.eye.position(), 0, {lower: 0, upper: 1});
+                context.beginPath();
+                context.moveTo(vis.beam[0].x, vis.beam[0].y);
+                context.lineTo(vis.beam[1].x, vis.beam[1].y);
+                context.lineTo(vis.beam[2].x, vis.beam[2].y);
+                context.lineTo(vis.beam[0].x, vis.beam[0].y);
+                context.fillShape(this);
+            }
+        }));
+        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+            fill: 'yellow',
+            stroke: 'black',
+            strokeWidth: 0.1,
+            drawFunc: function(context){
+                var vis = applet.hex.visibility(applet.eye.position(), 0, {lower: 0, upper: 1});
+                context.beginPath();
+                context.moveTo(vis.patch[0].x, vis.patch[0].y);
+                for(var i = 0; i < vis.patch.length; i++)
+                {
+                    context.lineTo(vis.patch[i].x, vis.patch[i].y);
+                }
+                context.strokeShape(this);
+            }
+        }));
+        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+            stroke: 'black',
+            strokeWidth: 0.1,
+            drawFunc: function(context){
+                var vis = applet.hex.visibility(applet.eye.position(), 0, {lower: 0, upper: 1});
+                context.beginPath();
+                context.moveTo(vis.left.a.x, vis.left.a.y);
+                context.lineTo(vis.left.b.x, vis.left.b.y);
+                context.strokeShape(this);
+                context.beginPath();
+                context.moveTo(vis.right.a.x, vis.right.a.y);
+                context.lineTo(vis.right.b.x, vis.right.b.y);
+                context.strokeShape(this);
+            }
+        }));
 
         _.each(lineSegments, function(lineSegment){
             new LineSegment2UI(lineSegment, applet.namedLayers["InteractiveLayer"]);
