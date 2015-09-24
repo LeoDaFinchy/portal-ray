@@ -192,14 +192,17 @@ if(window && document)
                 {
                     context.lineTo(vis.patch[i].x, vis.patch[i].y);
                 }
-                context.strokeShape(this);
+                context.fillStrokeShape(this);
             }
         }));
         applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-            stroke: 'green',
-            strokeWidth: 0.4,
+            stroke: 'black',
+            fill: 'green',
+            lineJoin: 'bevel',
+            strokeWidth: 0.1,
             drawFunc: function(context){
                 var vis = applet.vis;
+                var eye = Vector2.fromObject(applet.eye.position());
                 for(var i = 0; i < vis.bounds.length; i++)
                 {
                     var bounds = vis.bounds[i];
@@ -208,10 +211,15 @@ if(window && document)
                     {
                         var lowerPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.lower));
                         var upperPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.upper));
+                        var lowerOutPoint = lowerPoint._.subtract(eye).tangent.multiplyByScalar(4).add(lowerPoint);
+                        var upperOutPoint = upperPoint._.subtract(eye).tangent.multiplyByScalar(4).add(upperPoint);
                         context.beginPath();
                         context.moveTo(lowerPoint.x, lowerPoint.y);
                         context.lineTo(upperPoint.x, upperPoint.y);
-                        context.strokeShape(this);
+                        context.lineTo(upperOutPoint.x, upperOutPoint.y);
+                        context.lineTo(lowerOutPoint.x, lowerOutPoint.y);
+                        context.lineTo(lowerPoint.x, lowerPoint.y);
+                        context.fillStrokeShape(this);
                     }
                 }
             }
