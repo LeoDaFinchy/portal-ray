@@ -119,27 +119,24 @@ Object.defineProperties(Hex.prototype, {
                 {
                     var left = leftX[i];
                     var right = rightX[i];
-                    if(left.x && right.x)
+                    if((left.fractionB > right.fractionB) && (left.angle > 0) && (right.angle > 0))
                     {
-                        if((left.fractionB > right.fractionB) && (left.angle > 0) && (right.angle > 0))
-                        {
-                            patch.push(right.x);
-                            patch.push(left.x);
-                            bounds.push({lower: left.fractionB, upper: right.fractionB});
-                            continue;
-                        }
-                        if((right.angle < 0) && (left.angle > 0) && (left.fractionB > 0)){
-                            patch.push(left.x);
-                            bounds.push({lower: 0, upper: left.fractionB});
-                            continue;
-                        }
-                        if((left.angle < 0) && (right.angle > 0) && (right.fractionB < 1)){
-                            patch.push(right.x);
-                            bounds.push({lower: right.fractionB, upper: 1});
-                            continue
-                        }
-                        bounds.push(null);
+                        patch.push(right.x);
+                        patch.push(left.x);
+                        bounds.push({lower: left.fractionB, upper: right.fractionB});
+                        continue;
                     }
+                    if((right.angle <= 0) && (left.angle > 0) && (left.fractionB > 0)){
+                        patch.push(left.x);
+                        bounds.push({lower: 0, upper: left.fractionB});
+                        continue;
+                    }
+                    if((left.angle <= 0) && (right.angle > 0) && (right.fractionB < 1)){
+                        patch.push(right.x);
+                        bounds.push({lower: right.fractionB, upper: 1});
+                        continue
+                    }
+                    bounds.push(null);
                 }
             }
 
