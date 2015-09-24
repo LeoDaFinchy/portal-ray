@@ -150,6 +150,7 @@ if(window && document)
         applet.entrance = 0;
 
         applet.namedLayers["InteractiveLayer"].add(applet.eye);
+        applet.vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
 
         var hexUI = new Kinetic.Shape({
             fill: 'rgba(255,0,0,0.2)',
@@ -170,7 +171,7 @@ if(window && document)
         applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
             fill: 'blue',
             drawFunc: function(context){
-                var vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
+                var vis = applet.vis;
                 context.beginPath();
                 context.moveTo(vis.beam[0].x, vis.beam[0].y);
                 context.lineTo(vis.beam[1].x, vis.beam[1].y);
@@ -184,7 +185,7 @@ if(window && document)
             stroke: 'black',
             strokeWidth: 0.1,
             drawFunc: function(context){
-                var vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
+                var vis = applet.vis;
                 context.beginPath();
                 context.moveTo(vis.patch[0].x, vis.patch[0].y);
                 for(var i = 0; i < vis.patch.length; i++)
@@ -195,17 +196,24 @@ if(window && document)
             }
         }));
         applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-            stroke: 'black',
-            strokeWidth: 0.1,
+            stroke: 'red',
+            strokeWidth: 0.3,
             drawFunc: function(context){
-                var vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
-                context.beginPath();
-                context.moveTo(vis.left.a.x, vis.left.a.y);
-                context.lineTo(vis.left.b.x, vis.left.b.y);
-                context.strokeShape(this);
+                var vis = applet.vis;
                 context.beginPath();
                 context.moveTo(vis.right.a.x, vis.right.a.y);
                 context.lineTo(vis.right.b.x, vis.right.b.y);
+                context.strokeShape(this);
+            }
+        }));
+        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+            stroke: 'blue',
+            strokeWidth: 0.3,
+            drawFunc: function(context){
+                var vis = applet.vis;
+                context.beginPath();
+                context.moveTo(vis.left.a.x, vis.left.a.y);
+                context.lineTo(vis.left.b.x, vis.left.b.y);
                 context.strokeShape(this);
             }
         }));
@@ -240,6 +248,7 @@ if(window && document)
     });
 
     function draw(){
+        applet.vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
 
         applet.stage.draw();
         
