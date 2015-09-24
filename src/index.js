@@ -147,8 +147,11 @@ if(window && document)
             fill: 'green'
         })
 
+        applet.entrance = 0;
+
         applet.namedLayers["InteractiveLayer"].add(applet.eye);
-        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+
+        var hexUI = new Kinetic.Shape({
             fill: 'rgba(255,0,0,0.2)',
             drawFunc: function(context){
                 context.beginPath();
@@ -161,11 +164,13 @@ if(window && document)
                 context.lineTo(Hex.corners[0].x, Hex.corners[0].y);
                 context.fillShape(this);
             }
-        }));
+        });
+        applet.namedLayers["InteractiveLayer"].add(hexUI);
+        hexUI.on("click", function(){applet.entrance = (applet.entrance + 1) % 6;});
         applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
             fill: 'blue',
             drawFunc: function(context){
-                var vis = applet.hex.visibility(applet.eye.position(), 0, {lower: 0, upper: 1});
+                var vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
                 context.beginPath();
                 context.moveTo(vis.beam[0].x, vis.beam[0].y);
                 context.lineTo(vis.beam[1].x, vis.beam[1].y);
@@ -179,7 +184,7 @@ if(window && document)
             stroke: 'black',
             strokeWidth: 0.1,
             drawFunc: function(context){
-                var vis = applet.hex.visibility(applet.eye.position(), 0, {lower: 0, upper: 1});
+                var vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
                 context.beginPath();
                 context.moveTo(vis.patch[0].x, vis.patch[0].y);
                 for(var i = 0; i < vis.patch.length; i++)
@@ -193,7 +198,7 @@ if(window && document)
             stroke: 'black',
             strokeWidth: 0.1,
             drawFunc: function(context){
-                var vis = applet.hex.visibility(applet.eye.position(), 0, {lower: 0, upper: 1});
+                var vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
                 context.beginPath();
                 context.moveTo(vis.left.a.x, vis.left.a.y);
                 context.lineTo(vis.left.b.x, vis.left.b.y);
