@@ -132,7 +132,7 @@ if(window && document)
 
     $('document').ready(function(){
         applet = new Applet();
-        applet.initialise('canvasContainer');
+        applet.initialise(new Vector2(800,600));
         applet.addLayer("InertLayer");
         applet.addLayer("InteractiveLayer");
         applet.hex = new Hex();

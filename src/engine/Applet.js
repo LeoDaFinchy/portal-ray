@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var Kinetic = require('kinetic');
 
-var Applet = function(containerId){
+var Applet = function(){
 
 }
 
@@ -9,12 +9,14 @@ exports['Applet'] = Applet;
 
 Object.defineProperties(Applet.prototype, {
     initialise: {
-        value: function(containerId){
-            this.canvasContainer = $('#' + containerId);
+        value: function(size){
+            containerId = "canvasContainer";
+            this.canvasContainer = $('<div/>', {id: containerId});
+            $('#main-content').append(this.canvasContainer);
 
             this.stage = new Kinetic.Stage({
-                width: this.canvasContainer.width(),
-                height: this.canvasContainer.height(),
+                width: size.x,
+                height: size.y,
                 container: containerId,
             });
 
