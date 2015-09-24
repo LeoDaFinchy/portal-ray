@@ -12,6 +12,7 @@ Object.defineProperties(Applet.prototype, {
         value: function(size){
             containerId = "canvasContainer";
             this.canvasContainer = $('<div/>', {id: containerId});
+            this.canvasContainer.css('background-color', 'white')
             $('#main-content').append(this.canvasContainer);
 
             this.stage = new Kinetic.Stage({
