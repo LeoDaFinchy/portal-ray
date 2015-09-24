@@ -87,7 +87,8 @@ Object.defineProperties(Hex.prototype, {
                 }
             });
 
-
+            leftX = _.rotate(leftX, entry);
+            rightX = _.rotate(rightX, entry);
 
             var patch = [
                 entrance.a,
