@@ -167,85 +167,62 @@ if(window && document)
             }
         });
         applet.namedLayers["InteractiveLayer"].add(hexUI);
-        hexUI.on("click", function(){applet.entrance = (applet.entrance + 1) % 6;});
-        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-            fill: 'blue',
-            drawFunc: function(context){
-                var vis = applet.vis;
-                context.beginPath();
-                context.moveTo(vis.beam[0].x, vis.beam[0].y);
-                context.lineTo(vis.beam[1].x, vis.beam[1].y);
-                context.lineTo(vis.beam[2].x, vis.beam[2].y);
-                context.lineTo(vis.beam[0].x, vis.beam[0].y);
-                context.fillShape(this);
-            }
-        }));
-        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-            fill: 'yellow',
-            stroke: 'black',
-            strokeWidth: 0.1,
-            drawFunc: function(context){
-                var vis = applet.vis;
-                context.beginPath();
-                context.moveTo(vis.patch[0].x, vis.patch[0].y);
-                for(var i = 0; i < vis.patch.length; i++)
-                {
-                    context.lineTo(vis.patch[i].x, vis.patch[i].y);
-                }
-                context.fillStrokeShape(this);
-            }
-        }));
-        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-            stroke: 'black',
-            fill: 'green',
-            lineJoin: 'bevel',
-            strokeWidth: 0.1,
-            drawFunc: function(context){
-                var vis = applet.vis;
-                var eye = Vector2.fromObject(applet.eye.position());
-                for(var i = 0; i < vis.bounds.length; i++)
-                {
-                    var bounds = vis.bounds[i];
-                    var edge = Hex.edges[i];
-                    if(bounds)
+        _.each([
+            ['rgb(255,   0,   0)', 'rgb(255, 204, 204)'],
+            ['rgb(255, 255,   0)', 'rgb(255, 255, 204)'],
+            ['rgb(  0, 255,   0)', 'rgb(204, 255, 204)'],
+            ['rgb(  0, 255, 255)', 'rgb(204, 255, 255)'],
+            ['rgb(  0,   0, 255)', 'rgb(204, 204, 255)'],
+            ['rgb(255,   0, 255)', 'rgb(255, 204, 255)'],
+        ], function(colour, entry){
+            applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+                stroke: 'black',
+                fill: colour[0],
+                lineJoin: 'bevel',
+                strokeWidth: 0.1,
+                drawFunc: function(context){
+                    var vis = applet.vis[entry];
+                    var eye = Vector2.fromObject(applet.eye.position());
+                    for(var i = 0; i < vis.bounds.length; i++)
                     {
-                        var lowerPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.lower));
-                        var upperPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.upper));
-                        var lowerOutPoint = lowerPoint._.subtract(eye).tangent.multiplyByScalar(4).add(lowerPoint);
-                        var upperOutPoint = upperPoint._.subtract(eye).tangent.multiplyByScalar(4).add(upperPoint);
-                        context.beginPath();
-                        context.moveTo(lowerPoint.x, lowerPoint.y);
-                        context.lineTo(upperPoint.x, upperPoint.y);
-                        context.lineTo(upperOutPoint.x, upperOutPoint.y);
-                        context.lineTo(lowerOutPoint.x, lowerOutPoint.y);
-                        context.lineTo(lowerPoint.x, lowerPoint.y);
-                        context.fillStrokeShape(this);
+                        var bounds = vis.bounds[i];
+                        var edge = Hex.edges[i];
+                        if(bounds)
+                        {
+                            var lowerPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.lower));
+                            var upperPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.upper));
+                            var lowerOutPoint = lowerPoint._.subtract(eye).tangent.multiplyByScalar(4).add(lowerPoint);
+                            var upperOutPoint = upperPoint._.subtract(eye).tangent.multiplyByScalar(4).add(upperPoint);
+                            context.beginPath();
+                            context.moveTo(lowerPoint.x, lowerPoint.y);
+                            context.lineTo(upperPoint.x, upperPoint.y);
+                            context.lineTo(upperOutPoint.x, upperOutPoint.y);
+                            context.lineTo(lowerOutPoint.x, lowerOutPoint.y);
+                            context.lineTo(lowerPoint.x, lowerPoint.y);
+                            context.fillStrokeShape(this);
+                        }
                     }
                 }
-            }
-        }));
-        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-            stroke: 'red',
-            strokeWidth: 0.3,
-            drawFunc: function(context){
-                var vis = applet.vis;
-                context.beginPath();
-                context.moveTo(vis.right.a.x, vis.right.a.y);
-                context.lineTo(vis.right.b.x, vis.right.b.y);
-                context.strokeShape(this);
-            }
-        }));
-        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-            stroke: 'blue',
-            strokeWidth: 0.3,
-            drawFunc: function(context){
-                var vis = applet.vis;
-                context.beginPath();
-                context.moveTo(vis.left.a.x, vis.left.a.y);
-                context.lineTo(vis.left.b.x, vis.left.b.y);
-                context.strokeShape(this);
-            }
-        }));
+            }));
+
+            applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+                fill: colour[1],
+                stroke: 'black',
+                lineJoin: 'bevel',
+                strokeWidth: 0.1,
+                drawFunc: function(context){
+                    var vis = applet.vis[entry];
+                    context.beginPath();
+                    context.moveTo(vis.patch[0].x, vis.patch[0].y);
+                    for(var i = 0; i < vis.patch.length; i++)
+                    {
+                        context.lineTo(vis.patch[i].x, vis.patch[i].y);
+                    }
+                    context.fillStrokeShape(this);
+                }
+            }));
+        });
+        
 
         _.each(lineSegments, function(lineSegment){
             new LineSegment2UI(lineSegment, applet.namedLayers["InteractiveLayer"]);
@@ -277,7 +254,9 @@ if(window && document)
     });
 
     function draw(){
-        applet.vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
+        applet.vis = _.map(_.range(6), function(x){
+            return applet.hex.visibility(applet.eye.position(), x, {lower: 0, upper: 1});
+        });
 
         applet.stage.draw();
         
