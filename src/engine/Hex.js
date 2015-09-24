@@ -95,12 +95,23 @@ Object.defineProperties(Hex.prototype, {
                 entrance.b
             ];
 
-            if(leftX[5].angle > 0 && rightX[1].angle > 0 && leftX[0].angle < 0 && rightX[0].angle < 0)
+            var bounds = [null];
+
+            if(leftX[0].angle > 0 || rightX[0].angle > 0)
+            {
+                bounds = [null, null, null, null, null, null];
+            }
+            else if(leftX[5].angle > 0 && rightX[1].angle > 0 && leftX[0].angle < 0 && rightX[0].angle < 0)
             {
                 patch.push(leftX[1].b.b);
                 patch.push(leftX[2].b.b);
                 patch.push(leftX[3].b.b);
                 patch.push(leftX[4].b.b);
+                bounds.push({lower: 0, upper:1});
+                bounds.push({lower: 0, upper:1});
+                bounds.push({lower: 0, upper:1});
+                bounds.push({lower: 0, upper:1});
+                bounds.push({lower: 0, upper:1});
             }
             else
             {
@@ -114,25 +125,33 @@ Object.defineProperties(Hex.prototype, {
                         {
                             patch.push(right.x);
                             patch.push(left.x);
+                            bounds.push({lower: left.fractionB, upper: right.fractionB});
+                            continue;
                         }
-                        if((left.fractionB < 1) && (left.fractionB > 0) && (right.angle < 0) && (left.angle > 0)){
+                        if((right.angle < 0) && (left.angle > 0) && (left.fractionB > 0)){
                             patch.push(left.x);
+                            bounds.push({lower: 0, upper: left.fractionB});
+                            continue;
                         }
-                        if((right.fractionB < 1) && (right.fractionB > 0) && (left.angle < 0) && (right.angle > 0)){
+                        if((left.angle < 0) && (right.angle > 0) && (right.fractionB < 1)){
                             patch.push(right.x);
+                            bounds.push({lower: right.fractionB, upper: 1});
+                            continue
                         }
+                        bounds.push(null);
                     }
                 }
             }
 
             patch.push(entrance.a);
 
+            bounds = _.rotate(bounds, -entry);
+
             return {
                 patch: patch,
                 left: left,
                 right: right,
-                // uppers: uppers,
-                // lowers: lowers,
+                bounds: bounds,
                 beam: [
                     eye,
                     leftEntry,
