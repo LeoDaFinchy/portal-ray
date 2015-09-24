@@ -196,6 +196,27 @@ if(window && document)
             }
         }));
         applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
+            stroke: 'green',
+            strokeWidth: 0.4,
+            drawFunc: function(context){
+                var vis = applet.vis;
+                for(var i = 0; i < vis.bounds.length; i++)
+                {
+                    var bounds = vis.bounds[i];
+                    var edge = Hex.edges[i];
+                    if(bounds)
+                    {
+                        var lowerPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.lower));
+                        var upperPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.upper));
+                        context.beginPath();
+                        context.moveTo(lowerPoint.x, lowerPoint.y);
+                        context.lineTo(upperPoint.x, upperPoint.y);
+                        context.strokeShape(this);
+                    }
+                }
+            }
+        }));
+        applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
             stroke: 'red',
             strokeWidth: 0.3,
             drawFunc: function(context){
