@@ -1,5 +1,21 @@
 var _ = require('underscore');
 
+_.mixin({
+    rotate: function(array, amount){
+        if(!amount){return array};
+        if(amount > 0)
+        {
+            var removed = array.splice(0, amount);
+            return array.concat(removed);
+        }
+        else
+        {
+            var removed = array.splice(array.length + amount, -amount);
+            return removed.concat(array);
+        }
+    }
+});
+
 var Geometry = require('geometry');
 var LineSegment2 = Geometry.LineSegment2;
 var Vector2 = Geometry.Vector2;
@@ -70,6 +86,8 @@ Object.defineProperties(Hex.prototype, {
                     }
                 }
             });
+
+
 
             var patch = [
                 entrance.a,
