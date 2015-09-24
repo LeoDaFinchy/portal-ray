@@ -76,22 +76,32 @@ Object.defineProperties(Hex.prototype, {
                 entrance.b
             ];
 
-            for(var i = 1; i < 6; i++)
+            if(leftX[5].angle > 0 && rightX[1].angle > 0 && leftX[0].angle < 0 && rightX[0].angle < 0)
             {
-                var left = leftX[i];
-                var right = rightX[i];
-                if(left.x && right.x)
+                patch.push(leftX[1].b.b);
+                patch.push(leftX[2].b.b);
+                patch.push(leftX[3].b.b);
+                patch.push(leftX[4].b.b);
+            }
+            else
+            {
+                for(var i = 1; i < 6; i++)
                 {
-                    if((left.fractionB > right.fractionB) && (left.angle > 0) && (right.angle > 0))
+                    var left = leftX[i];
+                    var right = rightX[i];
+                    if(left.x && right.x)
                     {
-                        patch.push(right.x);
-                        patch.push(left.x);
-                    }
-                    if((left.fractionB < 1) && (left.fractionB > 0) && (right.angle < 0) && (left.angle > 0)){
-                        patch.push(left.x);
-                    }
-                    if((right.fractionB < 1) && (right.fractionB > 0) && (left.angle < 0) && (right.angle > 0)){
-                        patch.push(right.x);
+                        if((left.fractionB > right.fractionB) && (left.angle > 0) && (right.angle > 0))
+                        {
+                            patch.push(right.x);
+                            patch.push(left.x);
+                        }
+                        if((left.fractionB < 1) && (left.fractionB > 0) && (right.angle < 0) && (left.angle > 0)){
+                            patch.push(left.x);
+                        }
+                        if((right.fractionB < 1) && (right.fractionB > 0) && (left.angle < 0) && (right.angle > 0)){
+                            patch.push(right.x);
+                        }
                     }
                 }
             }
