@@ -2,6 +2,22 @@ var _ = require('underscore')._;
 var $ = require('jquery');
 var Kinetic = require('kinetic');
 
+_.mixin({
+    rotate: function(array, amount){
+        if(!amount){return array};
+        if(amount > 0)
+        {
+            var removed = array.splice(0, amount);
+            return array.concat(removed);
+        }
+        else
+        {
+            var removed = array.splice(array.length + amount, -amount);
+            return removed.concat(array);
+        }
+    }
+});
+
 var Geometry = require('geometry');
 var Vector2 = Geometry.Vector2;
 var Matrix2 = Geometry.Matrix2;
@@ -18,6 +34,7 @@ var LineSegment2UI = require("./gui/LineSegment2UI").LineSegment2UI;
 var RayUI = require("./gui/RayUI").RayUI;
 var PortalUI = require("./gui/PortalUI").PortalUI;
 var BeamUI = require("./gui/BeamUI").BeamUI;
+var HexUI = require("./gui/HexUI").HexUI;
 var RaycastCollectionUI = require("./gui/RaycastCollectionUI").RaycastCollectionUI;
 var BeamcastCollectionUI = require("./gui/BeamcastCollectionUI").BeamcastCollectionUI;
 
@@ -134,8 +151,10 @@ if(window && document)
         applet = new Applet();
         applet.initialise(new Vector2(800,600));
         applet.addLayer("InertLayer");
+        applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
         applet.hex = new Hex();
+        applet.hex2 = new Hex();
 
         applet.eye = new Kinetic.Circle({
             x: 2.0,
@@ -150,79 +169,21 @@ if(window && document)
         applet.entrance = 0;
 
         applet.namedLayers["InteractiveLayer"].add(applet.eye);
-        applet.vis = applet.hex.visibility(applet.eye.position(), applet.entrance, {lower: 0, upper: 1});
-
-        var hexUI = new Kinetic.Shape({
-            fill: 'rgba(255,0,0,0.2)',
-            drawFunc: function(context){
-                context.beginPath();
-                context.moveTo(Hex.corners[0].x, Hex.corners[0].y);
-                context.lineTo(Hex.corners[1].x, Hex.corners[1].y);
-                context.lineTo(Hex.corners[2].x, Hex.corners[2].y);
-                context.lineTo(Hex.corners[3].x, Hex.corners[3].y);
-                context.lineTo(Hex.corners[4].x, Hex.corners[4].y);
-                context.lineTo(Hex.corners[5].x, Hex.corners[5].y);
-                context.lineTo(Hex.corners[0].x, Hex.corners[0].y);
-                context.fillShape(this);
-            }
+        applet.eye.on("dragmove", function(e){
+            _.each(applet.hUIs, function(x){
+                x.eye = Vector2.fromObject(applet.eye.position()).subtract(Vector2.fromObject(x.group.position()))
+                x.vis = x.visibility();
+            })
         });
-        applet.namedLayers["InteractiveLayer"].add(hexUI);
-        _.each([
-            ['rgb(255,   0,   0)', 'rgb(255, 204, 204)'],
-            ['rgb(255, 255,   0)', 'rgb(255, 255, 204)'],
-            ['rgb(  0, 255,   0)', 'rgb(204, 255, 204)'],
-            ['rgb(  0, 255, 255)', 'rgb(204, 255, 255)'],
-            ['rgb(  0,   0, 255)', 'rgb(204, 204, 255)'],
-            ['rgb(255,   0, 255)', 'rgb(255, 204, 255)'],
-        ], function(colour, entry){
-            applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-                stroke: 'black',
-                fill: colour[0],
-                lineJoin: 'bevel',
-                strokeWidth: 0.1,
-                drawFunc: function(context){
-                    var vis = applet.vis[entry];
-                    var eye = Vector2.fromObject(applet.eye.position());
-                    for(var i = 0; i < vis.bounds.length; i++)
-                    {
-                        var bounds = vis.bounds[i];
-                        var edge = Hex.edges[i];
-                        if(bounds)
-                        {
-                            var lowerPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.lower));
-                            var upperPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.upper));
-                            var lowerOutPoint = lowerPoint._.subtract(eye).tangent.multiplyByScalar(4).add(lowerPoint);
-                            var upperOutPoint = upperPoint._.subtract(eye).tangent.multiplyByScalar(4).add(upperPoint);
-                            context.beginPath();
-                            context.moveTo(lowerPoint.x, lowerPoint.y);
-                            context.lineTo(upperPoint.x, upperPoint.y);
-                            context.lineTo(upperOutPoint.x, upperOutPoint.y);
-                            context.lineTo(lowerOutPoint.x, lowerOutPoint.y);
-                            context.lineTo(lowerPoint.x, lowerPoint.y);
-                            context.fillStrokeShape(this);
-                        }
-                    }
-                }
-            }));
 
-            applet.namedLayers["InteractiveLayer"].add(new Kinetic.Shape({
-                fill: colour[1],
-                stroke: 'black',
-                lineJoin: 'bevel',
-                strokeWidth: 0.1,
-                drawFunc: function(context){
-                    var vis = applet.vis[entry];
-                    context.beginPath();
-                    context.moveTo(vis.patch[0].x, vis.patch[0].y);
-                    for(var i = 0; i < vis.patch.length; i++)
-                    {
-                        context.lineTo(vis.patch[i].x, vis.patch[i].y);
-                    }
-                    context.fillStrokeShape(this);
-                }
-            }));
-        });
-        
+        applet.hUIs = [
+            new HexUI(applet.hex, applet.namedLayers.HexLayer, 0, {lower: 0, upper: 1}),
+            (function(){
+                var hex = new HexUI(applet.hex, applet.namedLayers.HexLayer, 0, {lower: 0, upper: 1});
+                hex.group.position(new Vector2(0.0, 6.0));
+                return hex;
+            })()
+        ];
 
         _.each(lineSegments, function(lineSegment){
             new LineSegment2UI(lineSegment, applet.namedLayers["InteractiveLayer"]);
@@ -254,11 +215,15 @@ if(window && document)
     });
 
     function draw(){
-        applet.vis = _.map(_.range(6), function(x){
-            return applet.hex.visibility(applet.eye.position(), x, {lower: 0, upper: 1});
-        });
+        // applet.vis = _.map(_.range(6), function(x){
+        //     return applet.hex.visibility(applet.eye.position(), x, {lower: 0, upper: 1});
+        // });
 
-        applet.stage.draw();
+        // applet.stage.draw();
+        applet.stage.clear();
+        applet.namedLayers.InertLayer.draw();
+        applet.namedLayers.InteractiveLayer.draw();
+        _.each(applet.hUIs, function(x){x.group.draw();});
         
         portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
