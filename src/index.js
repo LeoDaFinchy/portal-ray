@@ -177,7 +177,7 @@ if(window && document)
         });
 
         applet.hUIs = [
-            new HexUI(applet.hex, applet.namedLayers.HexLayer, 0, {lower: 0, upper: 1}),
+            new HexUI(applet.hex, applet.namedLayers.HexLayer, null, {lower: 0, upper: 1}),
             (function(){
                 var hex = new HexUI(applet.hex, applet.namedLayers.HexLayer, 0, {lower: 0, upper: 1});
                 hex.group.position(new Vector2(0.0, 6.0));
@@ -223,7 +223,7 @@ if(window && document)
         applet.stage.clear();
         applet.namedLayers.InertLayer.draw();
         applet.namedLayers.InteractiveLayer.draw();
-        _.each(applet.hUIs, function(x){x.group.draw();});
+        _.each(applet.hUIs, function(x){x.draw();});
         
         portal = castRaysAgainstPortals(rays, lineSegments, 100);
         toDraw.rays = portal.rays;
