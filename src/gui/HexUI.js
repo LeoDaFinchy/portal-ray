@@ -47,7 +47,7 @@ var HexUI = function(hex, layer, entrance, bounds){
         this.visibilityShape = HexUI.visibilityShape(this, entrance);
         this.group.add(
             this.hexShape,
-            this.exitShape,
+            // this.exitShape,
             this.visibilityShape
         );
     }
@@ -69,7 +69,38 @@ Object.defineProperties(HexUI.prototype, {
         value: function(){
             this.vis = this.visibility();
             this.group.draw();
+            _.each(this.vis.bounds, function(bound, i){
+                if(bound && !this.beyonds[i])
+                {
+                    if(this.hex.portals[i])
+                    {
+                        var hui = new HexUI(
+                            this.hex.portals[i].hex, 
+                            this.layer,
+                            this.hex.portals[i].otherSide,
+                            bound
+                        );
 
+                        this.beyonds[i] = hui;
+
+                        var edge = HexUI.edges[i];
+                        var targetPoint = edge.offset.multiplyByScalar(0.5).add(edge.a).multiplyByScalar(2).add(Vector2.fromObject(this.group.position()));
+
+                        hui.group.position(targetPoint);
+                    }
+                }
+                if(!bound && this.beyonds[i])
+                {
+                    console.log("delete hex "+i);
+                }
+                if(this.beyonds[i])
+                {
+                    this.beyonds[i].eye = this.eye._
+                        .add(Vector2.fromObject(this.group.position()))
+                        .subtract(Vector2.fromObject(this.beyonds[i].group.position()))
+                    this.beyonds[i].draw();
+                }
+            }, this);
         }
     },
     visibility: {
@@ -126,16 +157,18 @@ Object.defineProperties(HexUI.prototype, {
 
             if(this.entrance == null)
             {
-                bounds = [{lower: 0, upper:1}];
                 patch.push(leftX[1].b.b);
                 patch.push(leftX[2].b.b);
                 patch.push(leftX[3].b.b);
                 patch.push(leftX[4].b.b);
-            }
-
-            if(leftX[0].angle > 0 || rightX[0].angle > 0)
-            {
-                bounds = [null, null, null, null, null, null];
+                bounds = [
+                    {lower: 0, upper:1},
+                    {lower: 0, upper:1},
+                    {lower: 0, upper:1},
+                    {lower: 0, upper:1},
+                    {lower: 0, upper:1},
+                    {lower: 0, upper:1},
+                ];
             }
             else if(leftX[5].angle > 0 && rightX[1].angle > 0 && leftX[0].angle < 0 && rightX[0].angle < 0)
             {
