@@ -41,23 +41,41 @@ var HexUI = function(hex, layer, entrance, bounds){
         draggable: true,
     });
     this.hexShape = HexUI.hexShape(this);
-    this.exitShape = HexUI.exitShape(this, entrance);
-    this.visibilityShape = HexUI.visibilityShape(this, entrance);
-    this.group
-        .add(
+    if(this.entrance)
+    {
+        this.exitShape = HexUI.exitShape(this, entrance);
+        this.visibilityShape = HexUI.visibilityShape(this, entrance);
+        this.group.add(
             this.hexShape,
             this.exitShape,
             this.visibilityShape
         );
+    }
+    else
+    {
+        this.visibilityShape = HexUI.visibilityShape(this, null);
+        this.group.add(
+            this.hexShape,
+            this.visibilityShape
+        );
+    }
     this.layer.add(this.group);
 }
 
 exports['HexUI'] = HexUI;
 
 Object.defineProperties(HexUI.prototype, {
+    draw: {
+        value: function(){
+            this.vis = this.visibility();
+            this.group.draw();
+
+        }
+    },
     visibility: {
         value: function(){
             var entrance = HexUI.edges[this.entrance];
+            if(this.entrance == null){entrance = HexUI.edges[0];}
             var leftEntry = entrance.a._.add(entrance.offset.multiplyByScalar(this.bounds.lower));
             var rightEntry = entrance.a._.add(entrance.offset.multiplyByScalar(this.bounds.upper));
             var left = new LineSegment2(entrance.a, new LineSegment2(this.eye, leftEntry).tangent.add(entrance.a));
@@ -105,6 +123,15 @@ Object.defineProperties(HexUI.prototype, {
             ];
 
             var bounds = [null];
+
+            if(this.entrance == null)
+            {
+                bounds = [{lower: 0, upper:1}];
+                patch.push(leftX[1].b.b);
+                patch.push(leftX[2].b.b);
+                patch.push(leftX[3].b.b);
+                patch.push(leftX[4].b.b);
+            }
 
             if(leftX[0].angle > 0 || rightX[0].angle > 0)
             {
