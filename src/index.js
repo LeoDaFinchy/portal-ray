@@ -155,6 +155,16 @@ if(window && document)
         applet.addLayer("InteractiveLayer");
         applet.hex = new Hex();
         applet.hex2 = new Hex();
+        applet.hex3 = new Hex();
+
+        applet.hex.portals[1] = {
+            otherSide: 4,
+            hex: applet.hex2,
+        }
+        applet.hex2.portals[1] = {
+            otherSide: 4,
+            hex: applet.hex3,
+        }
 
         applet.eye = new Kinetic.Circle({
             x: 2.0,
@@ -172,17 +182,12 @@ if(window && document)
         applet.eye.on("dragmove", function(e){
             _.each(applet.hUIs, function(x){
                 x.eye = Vector2.fromObject(applet.eye.position()).subtract(Vector2.fromObject(x.group.position()))
-                x.vis = x.visibility();
+                // x.vis = x.visibility();
             })
         });
 
         applet.hUIs = [
             new HexUI(applet.hex, applet.namedLayers.HexLayer, null, {lower: 0, upper: 1}),
-            (function(){
-                var hex = new HexUI(applet.hex, applet.namedLayers.HexLayer, 0, {lower: 0, upper: 1});
-                hex.group.position(new Vector2(0.0, 6.0));
-                return hex;
-            })()
         ];
 
         _.each(lineSegments, function(lineSegment){
