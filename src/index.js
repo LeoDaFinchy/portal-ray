@@ -156,6 +156,7 @@ if(window && document)
         applet.hex = new Hex();
         applet.hex2 = new Hex();
         applet.hex3 = new Hex();
+        applet.hex4 = new Hex();
 
         applet.hex.portals[1] = {
             otherSide: 4,
@@ -165,11 +166,15 @@ if(window && document)
             otherSide: 4,
             hex: applet.hex3,
         }
+        applet.hex2.portals[0] = {
+            otherSide: 3,
+            hex: applet.hex3,
+        }
 
         applet.eye = new Kinetic.Circle({
-            x: 2.0,
-            y: 3.0,
-            radius: 0.5,
+            x: 0.0,
+            y: 0.0,
+            radius: 0.3,
             draggable: true,
             stroke: 'black',
             strokeWidth: 0.1,
@@ -181,8 +186,8 @@ if(window && document)
         applet.namedLayers["InteractiveLayer"].add(applet.eye);
         applet.eye.on("dragmove", function(e){
             _.each(applet.hUIs, function(x){
-                x.eye = Vector2.fromObject(applet.eye.position()).subtract(Vector2.fromObject(x.group.position()))
-                // x.vis = x.visibility();
+                x.eye = Vector2.fromObject(applet.eye.position())
+                    .subtract(Vector2.fromObject(x.group.position()))
             })
         });
 
