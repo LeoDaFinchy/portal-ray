@@ -108,8 +108,8 @@ Object.defineProperties(HexUI.prototype, {
             if(this.entrance == null){entrance = HexUI.edges[0];}
             var leftEntry = entrance.a._.add(entrance.offset.multiplyByScalar(this.bounds.lower));
             var rightEntry = entrance.a._.add(entrance.offset.multiplyByScalar(this.bounds.upper));
-            var left = new LineSegment2(entrance.a, new LineSegment2(this.eye, leftEntry).tangent.add(entrance.a));
-            var right = new LineSegment2(entrance.b, new LineSegment2(this.eye, rightEntry).tangent.add(entrance.b));
+            var left = new LineSegment2(leftEntry, new LineSegment2(this.eye, leftEntry).tangent.add(leftEntry));
+            var right = new LineSegment2(rightEntry, new LineSegment2(this.eye, rightEntry).tangent.add(rightEntry));
 
             var leftX = _.map(left.intersect(HexUI.edges), function(x){return x.solve();});
             var rightX = _.map(right.intersect(HexUI.edges), function(x){return x.solve();});
@@ -148,8 +148,8 @@ Object.defineProperties(HexUI.prototype, {
             rightX = _.rotate(rightX, this.entrance);
 
             var patch = [
-                entrance.a,
-                entrance.b
+                leftEntry,
+                rightEntry
             ];
 
             var bounds = [null];
@@ -208,7 +208,7 @@ Object.defineProperties(HexUI.prototype, {
                 }
             }
 
-            patch.push(entrance.a);
+            patch.push(leftEntry);
 
             bounds = _.rotate(bounds, -this.entrance);
 
