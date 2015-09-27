@@ -41,24 +41,19 @@ var HexUI = function(hex, layer, entrance, bounds){
         draggable: true,
     });
     this.hexShape = HexUI.hexShape(this);
-    if(this.entrance)
-    {
-        this.exitShape = HexUI.exitShape(this, entrance);
-        this.visibilityShape = HexUI.visibilityShape(this, entrance);
-        this.group.add(
-            this.hexShape,
-            // this.exitShape,
-            this.visibilityShape
-        );
-    }
-    else
-    {
-        this.visibilityShape = HexUI.visibilityShape(this, null);
-        this.group.add(
-            this.hexShape,
-            this.visibilityShape
-        );
-    }
+    this.visibilityShape = HexUI.visibilityShape(this, entrance);
+    this.eyeShape = HexUI.eyeShape(this);
+    this.exitShape = HexUI.exitShape(this, entrance);
+    this.entranceShape = HexUI.entranceShape(this);
+    this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
+    this.group.add(
+        this.hexShape,
+        this.visibilityShape,
+        this.entranceShape,
+        this.entranceBoundsShape,
+        this.eyeShape//,
+        // this.exitShape
+    );
     this.layer.add(this.group);
 }
 
@@ -91,13 +86,17 @@ Object.defineProperties(HexUI.prototype, {
                 }
                 if(!bound && this.beyonds[i])
                 {
-                    console.log("delete hex "+i);
+                    this.beyonds[i].group.destroy();
+                    delete this.beyonds[i];
                 }
                 if(this.beyonds[i])
                 {
                     this.beyonds[i].eye = this.eye._
                         .add(Vector2.fromObject(this.group.position()))
                         .subtract(Vector2.fromObject(this.beyonds[i].group.position()))
+                        ;
+                    var newBound = {lower: 1 - bound.upper, upper: 1 - bound.lower};
+                    this.beyonds[i].bounds = newBound;
                     this.beyonds[i].draw();
                 }
             }, this);
@@ -192,7 +191,7 @@ Object.defineProperties(HexUI.prototype, {
                     {
                         patch.push(right.x);
                         patch.push(left.x);
-                        bounds.push({lower: left.fractionB, upper: right.fractionB});
+                        bounds.push({lower: right.fractionB, upper: left.fractionB});
                         continue;
                     }
                     if((right.angle <= 0) && (left.angle > 0) && (left.fractionB > 0)){
@@ -270,8 +269,8 @@ Object.defineProperties(HexUI, {
                         {
                             var lowerPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.lower));
                             var upperPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.upper));
-                            var lowerOutPoint = lowerPoint._.subtract(instance.eye).tangent.multiplyByScalar(4).add(lowerPoint);
-                            var upperOutPoint = upperPoint._.subtract(instance.eye).tangent.multiplyByScalar(4).add(upperPoint);
+                            var lowerOutPoint = lowerPoint._.subtract(instance.eye).tangent.multiplyByScalar(1).add(lowerPoint);
+                            var upperOutPoint = upperPoint._.subtract(instance.eye).tangent.multiplyByScalar(1).add(upperPoint);
                             context.beginPath();
                             context.moveTo(lowerPoint.x, lowerPoint.y);
                             context.lineTo(upperPoint.x, upperPoint.y);
@@ -303,6 +302,56 @@ Object.defineProperties(HexUI, {
                     context.fillStrokeShape(this);
                 }
             })
+        }
+    },
+    eyeShape: {
+        value: function(instance){
+            return new Kinetic.Shape({
+                fill: 'blue',
+                stroke: 'blue',
+                strokeWidth: 0.1,
+                drawFunc: function(context){
+                    var eye = instance.eye;
+                    context.beginPath();
+                    context.moveTo(0, 0);
+                    context.arc(eye.x, eye.y, 0.4, 0, Math.PI * 2);
+                    context.fillStrokeShape(this);
+                }
+            });
+        }
+    },
+    entranceShape: {
+        value: function(instance){
+            return new Kinetic.Shape({
+                stroke: 'cyan',
+                strokeWidth: 0.2,
+                drawFunc: function(context){
+                    var entrance = HexUI.edges[instance.entrance];
+                    if(instance.entrance == null){entrance = HexUI.edges[0];}
+                    context.beginPath();
+                    context.moveTo(entrance.a.x, entrance.a.y);
+                    context.lineTo(entrance.b.x, entrance.b.y);
+                    context.strokeShape(this);
+                }
+            });
+        }
+    },
+    entranceBoundsShape: {
+        value: function(instance){
+            return new Kinetic.Shape({
+                stroke: 'red',
+                strokeWidth: 0.3,
+                drawFunc: function(context){
+                    var entrance = HexUI.edges[instance.entrance];
+                    if(instance.entrance == null){entrance = HexUI.edges[0];}
+                    var leftEntry = entrance.a._.add(entrance.offset.multiplyByScalar(instance.bounds.lower));
+                    var rightEntry = entrance.a._.add(entrance.offset.multiplyByScalar(instance.bounds.upper));
+                    context.beginPath();
+                    context.moveTo(leftEntry.x, leftEntry.y);
+                    context.lineTo(rightEntry.x, rightEntry.y);
+                    context.strokeShape(this);
+                }
+            });
         }
     }
 });
