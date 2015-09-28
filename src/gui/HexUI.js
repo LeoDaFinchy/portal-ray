@@ -47,11 +47,9 @@ var HexUI = function(hex, layer, entrance, bounds){
     this.entranceShape = HexUI.entranceShape(this);
     this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
     this.group.add(
-        this.hexShape,
         this.visibilityShape,
         this.entranceShape,
-        this.entranceBoundsShape,
-        this.eyeShape
+        this.entranceBoundsShape
     );
     this.layer.add(this.group);
 }
@@ -63,6 +61,7 @@ Object.defineProperties(HexUI.prototype, {
         value: function(){
             this.vis = this.visibility();
             this.group.draw();
+
             _.each(this.vis.bounds, function(bound, i){
                 if(bound && !this.beyonds[i])
                 {
