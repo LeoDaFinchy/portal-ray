@@ -51,8 +51,7 @@ var HexUI = function(hex, layer, entrance, bounds){
         this.visibilityShape,
         this.entranceShape,
         this.entranceBoundsShape,
-        this.eyeShape//,
-        // this.exitShape
+        this.eyeShape
     );
     this.layer.add(this.group);
 }
@@ -79,7 +78,7 @@ Object.defineProperties(HexUI.prototype, {
                         this.beyonds[i] = hui;
 
                         var edge = HexUI.edges[i];
-                        var targetPoint = edge.offset.multiplyByScalar(0.5).add(edge.a).multiplyByScalar(2).add(Vector2.fromObject(this.group.position()));
+                        var targetPoint = edge.lerp(0.5).multiplyByScalar(2).add(Vector2.fromObject(this.group.position()));
 
                         hui.group.position(targetPoint);
                     }
@@ -106,10 +105,10 @@ Object.defineProperties(HexUI.prototype, {
         value: function(){
             var entrance = HexUI.edges[this.entrance];
             if(this.entrance == null){entrance = HexUI.edges[0];}
-            var leftEntry = entrance.a._.add(entrance.offset.multiplyByScalar(this.bounds.lower));
-            var rightEntry = entrance.a._.add(entrance.offset.multiplyByScalar(this.bounds.upper));
-            var left = new LineSegment2(leftEntry, new LineSegment2(this.eye, leftEntry).tangent.add(leftEntry));
-            var right = new LineSegment2(rightEntry, new LineSegment2(this.eye, rightEntry).tangent.add(rightEntry));
+            var leftEntry = entrance.lerp(this.bounds.lower);
+            var rightEntry = entrance.lerp(this.bounds.upper);
+            var left = new LineSegment2(leftEntry, Vector2.lerp(this.eye, leftEntry, 1.2));
+            var right = new LineSegment2(rightEntry, Vector2.lerp(this.eye, rightEntry, 1.2));
 
             var leftX = _.map(left.intersect(HexUI.edges), function(x){return x.solve();});
             var rightX = _.map(right.intersect(HexUI.edges), function(x){return x.solve();});
@@ -267,10 +266,10 @@ Object.defineProperties(HexUI, {
                         var edge = HexUI.edges[i];
                         if(bounds)
                         {
-                            var lowerPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.lower));
-                            var upperPoint = edge.a._.add(edge.offset.multiplyByScalar(bounds.upper));
-                            var lowerOutPoint = lowerPoint._.subtract(instance.eye).tangent.multiplyByScalar(1).add(lowerPoint);
-                            var upperOutPoint = upperPoint._.subtract(instance.eye).tangent.multiplyByScalar(1).add(upperPoint);
+                            var lowerPoint = edge.lerp(bounds.lower);
+                            var upperPoint = edge.lerp(bounds.upper);
+                            var lowerOutPoint = Vector2.lerp(instance.eye, lowerPoint, 1.2);
+                            var upperOutPoint = Vector2.lerp(instance.eye, upperPoint, 1.2);;
                             context.beginPath();
                             context.moveTo(lowerPoint.x, lowerPoint.y);
                             context.lineTo(upperPoint.x, upperPoint.y);
@@ -344,8 +343,8 @@ Object.defineProperties(HexUI, {
                 drawFunc: function(context){
                     var entrance = HexUI.edges[instance.entrance];
                     if(instance.entrance == null){entrance = HexUI.edges[0];}
-                    var leftEntry = entrance.a._.add(entrance.offset.multiplyByScalar(instance.bounds.lower));
-                    var rightEntry = entrance.a._.add(entrance.offset.multiplyByScalar(instance.bounds.upper));
+                    var leftEntry = entrance.lerp(instance.bounds.lower);
+                    var rightEntry = entrance.lerp(instance.bounds.upper);
                     context.beginPath();
                     context.moveTo(leftEntry.x, leftEntry.y);
                     context.lineTo(rightEntry.x, rightEntry.y);
