@@ -46,10 +46,12 @@ var HexUI = function(hex, layer, entrance, bounds){
     this.exitShape = HexUI.exitShape(this, entrance);
     this.entranceShape = HexUI.entranceShape(this);
     this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
+    this.clipShape = HexUI.clipShape(this);
     this.group.add(
         this.visibilityShape,
         this.entranceShape,
-        this.entranceBoundsShape
+        this.entranceBoundsShape,
+        this.clipShape
     );
     this.layer.add(this.group);
 }
@@ -246,6 +248,31 @@ Object.defineProperties(HexUI, {
                     context.lineTo(HexUI.corners[5].x, HexUI.corners[5].y);
                     context.lineTo(HexUI.corners[0].x, HexUI.corners[0].y);
                     context.fillShape(this);
+                }
+            });
+        },
+    },
+    clipShape: {
+        value: function(instance){
+            return new Kinetic.Shape({
+                stroke: 'red',
+                strokeWidth: 0.1,
+                fill: 'green',
+                drawFunc: function(context){
+                    var vis = instance.vis;
+                    context.beginPath();
+                    context.moveTo(vis.patch[0].x, vis.patch[0].y);
+                    for(var i = 0; i < vis.patch.length; i++)
+                    {
+                        context.lineTo(vis.patch[i].x, vis.patch[i].y);
+                    }
+                    context.save();
+                    context.clip();
+                    if(instance.hex.drawFunc)
+                    {
+                        instance.hex.drawFunc(context);
+                    }
+                    context.restore();
                 }
             });
         },
