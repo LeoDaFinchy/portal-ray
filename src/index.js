@@ -40,10 +40,41 @@ if(window && document)
         applet.addLayer("InertLayer");
         applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
-        applet.hex = new Hex();
-        applet.hex2 = new Hex();
-        applet.hex3 = new Hex();
-        applet.hex4 = new Hex();
+        function drawFuncFactory(){
+            var hue = Math.random() * 360;
+            var saturation = 30 + (Math.random() * 50);
+            var luminosity = 30 + (Math.random() * 50);
+            var circles = [];
+            for(var i = 0; i < 20; i++)
+            {
+                circles.push({
+                    h: hue + ((Math.random() * 40) - 20) % 360,
+                    s: saturation + ((Math.random() * 40) - 20),
+                    l: luminosity + ((Math.random() * 40) - 20),
+                    x: ((i % 4) - 1) * 2,
+                    y: (Math.floor(i / 4.0) - 1.0) * 2,
+                });
+            }
+            circles = _.shuffle(circles);
+            return function drawFunc(kineticContext){
+                var context = kineticContext._context;
+                for(var circ in circles)
+                {
+                    c = circles[circ];
+                    context.strokeStyle = 'hsl('+c.h+','+c.s+'%,'+(c.l-20)+'%)';
+                    context.lineWidth = 0.2;
+                    context.fillStyle = 'hsl('+c.h+','+c.s+'%,'+c.l+'%)';
+                    context.beginPath();
+                    context.arc(c.x, c.y, 1.5, 0, Math.PI*2);
+                    context.fill();
+                    context.stroke();
+                }
+            }
+        }
+        applet.hex = new Hex(drawFuncFactory());
+        applet.hex2 = new Hex(drawFuncFactory());
+        applet.hex3 = new Hex(drawFuncFactory());
+        applet.hex4 = new Hex(drawFuncFactory());
 
         applet.hex.portals[1] = {
             otherSide: 4,
