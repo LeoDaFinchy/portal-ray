@@ -40,17 +40,17 @@ var HexUI = function(hex, layer, entrance, bounds){
         y: 0,
         draggable: true,
     });
-    this.hexShape = HexUI.hexShape(this);
-    this.visibilityShape = HexUI.visibilityShape(this, entrance);
-    this.eyeShape = HexUI.eyeShape(this);
-    this.exitShape = HexUI.exitShape(this, entrance);
-    this.entranceShape = HexUI.entranceShape(this);
-    this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
+    // this.hexShape = HexUI.hexShape(this);
+    // this.visibilityShape = HexUI.visibilityShape(this, entrance);
+    // this.eyeShape = HexUI.eyeShape(this);
+    // this.exitShape = HexUI.exitShape(this, entrance);
+    // this.entranceShape = HexUI.entranceShape(this);
+    // this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
     this.clipShape = HexUI.clipShape(this);
     this.group.add(
-        this.visibilityShape,
-        this.entranceShape,
-        this.entranceBoundsShape,
+        // this.visibilityShape,
+        // this.entranceShape,
+        // this.entranceBoundsShape,
         this.clipShape
     );
     this.layer.add(this.group);
