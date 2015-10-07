@@ -73,25 +73,13 @@ if(window && document)
         }
         applet.hex = new Hex(drawFuncFactory());
         applet.hex2 = new Hex(drawFuncFactory());
-        applet.hex3 = new Hex(drawFuncFactory());
-        applet.hex4 = new Hex(drawFuncFactory());
 
-        applet.hex.portals[1] = {
-            otherSide: 4,
-            hex: applet.hex2,
-        }
-        applet.hex2.portals[1] = {
-            otherSide: 4,
-            hex: applet.hex3,
-        }
-        applet.hex2.portals[0] = {
-            otherSide: 3,
-            hex: applet.hex4,
-        }
-        applet.hex4.portals[2] = {
-            otherSide: 5,
-            hex: applet.hex3,
-        }
+        applet.hex.join(applet.hex2, 0, 3);
+        applet.hex.join(applet.hex2, 1, 4);
+        applet.hex.join(applet.hex2, 2, 5);
+        applet.hex.join(applet.hex2, 3, 0);
+        applet.hex.join(applet.hex2, 4, 1);
+        applet.hex.join(applet.hex2, 5, 2);
 
         applet.eye = new Kinetic.Circle({
             x: 0.0,
@@ -131,7 +119,7 @@ if(window && document)
         applet.stage.clear();
         applet.namedLayers.InertLayer.draw();
         applet.namedLayers.InteractiveLayer.draw();
-        _.each(applet.hUIs, function(x){x.draw();});
+        _.each(applet.hUIs, function(x){x.draw(10);});
 
         window.setTimeout(draw, 10);
     };
