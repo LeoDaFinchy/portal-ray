@@ -31,48 +31,74 @@ var Applet = require('./engine/Applet').Applet;
 var HexUI = require("./gui/HexUI").HexUI;
 var applet;
 
+var spriteCanvas = $('<canvas width=400 height=300 style="border: 1px black solid">')[0];
+var spriteContext = spriteCanvas.getContext('2d');
+var spriteIter = new Vector2(0, 0);
+
 if(window && document)
 {   
 
     $('document').ready(function(){
+        $('body').append(spriteCanvas);
         applet = new Applet();
         applet.initialise(new Vector2(800,600));
         applet.addLayer("InertLayer");
         applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
-        function drawFuncFactory(){
+        function drawFuncFactory(instance){
             var hue = Math.random() * 360;
             var saturation = 30 + (Math.random() * 50);
             var luminosity = 30 + (Math.random() * 50);
             var circles = [];
-            for(var i = 0; i < 20; i++)
+            for(var i = 0; i < 16; i++)
             {
                 circles.push({
                     h: hue + ((Math.random() * 40) - 20) % 360,
                     s: saturation + ((Math.random() * 40) - 20),
                     l: luminosity + ((Math.random() * 40) - 20),
-                    x: ((i % 4) - 1) * 2,
-                    y: (Math.floor(i / 4.0) - 1.0) * 2,
+                    x: ((i % 4) - 1.5) * 20,
+                    y: (Math.floor(i / 4.0) - 1.5) * 20,
                 });
             }
             circles = _.shuffle(circles);
-            return function drawFunc(kineticContext){
-                var context = kineticContext._context;
-                for(var circ in circles)
-                {
-                    c = circles[circ];
-                    context.strokeStyle = 'hsl('+c.h+','+c.s+'%,'+(c.l-20)+'%)';
-                    context.lineWidth = 0.2;
-                    context.fillStyle = 'hsl('+c.h+','+c.s+'%,'+c.l+'%)';
-                    context.beginPath();
-                    context.arc(c.x, c.y, 1.5, 0, Math.PI*2);
-                    context.fill();
-                    context.stroke();
-                }
+            var context = spriteContext;
+            context.save();
+            context.translate(spriteIter.x, spriteIter.y);
+            context.beginPath();
+            context.moveTo(-40,-40);
+            context.lineTo( 40,-40);
+            context.lineTo( 40, 40);
+            context.lineTo(-40, 40);
+            context.lineTo(-40,-40);
+            context.clip();
+            for(var circ in circles)
+            {
+                c = circles[circ];
+                context.strokeStyle = 'hsl('+c.h+','+c.s+'%,'+(c.l-20)+'%)';
+                context.lineWidth = 2;
+                context.fillStyle = 'hsl('+c.h+','+c.s+'%,'+c.l+'%)';
+                context.beginPath();
+                context.arc(c.x, c.y, 15, 0, Math.PI*2);
+                context.fill();
+                context.stroke();
             }
+            context.restore();
+            function drawFunc(kineticContext){
+                var context = kineticContext._context;
+                context.drawImage(spriteCanvas, instance.drawFunc.pos.x, instance.drawFunc.pos.y, 80, 80, -40, -40, 80, 80);
+            }
+
+            var returnValue = {pos: spriteIter._, func: drawFunc}
+
+            spriteIter.add(new Vector2(80, 0));
+
+            return returnValue;
         }
-        applet.hex = new Hex(drawFuncFactory());
-        applet.hex2 = new Hex(drawFuncFactory());
+        spriteContext.translate(40, 40);
+        applet.hex = new Hex(null);
+        applet.hex.drawFunc = drawFuncFactory(applet.hex);
+        applet.hex2 = new Hex(null);
+        applet.hex2.drawFunc = drawFuncFactory(applet.hex2);
 
         applet.hex.join(applet.hex2, 0, 3);
         applet.hex.join(applet.hex2, 1, 4);
@@ -84,10 +110,10 @@ if(window && document)
         applet.eye = new Kinetic.Circle({
             x: 0.0,
             y: 0.0,
-            radius: 0.3,
+            radius: 10,
             draggable: true,
             stroke: 'black',
-            strokeWidth: 0.1,
+            strokeWidth: 3,
             fill: 'green'
         })
 
@@ -109,8 +135,7 @@ if(window && document)
         var GraphSize = new Vector2(40, 30);
         var Scaling = new Vector2(CanvasSize.x / GraphSize.x, -CanvasSize.y / GraphSize.y);
 
-        applet.stage.scale(Scaling);
-        applet.stage.offset(GraphSize.multiplyByVector2(new Vector2(-0.5, 0.5)));
+        applet.stage.offset(new Vector2(-400, -300));
 
         window.setTimeout(draw, 10);
     });

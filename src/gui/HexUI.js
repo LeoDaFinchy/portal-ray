@@ -6,7 +6,7 @@ var Vector2 = Geometry.Vector2;
 var LineSegment2 = Geometry.LineSegment2;
 var Matrix3 = Geometry.Matrix3;
 
-var offset = Vector2.unit.multiplyByScalar(3.0);
+var offset = Vector2.unit.multiplyByScalar(30.0);
 
 var corners = [
     offset,
@@ -275,7 +275,7 @@ Object.defineProperties(HexUI, {
                     context.clip();
                     if(instance.hex.drawFunc)
                     {
-                        instance.hex.drawFunc(context);
+                        instance.hex.drawFunc.func(context);
                     }
                     context.restore();
                 }
