@@ -60,7 +60,12 @@ exports['HexUI'] = HexUI;
 
 Object.defineProperties(HexUI.prototype, {
     draw: {
-        value: function(){
+        value: function(levels){
+            if(levels <= 0)
+            {
+                return;
+            }
+
             this.vis = this.visibility();
             this.group.draw();
 
@@ -70,9 +75,9 @@ Object.defineProperties(HexUI.prototype, {
                     if(this.hex.portals[i])
                     {
                         var hui = new HexUI(
-                            this.hex.portals[i].hex, 
+                            this.hex.portals[i].other.hex, 
                             this.layer,
-                            this.hex.portals[i].otherSide,
+                            this.hex.portals[i].other.exit,
                             bound
                         );
 
@@ -97,7 +102,7 @@ Object.defineProperties(HexUI.prototype, {
                         ;
                     var newBound = {lower: 1 - bound.upper, upper: 1 - bound.lower};
                     this.beyonds[i].bounds = newBound;
-                    this.beyonds[i].draw();
+                    this.beyonds[i].draw(levels -1);
                 }
             }, this);
         }
