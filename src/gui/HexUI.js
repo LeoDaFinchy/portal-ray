@@ -60,11 +60,7 @@ exports['HexUI'] = HexUI;
 
 Object.defineProperties(HexUI.prototype, {
     draw: {
-        value: function(levels){
-            if(levels <= 0)
-            {
-                return;
-            }
+        value: function(origin, range){
 
             this.vis = this.visibility();
             this.group.draw();
@@ -74,22 +70,26 @@ Object.defineProperties(HexUI.prototype, {
                 {
                     if(this.hex.portals[i])
                     {
-                        var hui = new HexUI(
-                            this.hex.portals[i].other.hex, 
-                            this.layer,
-                            this.hex.portals[i].other.exit,
-                            bound
-                        );
-
-                        this.beyonds[i] = hui;
-
                         var edge = HexUI.edges[i];
                         var targetPoint = edge.lerp(0.5).multiplyByScalar(2).add(Vector2.fromObject(this.group.position()));
 
-                        hui.group.position(targetPoint);
+                        if(Vector2.displacement(targetPoint, origin).length <= range)
+                        {
+                            var hui = new HexUI(
+                                this.hex.portals[i].other.hex, 
+                                this.layer,
+                                this.hex.portals[i].other.exit,
+                                bound
+                            );
+
+                            this.beyonds[i] = hui;
+
+
+                            hui.group.position(targetPoint);
+                        }
                     }
                 }
-                if(!bound && this.beyonds[i])
+                if(this.beyonds[i] && (!bound || Vector2.displacement(Vector2.fromObject(this.beyonds[i].group.position()), origin).length > range))
                 {
                     this.beyonds[i].group.destroy();
                     delete this.beyonds[i];
@@ -102,7 +102,7 @@ Object.defineProperties(HexUI.prototype, {
                         ;
                     var newBound = {lower: 1 - bound.upper, upper: 1 - bound.lower};
                     this.beyonds[i].bounds = newBound;
-                    this.beyonds[i].draw(levels -1);
+                    this.beyonds[i].draw(origin, range);
                 }
             }, this);
         }
