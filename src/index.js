@@ -144,7 +144,7 @@ if(window && document)
         applet.stage.clear();
         applet.namedLayers.InertLayer.draw();
         applet.namedLayers.InteractiveLayer.draw();
-        _.each(applet.hUIs, function(x){x.draw(10);});
+        _.each(applet.hUIs, function(x){x.draw(Vector2.zero, 300);});
 
         window.setTimeout(draw, 10);
     };
