@@ -101,11 +101,7 @@ if(window && document)
         applet.hex2.drawFunc = drawFuncFactory(applet.hex2);
 
         applet.hex.join(applet.hex2, 0, 3);
-        applet.hex.join(applet.hex2, 1, 4);
-        applet.hex.join(applet.hex2, 2, 5);
-        applet.hex.join(applet.hex2, 3, 0);
-        applet.hex.join(applet.hex2, 4, 1);
-        applet.hex.join(applet.hex2, 5, 2);
+        applet.hex.join(applet.hex2, 3, 1);
 
         applet.eye = new Kinetic.Circle({
             x: 0.0,
