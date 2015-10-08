@@ -7,6 +7,7 @@ var LineSegment2 = Geometry.LineSegment2;
 var Matrix3 = Geometry.Matrix3;
 
 var offset = Vector2.unit.multiplyByScalar(30.0);
+var sixth = Math.PI / 3.0;
 
 var corners = [
     offset,
@@ -42,7 +43,7 @@ var HexUI = function(hex, layer, entrance, bounds){
     });
     // this.hexShape = HexUI.hexShape(this);
     // this.visibilityShape = HexUI.visibilityShape(this, entrance);
-    // this.eyeShape = HexUI.eyeShape(this);
+    this.eyeShape = HexUI.eyeShape(this);
     // this.exitShape = HexUI.exitShape(this, entrance);
     // this.entranceShape = HexUI.entranceShape(this);
     // this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
@@ -51,6 +52,7 @@ var HexUI = function(hex, layer, entrance, bounds){
         // this.visibilityShape,
         // this.entranceShape,
         // this.entranceBoundsShape,
+        this.eyeShape,
         this.clipShape
     );
     this.layer.add(this.group);
@@ -66,9 +68,9 @@ Object.defineProperties(HexUI.prototype, {
             this.group.draw();
 
             _.each(this.vis.bounds, function(bound, i){
-                if(bound && !this.beyonds[i])
+                if(bound)
                 {
-                    if(this.hex.portals[i])
+                    if(!this.beyonds[i] && this.hex.portals[i])
                     {
                         var edge = HexUI.edges[i];
                         var targetPoint = edge.lerp(0.5).multiplyByScalar(2).add(Vector2.fromObject(this.group.position()));
@@ -84,25 +86,21 @@ Object.defineProperties(HexUI.prototype, {
 
                             this.beyonds[i] = hui;
 
-
+                            var rotation = (i - this.hex.portals[i].other.exit + 3) % 6;
                             hui.group.position(targetPoint);
+                            hui.group.rotation(rotation * 60);
                         }
                     }
-                }
-                if(this.beyonds[i] && (!bound || Vector2.displacement(Vector2.fromObject(this.beyonds[i].group.position()), origin).length > range))
-                {
-                    this.beyonds[i].group.destroy();
-                    delete this.beyonds[i];
-                }
-                if(this.beyonds[i])
-                {
-                    this.beyonds[i].eye = this.eye._
-                        .add(Vector2.fromObject(this.group.position()))
-                        .subtract(Vector2.fromObject(this.beyonds[i].group.position()))
-                        ;
-                    var newBound = {lower: 1 - bound.upper, upper: 1 - bound.lower};
-                    this.beyonds[i].bounds = newBound;
-                    this.beyonds[i].draw(origin, range);
+                    if(this.beyonds[i])
+                    {
+                        var rotation = (i - this.hex.portals[i].other.exit + 3) % 6;
+                        this.beyonds[i].eye = this.beyonds[i].matrix.inverse
+                            .transformVector2(this.eye._);
+
+                        var newBound = {lower: 1 - bound.upper, upper: 1 - bound.lower};
+                        this.beyonds[i].bounds = newBound;
+                        this.beyonds[i].draw(origin, range);
+                    }
                 }
             }, this);
         }
@@ -230,6 +228,12 @@ Object.defineProperties(HexUI.prototype, {
             }
         }
     },
+    matrix: {
+        get: function(){
+            var m = this.group.getTransform().m;
+            return new Matrix3([m[0], m[1], m[4], m[2], m[3], m[5], 0, 0, 1]);
+        }
+    }
 })
 
 Object.defineProperties(HexUI, {
@@ -344,7 +348,7 @@ Object.defineProperties(HexUI, {
                     var eye = instance.eye;
                     context.beginPath();
                     context.moveTo(0, 0);
-                    context.arc(eye.x, eye.y, 0.4, 0, Math.PI * 2);
+                    context.arc(eye.x, eye.y, 1, 0, Math.PI * 2);
                     context.fillStrokeShape(this);
                 }
             });
