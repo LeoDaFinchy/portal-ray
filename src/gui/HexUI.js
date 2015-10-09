@@ -63,7 +63,10 @@ Object.defineProperties(HexUI.prototype, {
                     if(!this.beyonds[i] && this.hex.portals[i])
                     {
                         var edge = HexUI.edges[i];
-                        var targetPoint = this.matrix.inverse.rotateVector2(edge.lerp(0.5).multiplyByScalar(2)).add(Vector2.fromObject(this.group.position()));
+                        var relativeRotation = HexUI.numBind(i - this.hex.portals[i].other.exit + 3);
+                        var absoluteRotation = HexUI.numBind(relativeRotation + this.rotation);
+                        var direction = HexUI.numBind(i + this.rotation)
+                        var targetPoint = HexUI.neighbourPoints[direction]._.add(this.position);
 
                         if(Vector2.displacement(targetPoint, origin).length <= range)
                         {
@@ -77,8 +80,7 @@ Object.defineProperties(HexUI.prototype, {
 
                             this.beyonds[i] = hui;
 
-                            var rotation = (i - this.hex.portals[i].other.exit + 3) % 6;
-                            hui.rotation = rotation + this.rotation
+                            hui.rotation = absoluteRotation;
                             hui.group.position(targetPoint);
                             hui.group.rotation(hui.rotation * 60);
                         }
