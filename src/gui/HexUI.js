@@ -9,24 +9,6 @@ var Matrix3 = Geometry.Matrix3;
 var offset = Vector2.unit.multiplyByScalar(30.0);
 var sixth = Math.PI / 3.0;
 
-var corners = [
-    offset,
-    Matrix3.rotation(Math.PI * (1.0/3.0)).transformVector2(offset),
-    Matrix3.rotation(Math.PI * (2.0/3.0)).transformVector2(offset),
-    Matrix3.rotation(Math.PI).transformVector2(offset),
-    Matrix3.rotation(Math.PI * (4.0/3.0)).transformVector2(offset),
-    Matrix3.rotation(Math.PI * (5.0/3.0)).transformVector2(offset)
-];
-
-var edges = [
-    new LineSegment2(corners[0], corners[1]),
-    new LineSegment2(corners[1], corners[2]),
-    new LineSegment2(corners[2], corners[3]),
-    new LineSegment2(corners[3], corners[4]),
-    new LineSegment2(corners[4], corners[5]),
-    new LineSegment2(corners[5], corners[0]),
-];
-
 var HexUI = function(applet, hex, layer, entrance, bounds){
     this.layer = layer;
     this.applet = applet;
@@ -245,11 +227,44 @@ Object.defineProperties(HexUI.prototype, {
 })
 
 Object.defineProperties(HexUI, {
-    corners:{
-        value: corners
+    initialise:{
+        value: function(hexRadius){
+            this.hexRad = hexRadius;
+            this.hexDia = this.hexRad * 2;
+            this.offset = Vector2.unit.multiplyByScalar(this.hexRad);
+            this.turn = [
+                0,
+                this.sixthTurn,
+                this.sixthTurn * 2,
+                this.sixthTurn * 3,
+                this.sixthTurn * 4,
+                this.sixthTurn * 5
+            ];
+            this.corners = [
+                Matrix3.rotation(this.turn[0]).rotateVector2(this.offset),
+                Matrix3.rotation(this.turn[1]).rotateVector2(this.offset),
+                Matrix3.rotation(this.turn[2]).rotateVector2(this.offset),
+                Matrix3.rotation(this.turn[3]).rotateVector2(this.offset),
+                Matrix3.rotation(this.turn[4]).rotateVector2(this.offset),
+                Matrix3.rotation(this.turn[5]).rotateVector2(this.offset)
+            ];
+            this.edges = [
+                new LineSegment2(this.corners[0], this.corners[1]),
+                new LineSegment2(this.corners[1], this.corners[2]),
+                new LineSegment2(this.corners[2], this.corners[3]),
+                new LineSegment2(this.corners[3], this.corners[4]),
+                new LineSegment2(this.corners[4], this.corners[5]),
+                new LineSegment2(this.corners[5], this.corners[0])
+            ];
+
+            this.ready = true;
+        }
     },
-    edges:{
-        value: edges
+    sixthTurn: {
+        value: Math.PI / 3.0
+    },
+    ready: {
+        value: false
     },
     hexShape: {
         value: function(instance){
