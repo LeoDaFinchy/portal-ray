@@ -39,6 +39,9 @@ if(window && document)
 {   
 
     $('document').ready(function(){
+
+        HexUI.initialise(30.0);
+
         $('body').append(spriteCanvas);
         applet = new Applet();
         applet.initialise(new Vector2(800,600));
