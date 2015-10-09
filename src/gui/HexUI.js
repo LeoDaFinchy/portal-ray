@@ -11,6 +11,11 @@ var sixth = Math.PI / 3.0;
 
 var HexUI = function(applet, hex, layer, entrance, bounds){
     this.layer = layer;
+    this.group = new Kinetic.Group({
+        x: 0,
+        y: 0,
+        draggable: true,
+    });
     this.applet = applet;
     this.hex = hex;
     this.entrance = entrance;
@@ -18,11 +23,6 @@ var HexUI = function(applet, hex, layer, entrance, bounds){
     this.beyonds = [];
     this.rotation = 0;
 
-    this.group = new Kinetic.Group({
-        x: 0,
-        y: 0,
-        draggable: true,
-    });
     this.eye = this.applet.eye._.subtract(Vector2.fromObject(this.group.position()));
 
 
@@ -52,7 +52,7 @@ exports['HexUI'] = HexUI;
 Object.defineProperties(HexUI.prototype, {
     draw: {
         value: function(origin, range){
-            this.eye = this.matrix.rotateVector2(this.applet.eye._.subtract(Vector2.fromObject(this.group.position())));
+            this.eye = HexUI.rotMats[HexUI.numBind(-this.rotation)].rotateVector2(this.applet.eye._.subtract(this.position));
             this.vis = this.visibility();
             this.group.draw();
 
@@ -223,7 +223,24 @@ Object.defineProperties(HexUI.prototype, {
             var m = this.group.getTransform().m;
             return new Matrix3([m[0], m[1], m[4], m[2], m[3], m[5], 0, 0, 1]);
         }
-    }
+    },
+    position: {
+        get: function(){
+            return this.group.position();
+        },
+        set: function(vector){
+            this.group.position(vector);
+        }
+    },
+    rotation: {
+        get: function(){
+            return this._rotation;
+        },
+        set: function(rotation){
+            this._rotation = rotation;
+            this.group.rotation(this._rotation * 60);
+        }
+    },
 })
 
 Object.defineProperties(HexUI, {
@@ -240,7 +257,7 @@ Object.defineProperties(HexUI, {
                 this.turn * 4,
                 this.turn * 5,
             ];
-            this.rots = [
+            this.rotMats = [
                 Matrix3.rotation(this.turns[0]),
                 Matrix3.rotation(this.turns[1]),
                 Matrix3.rotation(this.turns[2]),
@@ -249,12 +266,12 @@ Object.defineProperties(HexUI, {
                 Matrix3.rotation(this.turns[5]),
             ];
             this.corners = [
-                this.rots[0].rotateVector2(this.offset),
-                this.rots[1].rotateVector2(this.offset),
-                this.rots[2].rotateVector2(this.offset),
-                this.rots[3].rotateVector2(this.offset),
-                this.rots[4].rotateVector2(this.offset),
-                this.rots[5].rotateVector2(this.offset),
+                this.rotMats[0].rotateVector2(this.offset),
+                this.rotMats[1].rotateVector2(this.offset),
+                this.rotMats[2].rotateVector2(this.offset),
+                this.rotMats[3].rotateVector2(this.offset),
+                this.rotMats[4].rotateVector2(this.offset),
+                this.rotMats[5].rotateVector2(this.offset),
             ];
             this.edges = [
                 new LineSegment2(this.corners[0], this.corners[1]),
@@ -281,7 +298,8 @@ Object.defineProperties(HexUI, {
     },
     numBind: {
         value: function(input){
-            return input % 6;
+            var remainder = input % 6;
+            return remainder >= 0 ? remainder : remainder + 6;
         }
     },
     ready: {
