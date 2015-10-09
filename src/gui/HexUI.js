@@ -232,21 +232,29 @@ Object.defineProperties(HexUI, {
             this.hexRad = hexRadius;
             this.hexDia = this.hexRad * 2;
             this.offset = Vector2.unit.multiplyByScalar(this.hexRad);
-            this.turn = [
+            this.turns = [
                 0,
-                this.sixthTurn,
-                this.sixthTurn * 2,
-                this.sixthTurn * 3,
-                this.sixthTurn * 4,
-                this.sixthTurn * 5
+                this.turn,
+                this.turn * 2,
+                this.turn * 3,
+                this.turn * 4,
+                this.turn * 5,
+            ];
+            this.rots = [
+                Matrix3.rotation(this.turns[0]),
+                Matrix3.rotation(this.turns[1]),
+                Matrix3.rotation(this.turns[2]),
+                Matrix3.rotation(this.turns[3]),
+                Matrix3.rotation(this.turns[4]),
+                Matrix3.rotation(this.turns[5]),
             ];
             this.corners = [
-                Matrix3.rotation(this.turn[0]).rotateVector2(this.offset),
-                Matrix3.rotation(this.turn[1]).rotateVector2(this.offset),
-                Matrix3.rotation(this.turn[2]).rotateVector2(this.offset),
-                Matrix3.rotation(this.turn[3]).rotateVector2(this.offset),
-                Matrix3.rotation(this.turn[4]).rotateVector2(this.offset),
-                Matrix3.rotation(this.turn[5]).rotateVector2(this.offset)
+                this.rots[0].rotateVector2(this.offset),
+                this.rots[1].rotateVector2(this.offset),
+                this.rots[2].rotateVector2(this.offset),
+                this.rots[3].rotateVector2(this.offset),
+                this.rots[4].rotateVector2(this.offset),
+                this.rots[5].rotateVector2(this.offset),
             ];
             this.edges = [
                 new LineSegment2(this.corners[0], this.corners[1]),
@@ -254,14 +262,27 @@ Object.defineProperties(HexUI, {
                 new LineSegment2(this.corners[2], this.corners[3]),
                 new LineSegment2(this.corners[3], this.corners[4]),
                 new LineSegment2(this.corners[4], this.corners[5]),
-                new LineSegment2(this.corners[5], this.corners[0])
+                new LineSegment2(this.corners[5], this.corners[0]),
+            ];
+            this.neighbourPoints = [
+                this.edges[0].lerp(0.5).multiplyByScalar(2.0),
+                this.edges[1].lerp(0.5).multiplyByScalar(2.0),
+                this.edges[2].lerp(0.5).multiplyByScalar(2.0),
+                this.edges[3].lerp(0.5).multiplyByScalar(2.0),
+                this.edges[4].lerp(0.5).multiplyByScalar(2.0),
+                this.edges[5].lerp(0.5).multiplyByScalar(2.0),
             ];
 
             this.ready = true;
         }
     },
-    sixthTurn: {
+    turn: {
         value: Math.PI / 3.0
+    },
+    numBind: {
+        value: function(input){
+            return input % 6;
+        }
     },
     ready: {
         value: false
