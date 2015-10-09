@@ -45,6 +45,7 @@ if(window && document)
         applet.addLayer("InertLayer");
         applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
+        applet.time = 0;
         function drawFuncFactory(instance){
             var hue = Math.random() * 360;
             var saturation = 30 + (Math.random() * 50);
@@ -103,29 +104,20 @@ if(window && document)
         applet.hex.join(applet.hex2, 0, 3);
         applet.hex.join(applet.hex2, 3, 1);
 
-        applet.eye = new Kinetic.Circle({
-            x: 0.0,
-            y: 0.0,
-            radius: 10,
+        applet.eye = new Vector2(Math.sin(applet.time / 50.0) * 10, Math.cos(applet.time / 50.0) * 10);
+        applet.eyePoint = new Kinetic.Circle({
+            radius: 5,
             draggable: true,
             stroke: 'black',
-            strokeWidth: 3,
-            fill: 'green'
+            strokeWidth: 2,
+            fill: 'cyan'
         })
 
         applet.entrance = 0;
 
-        applet.namedLayers["InteractiveLayer"].add(applet.eye);
-        applet.eye.on("dragmove", function(e){
-            _.each(applet.hUIs, function(x){
-                x.eye = Vector2.fromObject(applet.eye.position())
-                    .subtract(Vector2.fromObject(x.group.position()))
-            })
-        });
+        applet.namedLayers["InteractiveLayer"].add(applet.eyePoint);
 
-        applet.hUIs = [
-            new HexUI(applet.hex, applet.namedLayers.HexLayer, null, {lower: 0, upper: 1}),
-        ];
+        applet.hUI = new HexUI(applet, applet.hex, applet.namedLayers.HexLayer, null, {lower: 0, upper: 1});
 
         var CanvasSize = new Vector2(800, 600);
         var GraphSize = new Vector2(40, 30);
@@ -140,8 +132,12 @@ if(window && document)
         applet.stage.clear();
         applet.namedLayers.InertLayer.draw();
         applet.namedLayers.InteractiveLayer.draw();
-        _.each(applet.hUIs, function(x){x.draw(Vector2.zero, 300);});
+        applet.hUI.draw(Vector2.zero, 300);
 
+        applet.eye = new Vector2(Math.sin(applet.time / 50.0) * 15, Math.cos(applet.time / 50.0) * 15);
+        applet.eyePoint.position(applet.eye);
+
+        applet.time++;
         window.setTimeout(draw, 10);
     };
 }

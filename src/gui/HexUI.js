@@ -27,21 +27,27 @@ var edges = [
     new LineSegment2(corners[5], corners[0]),
 ];
 
-var HexUI = function(hex, layer, entrance, bounds){
+var HexUI = function(applet, hex, layer, entrance, bounds){
     this.layer = layer;
+    this.applet = applet;
     this.hex = hex;
     this.entrance = entrance;
-    this.eye = Vector2.unit;
     this.bounds = bounds;
-    this.vis = this.visibility();
     this.beyonds = [];
+    this.rotation = 0;
 
     this.group = new Kinetic.Group({
         x: 0,
         y: 0,
         draggable: true,
     });
-    // this.hexShape = HexUI.hexShape(this);
+    this.eye = this.applet.eye._.subtract(Vector2.fromObject(this.group.position()));
+
+
+    this.vis = this.visibility();
+
+
+    this.hexShape = HexUI.hexShape(this);
     // this.visibilityShape = HexUI.visibilityShape(this, entrance);
     this.eyeShape = HexUI.eyeShape(this);
     // this.exitShape = HexUI.exitShape(this, entrance);
@@ -49,6 +55,7 @@ var HexUI = function(hex, layer, entrance, bounds){
     // this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
     this.clipShape = HexUI.clipShape(this);
     this.group.add(
+        this.hexShape,
         // this.visibilityShape,
         // this.entranceShape,
         // this.entranceBoundsShape,
@@ -63,21 +70,23 @@ exports['HexUI'] = HexUI;
 Object.defineProperties(HexUI.prototype, {
     draw: {
         value: function(origin, range){
-
+            this.eye = this.matrix.rotateVector2(this.applet.eye._.subtract(Vector2.fromObject(this.group.position())));
             this.vis = this.visibility();
             this.group.draw();
 
             _.each(this.vis.bounds, function(bound, i){
                 if(bound)
                 {
+                    // console.log(this.beyonds);
                     if(!this.beyonds[i] && this.hex.portals[i])
                     {
                         var edge = HexUI.edges[i];
-                        var targetPoint = edge.lerp(0.5).multiplyByScalar(2).add(Vector2.fromObject(this.group.position()));
+                        var targetPoint = this.matrix.inverse.rotateVector2(edge.lerp(0.5).multiplyByScalar(2)).add(Vector2.fromObject(this.group.position()));
 
                         if(Vector2.displacement(targetPoint, origin).length <= range)
                         {
                             var hui = new HexUI(
+                                this.applet,
                                 this.hex.portals[i].other.hex, 
                                 this.layer,
                                 this.hex.portals[i].other.exit,
@@ -87,15 +96,14 @@ Object.defineProperties(HexUI.prototype, {
                             this.beyonds[i] = hui;
 
                             var rotation = (i - this.hex.portals[i].other.exit + 3) % 6;
+                            hui.rotation = rotation + this.rotation
                             hui.group.position(targetPoint);
-                            hui.group.rotation(rotation * 60);
+                            hui.group.rotation(hui.rotation * 60);
                         }
                     }
                     if(this.beyonds[i])
                     {
                         var rotation = (i - this.hex.portals[i].other.exit + 3) % 6;
-                        this.beyonds[i].eye = this.beyonds[i].matrix.inverse
-                            .transformVector2(this.eye._);
 
                         var newBound = {lower: 1 - bound.upper, upper: 1 - bound.lower};
                         this.beyonds[i].bounds = newBound;
