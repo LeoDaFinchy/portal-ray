@@ -6,9 +6,6 @@ var Vector2 = Geometry.Vector2;
 var LineSegment2 = Geometry.LineSegment2;
 var Matrix3 = Geometry.Matrix3;
 
-var offset = Vector2.unit.multiplyByScalar(30.0);
-var sixth = Math.PI / 3.0;
-
 var HexUI = function(applet, hex, layer, entrance, bounds){
     this.layer = layer;
     this.group = new Kinetic.Group({
@@ -29,19 +26,19 @@ var HexUI = function(applet, hex, layer, entrance, bounds){
     this.vis = this.visibility();
 
 
-    this.hexShape = HexUI.hexShape(this);
+    // this.hexShape = HexUI.hexShape(this);
     // this.visibilityShape = HexUI.visibilityShape(this, entrance);
-    this.eyeShape = HexUI.eyeShape(this);
+    // this.eyeShape = HexUI.eyeShape(this);
     // this.exitShape = HexUI.exitShape(this, entrance);
     // this.entranceShape = HexUI.entranceShape(this);
     // this.entranceBoundsShape = HexUI.entranceBoundsShape(this);
     this.clipShape = HexUI.clipShape(this);
     this.group.add(
-        this.hexShape,
+        // this.hexShape,
         // this.visibilityShape,
         // this.entranceShape,
         // this.entranceBoundsShape,
-        this.eyeShape,
+        // this.eyeShape,
         this.clipShape
     );
     this.layer.add(this.group);
