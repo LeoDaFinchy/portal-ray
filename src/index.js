@@ -40,7 +40,7 @@ if(window && document)
 
     $('document').ready(function(){
 
-        HexUI.initialise(30.0);
+        HexUI.initialise(40.0);
 
         $('body').append(spriteCanvas);
         applet = new Applet();
@@ -103,9 +103,18 @@ if(window && document)
         applet.hex.drawFunc = drawFuncFactory(applet.hex);
         applet.hex2 = new Hex(null);
         applet.hex2.drawFunc = drawFuncFactory(applet.hex2);
+        applet.hex3 = new Hex(null);
+        applet.hex3.drawFunc = drawFuncFactory(applet.hex3);
+        applet.hex4 = new Hex(null);
+        applet.hex4.drawFunc = drawFuncFactory(applet.hex4);
 
         applet.hex.join(applet.hex2, 0, 3);
         applet.hex.join(applet.hex2, 3, 1);
+        applet.hex.join(applet.hex3, 4, 1);
+        applet.hex.join(applet.hex4, 5, 2);
+        applet.hex3.join(applet.hex4, 0, 3);
+        applet.hex3.join(applet.hex2, 2, 0);
+        applet.hex4.join(applet.hex2, 1, 4);
 
         applet.eye = new Vector2(Math.sin(applet.time / 50.0) * 10, Math.cos(applet.time / 50.0) * 10);
         applet.eyePoint = new Kinetic.Circle({
