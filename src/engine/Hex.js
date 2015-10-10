@@ -7,9 +7,9 @@ var Matrix3 = Geometry.Matrix3;
 
 var HexPortal = require('./HexPortal').HexPortal;
 
-function Hex(drawFunc){
+function Hex(tile){
     this.portals = [];
-    this.drawFunc = drawFunc;
+    this.tile = tile;
 }
 
 exports.Hex = Hex;

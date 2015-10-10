@@ -25,6 +25,9 @@ var Matrix3 = Geometry.Matrix3;
 var Intersect2 = Geometry.Intersect2;
 var LineSegment2 = Geometry.LineSegment2;
 
+var TerrainTiles_mod = require('./engine/TerrainTiles');
+var TerrainTiles = TerrainTiles_mod.TerrainTiles;
+
 var Hex = require('./engine/Hex').Hex;
 var Applet = require('./engine/Applet').Applet;
 
@@ -40,7 +43,7 @@ if(window && document)
 
     $('document').ready(function(){
 
-        HexUI.initialise(40.0);
+        HexUI.initialise(50.0);
 
         $('body').append(spriteCanvas);
         applet = new Applet();
@@ -49,64 +52,20 @@ if(window && document)
         applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
         applet.time = 0;
-        function drawFuncFactory(instance){
-            var hue = Math.random() * 360;
-            var saturation = 30 + (Math.random() * 50);
-            var luminosity = 30 + (Math.random() * 50);
-            var circles = [];
-            for(var i = 0; i < 16; i++)
-            {
-                circles.push({
-                    h: hue + ((Math.random() * 40) - 20) % 360,
-                    s: saturation + ((Math.random() * 40) - 20),
-                    l: luminosity + ((Math.random() * 40) - 20),
-                    x: ((i % 4) - 1.5) * 20,
-                    y: (Math.floor(i / 4.0) - 1.5) * 20,
-                });
-            }
-            circles = _.shuffle(circles);
-            var context = spriteContext;
-            context.save();
-            context.translate(spriteIter.x, spriteIter.y);
-            context.beginPath();
-            context.moveTo(-40,-40);
-            context.lineTo( 40,-40);
-            context.lineTo( 40, 40);
-            context.lineTo(-40, 40);
-            context.lineTo(-40,-40);
-            context.clip();
-            for(var circ in circles)
-            {
-                c = circles[circ];
-                context.strokeStyle = 'hsl('+c.h+','+c.s+'%,'+(c.l-20)+'%)';
-                context.lineWidth = 2;
-                context.fillStyle = 'hsl('+c.h+','+c.s+'%,'+c.l+'%)';
-                context.beginPath();
-                context.arc(c.x, c.y, 15, 0, Math.PI*2);
-                context.fill();
-                context.stroke();
-            }
-            context.restore();
-            function drawFunc(kineticContext){
-                var context = kineticContext._context;
-                context.drawImage(spriteCanvas, instance.drawFunc.pos.x, instance.drawFunc.pos.y, 80, 80, -40, -40, 80, 80);
-            }
+        applet.terrainTiles = new TerrainTiles(spriteContext, new Vector2(100, 100))
+        spriteContext.translate(50, 50);
+        applet.hex = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
+        applet.hex2 = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
+        applet.hex3 = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
+        applet.hex4 = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
 
-            var returnValue = {pos: spriteIter._, func: drawFunc}
+        /**
+               4
+            3     5
+            2     0
+               1
+        **/
 
-            spriteIter.add(new Vector2(80, 0));
-
-            return returnValue;
-        }
-        spriteContext.translate(40, 40);
-        applet.hex = new Hex(null);
-        applet.hex.drawFunc = drawFuncFactory(applet.hex);
-        applet.hex2 = new Hex(null);
-        applet.hex2.drawFunc = drawFuncFactory(applet.hex2);
-        applet.hex3 = new Hex(null);
-        applet.hex3.drawFunc = drawFuncFactory(applet.hex3);
-        applet.hex4 = new Hex(null);
-        applet.hex4.drawFunc = drawFuncFactory(applet.hex4);
 
         applet.hex.join(applet.hex2, 0, 3);
         applet.hex.join(applet.hex2, 3, 1);
@@ -115,8 +74,13 @@ if(window && document)
         applet.hex3.join(applet.hex4, 0, 3);
         applet.hex3.join(applet.hex2, 2, 0);
         applet.hex4.join(applet.hex2, 1, 4);
+        applet.hex.join(applet.hex4, 1, 4);
+        applet.hex.join(applet.hex3, 2, 5);
+        applet.hex2.join(applet.hex4, 2, 5);
+        applet.hex3.join(applet.hex4, 4, 0);
+        applet.hex3.join(applet.hex2, 3, 5);
 
-        applet.eye = new Vector2(Math.sin(applet.time / 50.0) * 10, Math.cos(applet.time / 50.0) * 10);
+        applet.eye = new Vector2(Math.sin(applet.time / 30.0) * 10, Math.cos(applet.time / 30.0) * 10);
         applet.eyePoint = new Kinetic.Circle({
             radius: 5,
             draggable: true,
@@ -144,7 +108,7 @@ if(window && document)
         applet.stage.clear();
         applet.namedLayers.InertLayer.draw();
         applet.namedLayers.InteractiveLayer.draw();
-        applet.hUI.draw(Vector2.zero, 300);
+        applet.hUI.draw(Vector2.zero, 320);
 
         applet.eye = new Vector2(Math.sin(applet.time / 50.0) * 15, Math.cos(applet.time / 50.0) * 15);
         applet.eyePoint.position(applet.eye);
