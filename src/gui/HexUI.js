@@ -53,10 +53,9 @@ Object.defineProperties(HexUI.prototype, {
             this.vis = this.visibility();
             this.group.draw();
 
-            _.each(this.vis.bounds, function(bound, i){
+            _.each(this.vis.bounds, function eachBound(bound, i){
                 if(bound)
                 {
-                    // console.log(this.beyonds);
                     if(!this.beyonds[i] && this.hex.portals[i])
                     {
                         var edge = HexUI.edges[i];
@@ -103,10 +102,10 @@ Object.defineProperties(HexUI.prototype, {
             var left = new LineSegment2(leftEntry, Vector2.lerp(this.eye, leftEntry, 1.2));
             var right = new LineSegment2(rightEntry, Vector2.lerp(this.eye, rightEntry, 1.2));
 
-            var leftX = _.map(left.intersect(HexUI.edges), function(x){return x.solve();});
-            var rightX = _.map(right.intersect(HexUI.edges), function(x){return x.solve();});
+            var leftX = _.map(left.intersect(HexUI.edges), function solve(x){return x.solve();});
+            var rightX = _.map(right.intersect(HexUI.edges), function solve(x){return x.solve();});
 
-            _.each(leftX, function(x){
+            _.each(leftX, function clampToUnit(x){
                 if(x.x){
                     if(x.fractionB < 0)
                     {
@@ -121,7 +120,7 @@ Object.defineProperties(HexUI.prototype, {
                 }
             });
 
-            _.each(rightX, function(x){
+            _.each(rightX, function clampToUnit(x){
                 if(x.x){
                     if(x.fractionB < 0)
                     {
@@ -328,6 +327,7 @@ Object.defineProperties(HexUI, {
                 stroke: 'red',
                 strokeWidth: 0.1,
                 fill: 'green',
+                listening: false,
                 drawFunc: function(context){
                     var vis = instance.vis;
                     context.beginPath();
@@ -338,9 +338,9 @@ Object.defineProperties(HexUI, {
                     }
                     context.save();
                     context.clip();
-                    if(instance.hex.drawFunc)
+                    if(instance.hex.tile)
                     {
-                        instance.hex.drawFunc.func(context);
+                        instance.hex.tile.drawFunc(context);
                     }
                     context.restore();
                 }
