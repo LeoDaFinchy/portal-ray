@@ -26,11 +26,14 @@ exports.TerrainTile = TerrainTile;
 
 Object.defineProperties(TerrainTiles.prototype, {
     newTile: {
-        value: function(drawFunc){
+        value: function(drawFuncs){
             this.context.save();
 
             this.prepareCanvasTile();
-            drawFunc(this.context);
+
+            _.each(drawFuncs, function drawFromDrawFunc(x){
+                x(this.context);
+            }, this);
 
             this.context.restore();
 
@@ -87,6 +90,17 @@ Object.defineProperties(TerrainTiles, {
                         context.fill();
                         context.stroke();
                     }
+                }
+            },
+            text: function(text, size){
+                return function textDrawFunc(context){
+                    console.log(context);
+                    context.font = size + "px serif";
+                    context.fillStyle = "black";
+                    context.strokeStyle = "lightgrey";
+                    context.lineWidth = 3.0;
+                    context.strokeText(text, 0, size * 0.5);
+                    context.fillText(text, 0, size * 0.5);
                 }
             }
         }
