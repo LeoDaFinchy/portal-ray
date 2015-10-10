@@ -54,10 +54,22 @@ if(window && document)
         applet.time = 0;
         applet.terrainTiles = new TerrainTiles(spriteContext, new Vector2(100, 100))
         spriteContext.translate(50, 50);
-        applet.hex = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
-        applet.hex2 = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
-        applet.hex3 = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
-        applet.hex4 = new Hex(applet.terrainTiles.newTile(TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100))));
+        applet.hex = new Hex(applet.terrainTiles.newTile([
+            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
+            TerrainTiles.drawFuncs.text("0", 48)
+        ]));
+        applet.hex2 = new Hex(applet.terrainTiles.newTile([
+            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
+            TerrainTiles.drawFuncs.text("1", 48)
+        ]));
+        applet.hex3 = new Hex(applet.terrainTiles.newTile([
+            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
+            TerrainTiles.drawFuncs.text("2", 48)
+        ]));
+        applet.hex4 = new Hex(applet.terrainTiles.newTile([
+            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
+            TerrainTiles.drawFuncs.text("3", 48)
+        ]));
 
         /**
                4
