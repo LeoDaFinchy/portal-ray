@@ -82,7 +82,7 @@ Object.defineProperties(HexUI.prototype, {
                             hui.group.rotation(hui.rotation * 60);
                         }
                     }
-                    if(this.beyonds[i])
+                    if(this.beyonds[i] && (this.hex.portals[i] != this.hex.portals[i].other))
                     {
                         var rotation = (i - this.hex.portals[i].other.exit + 3) % 6;
 
