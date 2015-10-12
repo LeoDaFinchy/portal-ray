@@ -107,8 +107,8 @@ Object.defineProperties(HexGrid.prototype, {
                     if(firstNeighbourNextPortal.other != firstNeighbourNextPortal)  //  If this portal leads further
                     {
                         var secondNeighbourExitPortal = firstNeighbourNextPortal.other;
-                        var secondNeighbourExit = firstNeighbourExitPortal.exit;
-                        var secondNeighbour = firstNeighbourExitPortal.hex;
+                        var secondNeighbourExit = secondNeighbourExitPortal.exit;
+                        var secondNeighbour = secondNeighbourExitPortal.hex;
                         var secondNeighbourNextPortal = secondNeighbour.portals[Hex.numBind(secondNeighbourExit + 1)];
                         if(secondNeighbourNextPortal.other == secondNeighbourNextPortal)    // If this portal is a mirror
                         {
