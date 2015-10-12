@@ -1,10 +1,13 @@
-var _ = require('underscore')
+var _ = require('underscore');
+var $ = require('jquery');
 
 var Geometry = require('geometry');
 var Vector2 = Geometry.Vector2;
 
-function TerrainTiles(context, size){
-    this.context = context;
+function TerrainTiles(size, tiles){
+    this.canvas = $('<canvas width=' + (size.x * tiles) + ' height=' + size.y + ' style="border: 1px black solid">')[0];
+    this.context = this.canvas.getContext('2d');
+    this.context.translate(size.x / 2.0, size.y / 2.0);
     this.tileSize = size;
     this.position = new Vector2();
     this.library = {
