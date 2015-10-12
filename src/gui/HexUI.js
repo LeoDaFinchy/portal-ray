@@ -5,6 +5,7 @@ var Geometry = require('geometry');
 var Vector2 = Geometry.Vector2;
 var LineSegment2 = Geometry.LineSegment2;
 var Matrix3 = Geometry.Matrix3;
+var Hex = require('../engine/Hex').Hex;
 
 var HexUI = function(applet, hex, layer, entrance, bounds){
     this.layer = layer;
@@ -49,7 +50,7 @@ exports['HexUI'] = HexUI;
 Object.defineProperties(HexUI.prototype, {
     draw: {
         value: function(origin, range){
-            this.eye = HexUI.rotMats[HexUI.numBind(-this.rotation)].rotateVector2(this.applet.eye._.subtract(this.position));
+            this.eye = HexUI.rotMats[Hex.numBind(-this.rotation)].rotateVector2(this.applet.eye._.subtract(this.position));
             this.vis = this.visibility();
             this.group.draw();
 
@@ -59,9 +60,9 @@ Object.defineProperties(HexUI.prototype, {
                     if(!this.beyonds[i] && this.hex.portals[i])
                     {
                         var edge = HexUI.edges[i];
-                        var relativeRotation = HexUI.numBind(i - this.hex.portals[i].other.exit + 3);
-                        var absoluteRotation = HexUI.numBind(relativeRotation + this.rotation);
-                        var direction = HexUI.numBind(i + this.rotation)
+                        var relativeRotation = Hex.numBind(i - this.hex.portals[i].other.exit + 3);
+                        var absoluteRotation = Hex.numBind(relativeRotation + this.rotation);
+                        var direction = Hex.numBind(i + this.rotation)
                         var targetPoint = HexUI.neighbourPoints[direction]._.add(this.position);
 
                         if(Vector2.displacement(targetPoint, origin).length <= range)
@@ -293,12 +294,6 @@ Object.defineProperties(HexUI, {
     },
     turn: {
         value: Math.PI / 3.0
-    },
-    numBind: {
-        value: function(input){
-            var remainder = input % 6;
-            return remainder >= 0 ? remainder : remainder + 6;
-        }
     },
     ready: {
         value: false

@@ -8,6 +8,7 @@ var Matrix3 = Geometry.Matrix3;
 var HexPortal = require('./HexPortal').HexPortal;
 
 function Hex(tile){
+    this.id = Hex.id++;
     this.tile = tile;
     this.portals = [];
     _.each(_.range(6), function(i){
@@ -35,4 +36,14 @@ Object.defineProperties(Hex.prototype, {
 });
 
 Object.defineProperties(Hex, {
+    numBind: {
+        value: function(input){
+            var remainder = input % 6;
+            return remainder >= 0 ? remainder : remainder + 6;
+        }
+    },
+    id: {
+        value: 0,
+        writable: true,
+    }
 });
