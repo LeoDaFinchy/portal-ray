@@ -31,6 +31,8 @@ var TerrainTiles = TerrainTiles_mod.TerrainTiles;
 var Hex = require('./engine/Hex').Hex;
 var Applet = require('./engine/Applet').Applet;
 
+var HexGrid = require('./engine/HexGrid').HexGrid;
+
 var HexUI = require("./gui/HexUI").HexUI;
 var applet;
 
@@ -54,43 +56,10 @@ if(window && document)
         applet.time = 0;
         applet.terrainTiles = new TerrainTiles(spriteContext, new Vector2(100, 100))
         spriteContext.translate(50, 50);
-        applet.hex = new Hex(applet.terrainTiles.newTile([
-            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
-            TerrainTiles.drawFuncs.text("0", 48)
-        ]));
-        applet.hex2 = new Hex(applet.terrainTiles.newTile([
-            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
-            TerrainTiles.drawFuncs.text("1", 48)
-        ]));
-        applet.hex3 = new Hex(applet.terrainTiles.newTile([
-            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
-            TerrainTiles.drawFuncs.text("2", 48)
-        ]));
-        applet.hex4 = new Hex(applet.terrainTiles.newTile([
-            TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
-            TerrainTiles.drawFuncs.text("3", 48)
-        ]));
-
-        /**
-               4
-            3     5
-            2     0
-               1
-        **/
-
-
-        applet.hex.join(applet.hex2, 0, 3);
-        applet.hex.join(applet.hex2, 3, 1);
-        applet.hex.join(applet.hex3, 4, 1);
-        applet.hex.join(applet.hex4, 5, 2);
-        applet.hex3.join(applet.hex4, 0, 3);
-        applet.hex3.join(applet.hex2, 2, 0);
-        applet.hex4.join(applet.hex2, 1, 4);
-        applet.hex.join(applet.hex4, 1, 4);
-        applet.hex.join(applet.hex3, 2, 5);
-        applet.hex2.join(applet.hex4, 2, 5);
-        applet.hex3.join(applet.hex4, 4, 0);
-        applet.hex3.join(applet.hex2, 3, 5);
+        applet.hexGrid = new HexGrid(applet, applet.terrainTiles);
+        applet.hexGrid.newTileThroughTheLookingGlass();
+        applet.hexGrid.newTileThroughTheLookingGlass();
+        applet.hexGrid.newTileThroughTheLookingGlass();
 
         applet.eye = new Vector2(Math.sin(applet.time / 30.0) * 10, Math.cos(applet.time / 30.0) * 10);
         applet.eyePoint = new Kinetic.Circle({
@@ -105,7 +74,7 @@ if(window && document)
 
         applet.namedLayers["InteractiveLayer"].add(applet.eyePoint);
 
-        applet.hUI = new HexUI(applet, applet.hex, applet.namedLayers.HexLayer, null, {lower: 0, upper: 1});
+        applet.hUI = new HexUI(applet, applet.hexGrid.seedHex, applet.namedLayers.HexLayer, null, {lower: 0, upper: 1});
 
         var CanvasSize = new Vector2(800, 600);
         var GraphSize = new Vector2(40, 30);

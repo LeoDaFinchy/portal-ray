@@ -38,6 +38,7 @@ Object.defineProperties(TerrainTiles.prototype, {
             this.context.restore();
 
             var returnValue = new TerrainTile(this.position._, this.tileSize._, this.context.canvas);
+            this.library[returnValue.id] = returnValue;
 
             this.position.x += this.tileSize.x;
 
@@ -94,7 +95,6 @@ Object.defineProperties(TerrainTiles, {
             },
             text: function(text, size){
                 return function textDrawFunc(context){
-                    console.log(context);
                     context.font = size + "px serif";
                     context.fillStyle = "black";
                     context.strokeStyle = "lightgrey";

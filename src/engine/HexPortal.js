@@ -2,16 +2,15 @@ function HexPortal(hex, exit){
     this.exit = exit;
     this.hex = hex;
     this.hex.portals[exit] = this;
-    this.other = null;
+    this.other = this;
 }
 
 exports.HexPortal = HexPortal;
 
-Object.defineProperties(HexPortal, {
-    tidy: {
+Object.defineProperties(HexPortal.prototype, {
+    mirror: {
         value: function(){
-            delete this.hex.portals[this.exit];
-            delete other;
+            other = this;
         }
     }
 });
