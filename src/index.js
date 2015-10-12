@@ -36,10 +36,6 @@ var HexGrid = require('./engine/HexGrid').HexGrid;
 var HexUI = require("./gui/HexUI").HexUI;
 var applet;
 
-var spriteCanvas = $('<canvas width=400 height=300 style="border: 1px black solid">')[0];
-var spriteContext = spriteCanvas.getContext('2d');
-var spriteIter = new Vector2(0, 0);
-
 if(window && document)
 {   
 
@@ -47,16 +43,20 @@ if(window && document)
 
         HexUI.initialise(50.0);
 
-        $('body').append(spriteCanvas);
         applet = new Applet();
         applet.initialise(new Vector2(800,600));
         applet.addLayer("InertLayer");
         applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
         applet.time = 0;
-        applet.terrainTiles = new TerrainTiles(spriteContext, new Vector2(100, 100))
-        spriteContext.translate(50, 50);
+        applet.terrainTiles = new TerrainTiles(new Vector2(100, 100), 12);
+        $('body').append(applet.terrainTiles.canvas);
         applet.hexGrid = new HexGrid(applet, applet.terrainTiles);
+        applet.hexGrid.newTileThroughTheLookingGlass();
+        applet.hexGrid.newTileThroughTheLookingGlass();
+        applet.hexGrid.newTileThroughTheLookingGlass();
+        applet.hexGrid.newTileThroughTheLookingGlass();
+        applet.hexGrid.newTileThroughTheLookingGlass();
         applet.hexGrid.newTileThroughTheLookingGlass();
         applet.hexGrid.newTileThroughTheLookingGlass();
         applet.hexGrid.newTileThroughTheLookingGlass();
