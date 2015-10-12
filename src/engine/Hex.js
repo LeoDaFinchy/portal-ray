@@ -8,8 +8,11 @@ var Matrix3 = Geometry.Matrix3;
 var HexPortal = require('./HexPortal').HexPortal;
 
 function Hex(tile){
-    this.portals = [];
     this.tile = tile;
+    this.portals = [];
+    _.each(_.range(6), function(i){
+        new HexPortal(this, i);
+    }, this);
 }
 
 exports.Hex = Hex;
@@ -19,7 +22,7 @@ Object.defineProperties(Hex.prototype, {
         value: function(other, thisExit, thatEntrance){
             if(this.portals[thisExit])
             {
-                this.portals[thisExit].other.tidy();
+                this.portals[thisExit].other.mirror();
             }
             else
             {
