@@ -49,17 +49,13 @@ if(window && document)
         applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
         applet.time = 0;
-        applet.terrainTiles = new TerrainTiles(new Vector2(100, 100), 12);
+        applet.terrainTiles = new TerrainTiles(new Vector2(100, 100), 20);
         $('body').append(applet.terrainTiles.canvas);
         applet.hexGrid = new HexGrid(applet, applet.terrainTiles);
-        applet.hexGrid.newTileThroughTheLookingGlass();
-        applet.hexGrid.newTileThroughTheLookingGlass();
-        applet.hexGrid.newTileThroughTheLookingGlass();
-        applet.hexGrid.newTileThroughTheLookingGlass();
-        applet.hexGrid.newTileThroughTheLookingGlass();
-        applet.hexGrid.newTileThroughTheLookingGlass();
-        applet.hexGrid.newTileThroughTheLookingGlass();
-        applet.hexGrid.newTileThroughTheLookingGlass();
+        for(var i = 1; i < 20; i++)
+        {
+            applet.hexGrid.newTileThroughTheLookingGlass();
+        }
 
         applet.eye = new Vector2(Math.sin(applet.time / 30.0) * 10, Math.cos(applet.time / 30.0) * 10);
         applet.eyePoint = new Kinetic.Circle({
