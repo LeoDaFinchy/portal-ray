@@ -54,24 +54,27 @@ Object.defineProperties(HexUI.prototype, {
             this.vis = this.visibility();
             this.group.draw();
 
-            _.each(this.vis.bounds, function eachBound(bound, i){
+            for(var n = 0; n < 6; n++)
+            {
+                var bound = this.vis.bounds[n];
                 if(bound)
                 {
-                    if(!this.beyonds[i] && this.hex.portals[i])
+                    var i = Hex.numBind(n + this.rotation);
+                    if(!this.beyonds[i] && this.hex.portals[n])
                     {
                         var edge = HexUI.edges[i];
-                        var relativeRotation = Hex.numBind(i - this.hex.portals[i].other.exit + 3);
+                        var relativeRotation = Hex.numBind(i - this.hex.portals[n].other.exit + 3);
                         var absoluteRotation = Hex.numBind(relativeRotation + this.rotation);
-                        var direction = Hex.numBind(i + this.rotation)
+                        var direction = i
                         var targetPoint = HexUI.neighbourPoints[direction]._.add(this.position);
 
                         if(Vector2.displacement(targetPoint, origin).length <= range)
                         {
                             var hui = new HexUI(
                                 this.applet,
-                                this.hex.portals[i].other.hex, 
+                                this.hex.portals[n].other.hex, 
                                 this.layer,
-                                this.hex.portals[i].other.exit,
+                                this.hex.portals[n].other.exit,
                                 bound
                             );
 
@@ -82,16 +85,20 @@ Object.defineProperties(HexUI.prototype, {
                             hui.group.rotation(hui.rotation * 60);
                         }
                     }
-                    if(this.beyonds[i] && (this.hex.portals[i] != this.hex.portals[i].other))
+                    if(this.beyonds[i] && (this.hex.portals[n].hex != this.hex.portals[n].other.hex))
                     {
-                        var rotation = (i - this.hex.portals[i].other.exit + 3) % 6;
-
                         var newBound = {lower: 1 - bound.upper, upper: 1 - bound.lower};
+                        var rotation = Hex.numBind(i - this.hex.portals[n].other.exit + 3);
+
+                        this.beyonds[i].hex = this.hex.portals[n].other.hex;
+                        this.beyonds[i].entrance = this.hex.portals[n].other.exit;
+                        this.beyonds[i].rotation = Hex.numBind(rotation);
+
                         this.beyonds[i].bounds = newBound;
                         this.beyonds[i].draw(origin, range);
                     }
                 }
-            }, this);
+            }
         }
     },
     visibility: {
