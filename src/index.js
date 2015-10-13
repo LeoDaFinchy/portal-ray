@@ -111,14 +111,25 @@ if(window && document)
         applet.namedLayers.InteractiveLayer.draw();
         applet.hUI.draw(Vector2.zero, 320);
 
-        applet.eye.add(applet.viewAxes);
-        applet.namedLayers.HexLayer.position(applet.eye._.multiplyByScalar(-1));
 
         applet.viewAxes.x = Math.max(-1.0, Math.min(1.0, applet.viewAxes.x + (applet.keyStates.right ? 0.1 : 0.0) + (applet.keyStates.left ? -0.1 : 0.0)));
         applet.viewAxes.y = Math.max(-1.0, Math.min(1.0, applet.viewAxes.y + (applet.keyStates.down ? 0.1 : 0.0) + (applet.keyStates.up ? -0.1 : 0.0)));
 
         applet.viewAxes.multiplyByScalar(0.95);
         if(applet.viewAxes.length <= 0.09){applet.viewAxes = Vector2.zero;}
+
+        applet.eye.add(applet.viewAxes);
+
+        for(var i = 0; i < 6; i++){
+            if(new Intersect2(new LineSegment2(applet.eye, HexUI.edges[i].lerp(0.5)), HexUI.edges[i]).solve().angle < 0){
+                var p = Hex.numBind(i - applet.hUI.rotation)
+                applet.hUI.rotation = applet.hUI.beyonds[i].rotation;
+                applet.hUI.hex = applet.hUI.hex.portals[p].other.hex;
+                applet.eye.add(HexUI.edges[Hex.numBind(i + 3)].b._.subtract(HexUI.edges[i].a));
+            }
+        }
+
+        applet.namedLayers.HexLayer.position(applet.eye._.multiplyByScalar(-1));
 
         applet.time++;
         window.setTimeout(draw, 10);
