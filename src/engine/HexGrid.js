@@ -15,6 +15,7 @@ function HexGrid(applet){
         TerrainTiles.drawFuncs.text("0", 48)
     ]));
 
+    this.hexes = {0: this.seedHex}
     this.mirrors = this.seedHex.portals.slice();
 }
 
@@ -28,6 +29,7 @@ Object.defineProperties(HexGrid.prototype, {
                 TerrainTiles.drawFuncs.text(_.size(this.applet.terrainTiles.library), 48)
             ]));
             newTile.join(neighbour, thisExit, neighbourExit);
+            this.hexes[newTile.id] = newTile;
             return newTile;
         }
     },
@@ -45,6 +47,7 @@ Object.defineProperties(HexGrid.prototype, {
             newMirrors.splice(thisExit, 1);
             this.mirrors = this.mirrors.concat(newMirrors);
             this.joinFlatlyAdjacentEdges(newTile);
+            this.hexes[newTile.id] = newTile;
             return newTile;
         }
     },
