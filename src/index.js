@@ -67,6 +67,29 @@ if(window && document)
         })
 
         applet.entrance = 0;
+        applet.viewAxes = Vector2.zero;
+        applet.keyStates = {}
+
+        Object.defineProperties(applet.keyStates, {
+            up: {
+                get: function(){return this[38];}
+            },
+            down: {
+                get: function(){return this[40];}
+            },
+            left: {
+                get: function(){return this[37];}
+            },
+            right: {
+                get: function(){return this[39];}
+            }
+        });
+
+        $('body').on('keydown', function keyDown(e){
+            applet.keyStates[e.keyCode] = true;
+        }).on('keyup', function keyUp(e){
+            applet.keyStates[e.keyCode] = false;
+        });
 
         applet.namedLayers["InteractiveLayer"].add(applet.eyePoint);
 
@@ -87,8 +110,14 @@ if(window && document)
         applet.namedLayers.InteractiveLayer.draw();
         applet.hUI.draw(Vector2.zero, 320);
 
-        applet.eye = new Vector2(Math.sin(applet.time / 50.0) * 15, Math.cos(applet.time / 50.0) * 15);
-        applet.eyePoint.position(applet.eye);
+        applet.eye.add(applet.viewAxes);
+        applet.namedLayers.HexLayer.position(applet.eye._.multiplyByScalar(-1));
+
+        applet.viewAxes.x = Math.max(-1.0, Math.min(1.0, applet.viewAxes.x + (applet.keyStates.right ? 0.1 : 0.0) + (applet.keyStates.left ? -0.1 : 0.0)));
+        applet.viewAxes.y = Math.max(-1.0, Math.min(1.0, applet.viewAxes.y + (applet.keyStates.down ? 0.1 : 0.0) + (applet.keyStates.up ? -0.1 : 0.0)));
+
+        applet.viewAxes.multiplyByScalar(0.95);
+        if(applet.viewAxes.length <= 0.09){applet.viewAxes = Vector2.zero;}
 
         applet.time++;
         window.setTimeout(draw, 10);
