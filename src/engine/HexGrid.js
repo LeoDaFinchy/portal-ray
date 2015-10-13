@@ -57,39 +57,20 @@ Object.defineProperties(HexGrid.prototype, {
                 var hex = mirror.hex;
                 var options = [];
                 var prevPortal = hex.portals[Hex.numBind(exit - 1)];
-                console.info(
-                    prevPortal,
-                    "Hex " + prevPortal.hex.id,
-                    "Exit " + prevPortal.exit,
-                    "Entrance " + prevPortal.other.exit,
-                    "Hex " + prevPortal.other.hex.id);
                 if(prevPortal.other != prevPortal)  //  If this portal isn't a mirror
                 {
                     var firstNeighbourExitPortal = prevPortal.other;
                     var firstNeighbourExit = firstNeighbourExitPortal.exit;
                     var firstNeighbour = firstNeighbourExitPortal.hex;
                     var firstNeighbourPrevPortal = firstNeighbour.portals[Hex.numBind(firstNeighbourExit - 1)];
-                    console.warn(
-                        firstNeighbourPrevPortal,
-                        "Hex " + firstNeighbourPrevPortal.hex.id,
-                        "Exit " + firstNeighbourPrevPortal.exit,
-                        "Entrance " + firstNeighbourPrevPortal.other.exit,
-                        "Hex " + firstNeighbourPrevPortal.other.hex.id);
                     if(firstNeighbourPrevPortal.other != firstNeighbourPrevPortal)  //  If this portal leads further
                     {
                         var secondNeighbourExitPortal = firstNeighbourPrevPortal.other;
                         var secondNeighbourExit = secondNeighbourExitPortal.exit;
                         var secondNeighbour = secondNeighbourExitPortal.hex;
                         var secondNeighbourPrevPortal = secondNeighbour.portals[Hex.numBind(secondNeighbourExit - 1)];
-                        console.error(
-                            secondNeighbourPrevPortal,
-                            "Hex " + secondNeighbourPrevPortal.hex.id,
-                            "Exit " + secondNeighbourPrevPortal.exit,
-                            "Entrance " + secondNeighbourPrevPortal.other.exit,
-                            "Hex " + secondNeighbourPrevPortal.other.hex.id);
                         if(secondNeighbourPrevPortal.other == secondNeighbourPrevPortal)    // If this portal is a mirror
                         {
-                            console.error("option")
                             options.push({
                                 other: secondNeighbour,
                                 thatEntrance: secondNeighbourPrevPortal.exit
