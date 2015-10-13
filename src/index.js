@@ -50,10 +50,10 @@ if(window && document)
         applet.addLayer("HexLayer");
         applet.addLayer("InteractiveLayer");
         applet.time = 0;
-        applet.terrainTiles = new TerrainTiles(new Vector2(100, 100), 20);
+        applet.terrainTiles = new TerrainTiles(new Vector2(100, 100), 100);
         $('body').append(applet.terrainTiles.canvas);
         applet.hexGrid = new HexGrid(applet, applet.terrainTiles);
-        for(var i = 1; i < 20; i++)
+        for(var i = 1; i < 100; i++)
         {
             applet.hexGrid.newTileThroughTheLookingGlass();
         }
@@ -123,6 +123,24 @@ if(window && document)
         for(var i = 0; i < 6; i++){
             if(new Intersect2(new LineSegment2(applet.eye, HexUI.edges[i].lerp(0.5)), HexUI.edges[i]).solve().angle < 0){
                 var p = Hex.numBind(i - applet.hUI.rotation)
+
+                var msg = "Hex " + applet.hUI.hex.id +
+                    " exit " + applet.hUI.hex.portals[p].exit +
+                    " to exit " + applet.hUI.hex.portals[p].other.exit +
+                    " of Hex " + applet.hUI.hex.portals[p].other.hex.id +
+                    ", back to exit " + applet.hUI.hex.portals[p].other.other.exit +
+                    " of Hex " + applet.hUI.hex.portals[p].other.other.hex.id +
+                    "(exit " + applet.hexGrid.hexes[applet.hUI.hex.portals[p].other.hex.id].portals[applet.hUI.hex.portals[p].other.exit].other.exit + 
+                    " of Hex " + applet.hexGrid.hexes[applet.hUI.hex.portals[p].other.hex.id].portals[applet.hUI.hex.portals[p].other.exit].other.hex.id + ")";
+
+                if(applet.hexGrid.hexes[applet.hUI.hex.portals[p].other.hex.id].portals[applet.hUI.hex.portals[p].other.exit].other.hex.id != applet.hUI.hex.id)
+                {
+                    console.warn(msg);
+                }
+                else
+                {
+                    console.log(msg);
+                }
                 applet.hUI.rotation = applet.hUI.beyonds[i].rotation;
                 applet.hUI.hex = applet.hUI.hex.portals[p].other.hex;
                 applet.eye.add(HexUI.edges[Hex.numBind(i + 3)].b._.subtract(HexUI.edges[i].a));
