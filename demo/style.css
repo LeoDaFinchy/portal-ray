@@ -12,3 +12,6 @@
     margin: 1px;
     padding: 2px;
 }
+body{
+    overflow: hidden;
+}
