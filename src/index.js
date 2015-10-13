@@ -44,6 +44,7 @@ if(window && document)
         HexUI.initialise(50.0);
 
         applet = new Applet();
+        window.applet = applet;
         applet.initialise(new Vector2(800,600));
         applet.addLayer("InertLayer");
         applet.addLayer("HexLayer");
