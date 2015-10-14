@@ -21,16 +21,11 @@ exports.Hex = Hex;
 Object.defineProperties(Hex.prototype, {
     join: {
         value: function(other, thisExit, thatEntrance){
-            if(this.portals[thisExit])
-            {
-                this.portals[thisExit].other.mirror();
-            }
-            else
-            {
-                new HexPortal(this, thisExit);
-            }
-            this.portals[thisExit].other = new HexPortal(other, thatEntrance);
-            this.portals[thisExit].other.other = this.portals[thisExit];
+            this.portals[thisExit].other.mirror();
+            HexPortal.link(
+                this.portals[thisExit],
+                other.portals[thatEntrance]
+            )
         }
     }
 });
