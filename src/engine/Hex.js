@@ -7,8 +7,9 @@ var Matrix3 = Geometry.Matrix3;
 
 var HexPortal = require('./HexPortal').HexPortal;
 
-function Hex(tile){
+function Hex(tile, grid){
     this.id = Hex.id++;
+    this.grid = grid;
     this.tile = tile;
     this.portals = [];
     _.each(_.range(6), function(i){
