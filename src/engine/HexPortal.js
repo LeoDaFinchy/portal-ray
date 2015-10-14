@@ -14,3 +14,12 @@ Object.defineProperties(HexPortal.prototype, {
         }
     }
 });
+
+Object.defineProperties(HexPortal, {
+    link: {
+        value: function(a, b){
+            a.other = b;
+            b.other = a;
+        }
+    }
+});
