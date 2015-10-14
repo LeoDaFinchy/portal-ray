@@ -10,7 +10,11 @@ exports.HexPortal = HexPortal;
 Object.defineProperties(HexPortal.prototype, {
     mirror: {
         value: function(){
-            other = this;
+            if(this.other != this)
+            {
+                this.other = this;
+                _.union(this.hex.grid.mirrors, [this]);
+            }
         }
     }
 });
