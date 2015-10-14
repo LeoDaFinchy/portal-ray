@@ -141,7 +141,14 @@ if(window && document)
                 {
                     console.log(msg);
                 }
-                applet.hUI.rotation = applet.hUI.beyonds[i].rotation;
+                if(applet.hUI.hex.portals[p] == applet.hUI.hex.portals[p].other)
+                {
+                    applet.hUI.rotation += 3;
+                }
+                else
+                {
+                    applet.hUI.rotation = applet.hUI.beyonds[i].rotation;
+                }
                 applet.hUI.hex = applet.hUI.hex.portals[p].other.hex;
                 applet.eye.add(HexUI.edges[Hex.numBind(i + 3)].b._.subtract(HexUI.edges[i].a));
             }
