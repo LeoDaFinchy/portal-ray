@@ -105,6 +105,7 @@ Object.defineProperties(HexGrid.prototype, {
                 }
                 var newLink = _.sample(options);
                 if(newLink){
+                    this.mirrors = _.without(this.mirrors, hex.portals[exit], newLink.other.portals[newLink.thatEntrance]);
                     hex.join(newLink.other, exit, newLink.thatEntrance);
                 }
             }, this);
