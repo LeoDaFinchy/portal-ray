@@ -12,7 +12,7 @@ function HexGrid(applet){
 
     this.seedHex = new Hex(this.applet.terrainTiles.newTile([
         TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
-        TerrainTiles.drawFuncs.text("0", 48)
+        TerrainTiles.drawFuncs.text("0", 36)
     ]), this);
 
     this.hexes = {0: this.seedHex}
@@ -26,7 +26,7 @@ Object.defineProperties(HexGrid.prototype, {
         value: function(neighbour, neighbourExit, thisExit){
             var newTile = new Hex(this.applet.terrainTiles.newTile([
                 TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
-                TerrainTiles.drawFuncs.text(_.size(this.applet.terrainTiles.library), 48)
+                TerrainTiles.drawFuncs.text(_.size(this.applet.terrainTiles.library), 36)
             ]), this);
             newTile.join(neighbour, thisExit, neighbourExit);
             this.hexes[newTile.id] = newTile;
@@ -37,7 +37,7 @@ Object.defineProperties(HexGrid.prototype, {
         value: function(){
             var newTile = new Hex(this.applet.terrainTiles.newTile([
                 TerrainTiles.drawFuncs.variedColourCircles(new Vector2(100, 100)),
-                TerrainTiles.drawFuncs.text(_.size(this.applet.terrainTiles.library), 48)
+                TerrainTiles.drawFuncs.text(_.size(this.applet.terrainTiles.library), 36)
             ]), this);
             var mirror = _.sample(this.mirrors);
             this.mirrors = _.without(this.mirrors, mirror);
