@@ -33,6 +33,9 @@ var Applet = require('./engine/Applet').Applet;
 
 var HexGrid = require('./engine/HexGrid').HexGrid;
 
+var TileView = require('./gui/TileView');
+var TileGridView = TileView.TileGridView;
+
 var HexUI = require("./gui/HexUI").HexUI;
 var applet;
 
@@ -48,6 +51,7 @@ if(window && document)
         applet.initialise(new Vector2(800,600));
         applet.addLayer("InertLayer");
         applet.addLayer("HexLayer");
+        applet.addLayer("ViewLayer");
         applet.addLayer("InteractiveLayer");
         applet.time = 0;
         applet.terrainTiles = new TerrainTiles(new Vector2(100, 100), 100);
@@ -102,6 +106,9 @@ if(window && document)
 
         applet.stage.offset(new Vector2(-400, -300));
 
+        TileGridView.initialise(50.0);
+        applet.tileGridView = new TileGridView(applet, applet.namedLayers.ViewLayer.canvas._canvas.getContext("2d"), new LineSegment2(new Vector2(100, 100), new Vector2(700, 500)));
+
         window.setTimeout(draw, 10);
     });
 
@@ -109,7 +116,7 @@ if(window && document)
         applet.stage.clear();
         applet.namedLayers.InertLayer.draw();
         applet.namedLayers.InteractiveLayer.draw();
-        applet.hUI.draw(Vector2.zero, 320);
+        // applet.hUI.draw(Vector2.zero, 320);
 
 
         applet.viewAxes.x = Math.max(-1.0, Math.min(1.0, applet.viewAxes.x + (applet.keyStates.right ? 0.1 : 0.0) + (applet.keyStates.left ? -0.1 : 0.0)));
@@ -155,6 +162,7 @@ if(window && document)
         }
 
         applet.namedLayers.HexLayer.position(applet.eye._.multiplyByScalar(-1));
+        applet.tileGridView.draw();
 
         applet.time++;
         window.setTimeout(draw, 10);
