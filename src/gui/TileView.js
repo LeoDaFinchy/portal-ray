@@ -5,10 +5,11 @@ var Vector2 = Geometry.Vector2;
 var Matrix3 = Geometry.Matrix3;
 var LineSegment2 = Geometry.LineSegment2;
 
-function TileNexusView(coord){
+function TileNexusView(coord, level){
     this.coord = coord;
     this.position = TileGridView.corners[0]._.multiplyByScalar(this.coord.x).add(TileGridView.corners[1]._.multiplyByScalar(this.coord.y));
-    console.log(this.position);
+    this.level = level;
+    // console.log(this.position);
 }
 
 function TilePortalView(front, back){
@@ -36,13 +37,16 @@ exports.TileGridView = TileGridView;
 Object.defineProperties(TileGridView.prototype, {
     draw: {
         value: function(){
+            var colours = ["red", "orange", "goldenrod", "yellow", "lightgreen", "green", "cyan", "blue", "violet", "purple", "black", "black", "black"]
             this.context.save();
             this.context.translate(400, 300);
             _.each(_.flatten(this.nexii), function drawNexus(nexus){
                 this.context.strokeStyle = "black";
-                this.context.lineWidth = 1.0;
+                this.context.fillStyle = colours[nexus.level];
+                this.context.lineWidth = 0.5;
                 this.context.beginPath()
-                this.context.arc(nexus.position.x, nexus.position.y, 10, 0, Math.PI * 2);
+                this.context.arc(nexus.position.x, nexus.position.y, 10 - (nexus.level * 0.5), 0, Math.PI * 2);
+                this.context.fill();
                 this.context.stroke();
             }, this);
             this.context.restore();
@@ -58,31 +62,128 @@ Object.defineProperties(TileGridView.prototype, {
     },
     generateNexiiLevel: {
         value: function(nexii, level, limit){
-            // console.log(level, limit)
             var levelNexii = [];
-            var inOrOut = level % 2;
+            var phase = level % 2;
             var rad = Math.floor(level * 1.5) + 1;
-            var corners = [
-                new TileNexusView({x: rad, y: inOrOut}),
-                new TileNexusView({x: -inOrOut, y: rad + inOrOut}),
-                new TileNexusView({x: -rad - inOrOut, y: rad}),
-                new TileNexusView({x: -rad, y: -inOrOut}),
-                new TileNexusView({x: inOrOut, y: -rad - inOrOut}),
-                new TileNexusView({x: rad + inOrOut, y: -rad}),
-            ];
+            if(phase == 0)
+            {
+                // console.log(level)
+                var corners = [
+                    {x:  rad, y:    0},
+                    {x:    0, y:  rad},
+                    {x: -rad, y:  rad},
+                    {x: -rad, y:    0},
+                    {x:    0, y: -rad},
+                    {x: rad,  y: -rad}
+                ]
+                // console.info(corners[1].y - corners[0].y)
 
-            var sides = _.map(corners, function(corner, i){
-                var side = [];
-                if(inOrOut)
-                {
-                    side.push(new TileNexusView({x: corner.coord.x - 1, y:corner.coord.y + 1}));
-                }
-                return side;
-            });
+                var paths = [
+                    [{x: -1, y: +1}, {x:  0, y: +1}, {x: -1, y: +1}, {x: -1, y:  0}],
+                    [{x: -1, y:  0}, {x: -1, y: +1}, {x: -1, y:  0}, {x:  0, y: -1}],
+                    [{x:  0, y: -1}, {x: -1, y:  0}, {x:  0, y: -1}, {x: +1, y: -1}],
+                    [{x: +1, y: -1}, {x:  0, y: -1}, {x: +1, y: -1}, {x: +1, y:  0}],
+                    [{x: +1, y:  0}, {x: +1, y: -1}, {x: +1, y:  0}, {x:  0, y: +1}],
+                    [{x:  0, y: +1}, {x: +1, y:  0}, {x:  0, y: +1}, {x: -1, y: +1}]
+                ];
+
+                var levelNexii = _.map(corners, function sideForCorner(corner, i){
+                    var pathIter = 0;
+                    return _.reduce(_.range(level * 2), function getNextNexusView(result, value){
+                        var newStep = {
+                            x: _.last(result).x + paths[i][pathIter].x,
+                            y: _.last(result).y + paths[i][pathIter].y
+                        }
+                        pathIter = (pathIter + 1) % 4;
+                        result.push(newStep);
+                        return result;
+                    }, [corner]);
+                });
+                // console.log(levelNexii)
+
+                levelNexii = _.flatten(levelNexii);
+                nexii[level] = _.map(levelNexii, function makeTileNexusViews(x){return new TileNexusView(x, level);});
+            }
+            else if(phase == 1)
+            {
+                // console.log(level)
+                var corners = [
+                    {x:  rad, y:    0},
+                    {x:    0, y:  rad},
+                    {x: -rad, y:  rad},
+                    {x: -rad, y:    0},
+                    {x:    0, y: -rad},
+                    {x: rad,  y: -rad}
+                ]
+                console.info(corners[1].y - corners[0].y)
+
+                var paths = [
+                    [{x:  0, y: +1}, {x: -1, y: +1}, {x: -1, y:  0}, {x: -1, y: +1}],
+                    [{x: -1, y: +1}, {x: -1, y:  0}, {x:  0, y: -1}, {x: -1, y:  0}],
+                    [{x: -1, y:  0}, {x:  0, y: -1}, {x: +1, y: -1}, {x:  0, y: -1}],
+                    [{x:  0, y: -1}, {x: +1, y: -1}, {x: +1, y:  0}, {x: +1, y: -1}],
+                    [{x: +1, y: -1}, {x: +1, y:  0}, {x:  0, y: +1}, {x: +1, y:  0}],
+                    [{x: +1, y:  0}, {x:  0, y: +1}, {x: -1, y: +1}, {x:  0, y: +1}]
+                ];
+
+                var levelNexii = _.map(corners, function sideForCorner(corner, i){
+                    var pathIter = 0;
+                    return _.reduce(_.range(level * 2), function getNextNexusView(result, value){
+                        var newStep = {
+                            x: _.last(result).x + paths[i][pathIter].x,
+                            y: _.last(result).y + paths[i][pathIter].y
+                        }
+                        pathIter = (pathIter + 1) % 4;
+                        result.push(newStep);
+                        return result;
+                    }, [corner]);
+                });
+                // console.log(levelNexii)
+
+                levelNexii = _.flatten(levelNexii);
+                nexii[level] = _.map(levelNexii, function makeTileNexusViews(x){return new TileNexusView(x, level);});
+            }
+            else if(phase == 2)
+            {
+                // console.log(level)
+                var corners = [
+                    {x:  rad, y:    0},
+                    {x:    0, y:  rad},
+                    {x: -rad, y:  rad},
+                    {x: -rad, y:    0},
+                    {x:    0, y: -rad},
+                    {x: rad,  y: -rad}
+                ]
+                // console.info(corners[1].y - corners[0].y)
+
+                var paths = [
+                    [{x: -1, y: +1}, {x:  0, y: +1}, {x: -1, y: +1}, {x: -1, y:  0}],
+                    [{x: -1, y:  0}, {x: -1, y: +1}, {x: -1, y:  0}, {x:  0, y: -1}],
+                    [{x:  0, y: -1}, {x: -1, y:  0}, {x:  0, y: -1}, {x: +1, y: -1}],
+                    [{x:  1, y: -1}, {x:  0, y: -1}, {x: +1, y: -1}, {x: +1, y:  0}],
+                    [{x:  1, y:  0}, {x: +1, y: -1}, {x: +1, y:  0}, {x:  0, y: +1}],
+                    [{x:  0, y: +1}, {x: +1, y:  0}, {x:  0, y: +1}, {x: -1, y: +1}]
+                ];
+
+                var levelNexii = _.map(corners, function sideForCorner(corner, i){
+                    var pathIter = 0;
+                    return _.reduce(_.range(level * 0), function getNextNexusView(result, value){
+                        var newStep = {
+                            x: _.last(result).x + paths[i][pathIter].x,
+                            y: _.last(result).y + paths[i][pathIter].y
+                        }
+                        pathIter = (pathIter + 1) % 1;
+                        result.push(newStep);
+                        return result;
+                    }, [corner]);
+                });
+                // console.log(levelNexii)
+
+                levelNexii = _.flatten(levelNexii);
+                nexii[level] = _.map(levelNexii, function makeTileNexusViews(x){return new TileNexusView(x, level);});
+            }
 
 
-            levelNexii = _.zip(corners, sides);
-            nexii[level] = _.flatten(levelNexii);
 
 
             return (TileGridView.radius * level) < limit;

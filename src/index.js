@@ -106,7 +106,7 @@ if(window && document)
 
         applet.stage.offset(new Vector2(-400, -300));
 
-        TileGridView.initialise(50.0);
+        TileGridView.initialise(30.0);
         applet.tileGridView = new TileGridView(applet, applet.namedLayers.ViewLayer.canvas._canvas.getContext("2d"), new LineSegment2(new Vector2(100, 100), new Vector2(700, 500)));
 
         window.setTimeout(draw, 10);
