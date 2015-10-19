@@ -30,16 +30,22 @@ var TerrainTiles = TerrainTiles_mod.TerrainTiles;
 
 var Hex = require('./engine/Hex').Hex;
 var Applet = require('./engine/Applet').Applet;
+var App = require('./App').App;
 
 var HexGrid = require('./engine/HexGrid').HexGrid;
 
 var HexUI = require("./gui/HexUI").HexUI;
 var applet;
 
+var app
+
 if(window && document)
 {   
 
     $('document').ready(function(){
+
+        app = new App();
+        app.newGame();
 
         HexUI.initialise(50.0);
 
