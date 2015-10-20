@@ -1,7 +1,15 @@
-function Game(newGameKwargs)
+function Game()
 {
-    this.mapSize = newGameKwargs.mapSize || 20;
-    this.seed = newGameKwargs.seed;
 }
 
 exports.Game = Game;
+
+Object.defineProperties(Game, {
+    newGame: {
+        value: function(newGameKwargs){
+            var game = new Game();
+            game.seed = newGameKwargs.seed || "New Game"
+            game.mapSize = newGameKwargs.mapSize || 20;
+        }
+    }
+})

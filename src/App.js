@@ -17,7 +17,7 @@ Object.defineProperties(App.prototype, {
     newGame: {
         value: function()
         {
-            this.game = new Game(this.newGameKwargs);
+            this.game = Game(this.newGameKwargs);
         }
     },
     newGameSeed: {
