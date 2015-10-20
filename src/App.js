@@ -2,6 +2,7 @@ var Game = require('./engine/Game').Game
 
 function App(){
     this.game = null;
+    this.mode = null;
 }
 
 exports.App = App;
@@ -34,3 +35,12 @@ Object.defineProperties(App.prototype, {
         }
     }
 })
+
+Object.defineProperties(App, {
+    modes: {
+        value: _.enum([
+            'play',
+            'mainMenu',
+        ])
+    }
+});

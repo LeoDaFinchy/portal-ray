@@ -15,8 +15,19 @@ _.mixin({
             var removed = array.splice(array.length + amount, -amount);
             return removed.concat(array);
         }
+    },
+    enum: function(arr){
+        var a = _.uniq(arr);
+        return _.object(
+            _.zip(
+                a,
+                _.range(a.length)
+            )
+        )
     }
 });
+
+window._ = _;
 
 var Geometry = require('geometry');
 var Vector2 = Geometry.Vector2;
