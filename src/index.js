@@ -38,6 +38,7 @@ var HexUI = require("./gui/HexUI").HexUI;
 var applet;
 
 var app
+var Chaos = require("./engine/Chaos").Chaos;
 
 if(window && document)
 {   
