@@ -36,8 +36,12 @@ var HexGrid = require('./engine/HexGrid').HexGrid;
 var HexUI = require("./gui/HexUI").HexUI;
 var applet;
 
+var Chaos = require("./engine/Chaos").Chaos;
+
 if(window && document)
 {   
+
+    Chaos("torsion", function(x){console.log(x)});
 
     $('document').ready(function(){
 
