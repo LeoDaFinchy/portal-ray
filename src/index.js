@@ -46,6 +46,8 @@ if(window && document)
     $('document').ready(function(){
 
         app = new App();
+        window.app = app;
+        app.newGameSeed("pullover");
         app.newGame();
 
         HexUI.initialise(50.0);
