@@ -38,12 +38,20 @@ var applet;
 
 var Chaos = require("./engine/Chaos").Chaos;
 
+var Tile = require("./data/Tile").Tile;
+var Terrain = require("./data/Terrain").Terrain;
+
+var tile = new Tile(Tile.id++, new Terrain(Terrain.id++, "Grass"));
+tile.generateWards();
+
+
 if(window && document)
 {   
 
     Chaos("torsion", function(x){console.log(x)});
 
     $('document').ready(function(){
+        window.tile = tile;
 
         HexUI.initialise(50.0);
 
