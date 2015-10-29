@@ -92,6 +92,7 @@ if(window && document)
 
         $('body').on('keydown', function keyDown(e){
             applet.keyStates[e.keyCode] = true;
+            e.preventDefault();
         }).on('keyup', function keyUp(e){
             applet.keyStates[e.keyCode] = false;
         });
